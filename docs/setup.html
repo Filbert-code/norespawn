@@ -1,0 +1,590 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NoRespawn — Setup Guide</title>
+    <style>
+      :root {
+        --bg: #0a0a0a;
+        --panel: #141414;
+        --panel-2: #1b1b1b;
+        --border: #2a2a2a;
+        --text: #e7e7e7;
+        --muted: #a1a1a1;
+        --accent: #ffffff;
+        --accent-soft: #2563eb;
+        --green: #22c55e;
+        --amber: #f59e0b;
+        --code-bg: #0f0f0f;
+        --radius: 12px;
+        --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        --sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      }
+      * { box-sizing: border-box; }
+      html { scroll-behavior: smooth; }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font: 16px/1.6 var(--sans);
+        -webkit-font-smoothing: antialiased;
+      }
+      a { color: #93c5fd; }
+      .layout { display: flex; max-width: 1200px; margin: 0 auto; }
+      /* Sidebar */
+      nav.toc {
+        position: sticky;
+        top: 0;
+        align-self: flex-start;
+        width: 270px;
+        height: 100vh;
+        overflow-y: auto;
+        padding: 28px 18px;
+        border-right: 1px solid var(--border);
+        flex-shrink: 0;
+      }
+      nav.toc .brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 700;
+        font-size: 18px;
+        margin-bottom: 6px;
+      }
+      nav.toc .brand .logo {
+        width: 30px; height: 30px;
+        display: grid; place-items: center;
+        background: #fff; color: #000;
+        border-radius: 8px; font-weight: 800;
+      }
+      nav.toc .sub { color: var(--muted); font-size: 13px; margin-bottom: 22px; }
+      nav.toc ol { list-style: none; margin: 0; padding: 0; counter-reset: step; }
+      nav.toc ol li { counter-increment: step; }
+      nav.toc ol li a {
+        display: flex; gap: 10px; align-items: baseline;
+        padding: 8px 10px; border-radius: 8px;
+        color: var(--muted); text-decoration: none; font-size: 14px;
+      }
+      nav.toc ol li a::before {
+        content: counter(step);
+        font-variant-numeric: tabular-nums;
+        font-size: 12px; color: #666;
+        border: 1px solid var(--border); border-radius: 6px;
+        min-width: 22px; height: 22px; display: inline-grid; place-items: center;
+        flex-shrink: 0;
+      }
+      nav.toc ol li a:hover { background: var(--panel); color: var(--text); }
+      /* Main */
+      main { flex: 1; padding: 48px 56px 120px; max-width: 860px; min-width: 0; }
+      header.hero { margin-bottom: 40px; }
+      header.hero h1 { font-size: 34px; margin: 0 0 8px; letter-spacing: -0.5px; }
+      header.hero p { color: var(--muted); margin: 0; font-size: 17px; }
+      .stack-badges { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+      .badge {
+        font-size: 12px; color: var(--muted);
+        background: var(--panel); border: 1px solid var(--border);
+        padding: 4px 10px; border-radius: 999px;
+      }
+      section { margin-bottom: 48px; scroll-margin-top: 24px; }
+      section > h2 {
+        font-size: 22px; margin: 0 0 4px; letter-spacing: -0.3px;
+        display: flex; align-items: center; gap: 10px;
+      }
+      section > h2 .num {
+        font-size: 13px; color: #000; background: #fff;
+        width: 26px; height: 26px; border-radius: 7px;
+        display: inline-grid; place-items: center; font-weight: 700;
+      }
+      section > .lead { color: var(--muted); margin: 0 0 18px; }
+      h3 { font-size: 16px; margin: 26px 0 10px; }
+      p { margin: 12px 0; }
+      ul, ol.steps { padding-left: 22px; }
+      ol.steps > li { margin: 10px 0; }
+      code.inline {
+        font-family: var(--mono); font-size: 13px;
+        background: var(--panel-2); border: 1px solid var(--border);
+        padding: 1px 6px; border-radius: 5px; color: #f3f3f3;
+      }
+      pre {
+        position: relative;
+        background: var(--code-bg); border: 1px solid var(--border);
+        border-radius: var(--radius); padding: 16px 16px; overflow-x: auto;
+        font-family: var(--mono); font-size: 13.5px; line-height: 1.5;
+      }
+      pre code { white-space: pre; }
+      .copy-btn {
+        position: absolute; top: 8px; right: 8px;
+        background: var(--panel-2); border: 1px solid var(--border);
+        color: var(--muted); font-size: 11px; padding: 4px 8px;
+        border-radius: 6px; cursor: pointer;
+      }
+      .copy-btn:hover { color: #fff; border-color: #555; }
+      .callout {
+        border: 1px solid var(--border); border-left-width: 3px;
+        background: var(--panel); border-radius: 10px;
+        padding: 12px 16px; margin: 16px 0; font-size: 14.5px;
+      }
+      .callout.note { border-left-color: var(--accent-soft); }
+      .callout.warn { border-left-color: var(--amber); }
+      .callout.tip { border-left-color: var(--green); }
+      .callout b { color: #fff; }
+      table {
+        width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px;
+      }
+      th, td { text-align: left; padding: 9px 12px; border: 1px solid var(--border); }
+      th { background: var(--panel); font-weight: 600; }
+      td code { font-family: var(--mono); font-size: 12.5px; color: #f3f3f3; }
+      .kbd-field { color: var(--muted); }
+      .check {
+        display: flex; gap: 10px; align-items: flex-start;
+        padding: 10px 12px; border: 1px solid var(--border);
+        border-radius: 10px; margin: 8px 0; background: var(--panel);
+      }
+      .check input { margin-top: 4px; width: 16px; height: 16px; accent-color: var(--green); }
+      .check label { cursor: pointer; }
+      hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
+      .pill { font-size: 11px; padding: 2px 8px; border-radius: 999px; border: 1px solid var(--border); color: var(--muted); }
+      .pill.dash { color: var(--amber); border-color: #5a4514; background: #2a1f07; }
+      footer { color: var(--muted); font-size: 13px; border-top: 1px solid var(--border); padding-top: 20px; }
+      @media (max-width: 880px) {
+        nav.toc { display: none; }
+        main { padding: 32px 20px 80px; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="layout">
+      <nav class="toc">
+        <div class="brand"><span class="logo">N</span> NoRespawn</div>
+        <div class="sub">Full setup guide</div>
+        <ol>
+          <li><a href="#overview">Overview &amp; architecture</a></li>
+          <li><a href="#local">Run the app locally</a></li>
+          <li><a href="#supabase">Create the Supabase project</a></li>
+          <li><a href="#env">Wire up environment variables</a></li>
+          <li><a href="#google">Configure Google OAuth</a></li>
+          <li><a href="#supabase-auth">Enable Google in Supabase</a></li>
+          <li><a href="#vercel">Deploy to Vercel</a></li>
+          <li><a href="#post-deploy">Post-deploy URL wiring</a></li>
+          <li><a href="#keepalive">Keep-alive GitHub Action</a></li>
+          <li><a href="#oauth-code">Wire OAuth into the app</a></li>
+          <li><a href="#checklist">Final checklist</a></li>
+        </ol>
+      </nav>
+
+      <main>
+        <header class="hero">
+          <h1>NoRespawn — Setup Guide</h1>
+          <p>
+            Everything you need to take this repo from a fresh clone to a live,
+            authenticated app — including every click you'll make in the
+            Supabase, Google Cloud, and Vercel dashboards.
+          </p>
+          <div class="stack-badges">
+            <span class="badge">React + Vite</span>
+            <span class="badge">TypeScript</span>
+            <span class="badge">Tailwind v4</span>
+            <span class="badge">shadcn/ui</span>
+            <span class="badge">Supabase (Postgres + Auth)</span>
+            <span class="badge">Google OAuth</span>
+            <span class="badge">Vercel hosting</span>
+          </div>
+        </header>
+
+        <!-- 1 -->
+        <section id="overview">
+          <h2><span class="num">1</span> Overview &amp; architecture</h2>
+          <p class="lead">How the pieces fit together.</p>
+          <ul>
+            <li>
+              <b>Frontend</b> — A React + Vite single-page app, deployed as
+              static files on <b>Vercel</b>. This is all the user's browser
+              downloads.
+            </li>
+            <li>
+              <b>Backend</b> — <b>Supabase</b> provides the Postgres database,
+              authentication (including Google OAuth), and (optionally) Edge
+              Functions. The browser talks to Supabase directly using the public
+              <code class="inline">anon</code> key, secured by Row Level Security.
+            </li>
+            <li>
+              <b>Identity</b> — <b>Google Cloud</b> issues the OAuth client that
+              lets users "Sign in with Google". Supabase brokers the OAuth
+              handshake for you.
+            </li>
+            <li>
+              <b>Keep-alive</b> — A scheduled <b>GitHub Action</b> pings Supabase
+              twice a week so the free-tier project never auto-pauses.
+            </li>
+          </ul>
+          <div class="callout note">
+            <b>Cost:</b> This entire stack runs on $0/month — Supabase free tier,
+            Vercel Hobby, and GitHub Actions free minutes. The only free-tier
+            gotcha (Supabase's 7-day pause) is handled by step 9.
+          </div>
+        </section>
+
+        <!-- 2 -->
+        <section id="local">
+          <h2><span class="num">2</span> Run the app locally</h2>
+          <p class="lead">
+            You're already in the cloned repo. Get it running before touching any
+            dashboards.
+          </p>
+          <ol class="steps">
+            <li>Make sure you have <b>Node.js 20+</b> installed (<code class="inline">node -v</code>).</li>
+            <li>Install dependencies:</li>
+          </ol>
+          <pre><code>npm install</code></pre>
+          <ol class="steps" start="3">
+            <li>Create your local env file from the template:</li>
+          </ol>
+          <pre><code>cp .env.example .env.local</code></pre>
+          <ol class="steps" start="4">
+            <li>
+              Leave the values blank for now — you'll fill them in after creating
+              the Supabase project (steps 3–4). Start the dev server:
+            </li>
+          </ol>
+          <pre><code>npm run dev</code></pre>
+          <p>
+            Open <a href="http://localhost:5173">http://localhost:5173</a>. You
+            should see the NoRespawn landing page.
+          </p>
+          <div class="callout tip">
+            <b>Tip:</b> The landing page renders without Supabase configured. You
+            only need env vars once you start using auth and the database.
+          </div>
+        </section>
+
+        <!-- 3 -->
+        <section id="supabase">
+          <h2><span class="num">3</span> Create the Supabase project</h2>
+          <p class="lead">Dashboard: <a href="https://supabase.com/dashboard" target="_blank">supabase.com/dashboard</a></p>
+          <ol class="steps">
+            <li>Click <b>New project</b>.</li>
+            <li>Pick (or create) an organization on the <b>Free</b> plan.</li>
+            <li>
+              Set a <b>Project name</b> (e.g. <code class="inline">norespawn</code>),
+              and a strong <b>Database password</b> — <b>save this password</b> in
+              your password manager; you'll need it for direct Postgres access.
+            </li>
+            <li>
+              Choose the <b>Region</b> closest to you (lower latency for a
+              single user).
+            </li>
+            <li>Click <b>Create new project</b> and wait ~2 minutes for provisioning.</li>
+          </ol>
+
+          <h3>Grab your API credentials</h3>
+          <ol class="steps">
+            <li>In the project, go to <b>Project Settings</b> (gear icon) → <b>API</b>.</li>
+            <li>Copy these two values — you'll paste them in the next step:</li>
+          </ol>
+          <table>
+            <tr><th>Supabase field</th><th>Goes into</th></tr>
+            <tr><td><span class="kbd-field">Project URL</span></td><td><code>VITE_SUPABASE_URL</code></td></tr>
+            <tr><td><span class="kbd-field">Project API key → <code>anon</code> / <code>public</code></span></td><td><code>VITE_SUPABASE_ANON_KEY</code></td></tr>
+          </table>
+          <div class="callout warn">
+            <b>Never</b> use the <code class="inline">service_role</code> key in the
+            frontend or commit it anywhere. Only the <code class="inline">anon</code>
+            key belongs in the browser — it's protected by Row Level Security.
+          </div>
+          <p>
+            Note your <b>project ref</b> too (the
+            <code class="inline">abcdefgh...</code> subdomain in the Project URL).
+            You'll need it for the Google redirect URI in step 5.
+          </p>
+        </section>
+
+        <!-- 4 -->
+        <section id="env">
+          <h2><span class="num">4</span> Wire up environment variables</h2>
+          <p class="lead">Connect the local app to your new Supabase project.</p>
+          <p>Open <code class="inline">.env.local</code> and fill in the two values from step 3:</p>
+          <pre><code>VITE_SUPABASE_URL=https://YOUR-PROJECT-REF.supabase.co
+VITE_SUPABASE_ANON_KEY=eyJhbGciOiJ...your-anon-key...</code></pre>
+          <div class="callout note">
+            <b>Why the <code class="inline">VITE_</code> prefix?</b> Vite only exposes
+            env vars that start with <code class="inline">VITE_</code> to the
+            browser bundle. The Supabase client reads these in
+            <code class="inline">src/lib/supabase.ts</code>.
+          </div>
+          <p>Restart <code class="inline">npm run dev</code> so the new env vars are picked up.</p>
+        </section>
+
+        <!-- 5 -->
+        <section id="google">
+          <h2><span class="num">5</span> Configure Google OAuth</h2>
+          <p class="lead">Console: <a href="https://console.cloud.google.com" target="_blank">console.cloud.google.com</a></p>
+
+          <h3>5a. Create / select a project</h3>
+          <ol class="steps">
+            <li>In the top bar, open the project picker → <b>New Project</b> (or reuse one).</li>
+            <li>Name it (e.g. <code class="inline">norespawn</code>) and create it.</li>
+          </ol>
+
+          <h3>5b. Configure the OAuth consent screen</h3>
+          <ol class="steps">
+            <li>Go to <b>APIs &amp; Services → OAuth consent screen</b> (a.k.a. "Google Auth Platform" → <b>Branding</b>).</li>
+            <li>Choose <b>External</b> user type and click <b>Create</b>.</li>
+            <li>Fill in <b>App name</b> (NoRespawn), <b>User support email</b>, and a <b>Developer contact email</b>. Save and continue.</li>
+            <li>On <b>Scopes</b>, you can leave defaults — Supabase requests <code class="inline">email</code>, <code class="inline">profile</code>, <code class="inline">openid</code> automatically. Save and continue.</li>
+            <li>
+              On <b>Test users</b>, add your own Google email address. While the
+              app is in "Testing" mode, only listed test users can sign in — which
+              is perfect for a single-user app.
+            </li>
+          </ol>
+          <div class="callout tip">
+            <b>You don't need to publish/verify the app</b> for personal use. Leave
+            it in <b>Testing</b> and just keep yourself on the test-users list.
+          </div>
+
+          <h3>5c. Create the OAuth client ID</h3>
+          <ol class="steps">
+            <li>Go to <b>APIs &amp; Services → Credentials</b>.</li>
+            <li>Click <b>Create Credentials → OAuth client ID</b>.</li>
+            <li>Application type: <b>Web application</b>. Name it (e.g. <code class="inline">norespawn-web</code>).</li>
+            <li>
+              Under <b>Authorized JavaScript origins</b>, add:
+              <ul>
+                <li><code class="inline">http://localhost:5173</code></li>
+                <li><code class="inline">https://YOUR-APP.vercel.app</code> <span class="pill dash">add after step 7</span></li>
+              </ul>
+            </li>
+            <li>
+              Under <b>Authorized redirect URIs</b>, add your Supabase callback
+              (this is the critical one):
+            </li>
+          </ol>
+          <pre><code>https://YOUR-PROJECT-REF.supabase.co/auth/v1/callback</code></pre>
+          <ol class="steps" start="6">
+            <li>Click <b>Create</b>. Copy the <b>Client ID</b> and <b>Client secret</b> — you'll paste them into Supabase next.</li>
+          </ol>
+          <div class="callout warn">
+            <b>Common mistake:</b> The redirect URI points at <b>Supabase</b>
+            (<code class="inline">/auth/v1/callback</code>), <i>not</i> at your
+            Vercel app. Supabase handles the handshake and then redirects back to
+            your app.
+          </div>
+        </section>
+
+        <!-- 6 -->
+        <section id="supabase-auth">
+          <h2><span class="num">6</span> Enable Google in Supabase</h2>
+          <p class="lead">Back in the Supabase dashboard.</p>
+          <ol class="steps">
+            <li>Go to <b>Authentication → Sign In / Providers</b> (or <b>Providers</b>).</li>
+            <li>Find <b>Google</b> and toggle it <b>on</b>.</li>
+            <li>Paste the <b>Client ID</b> and <b>Client Secret</b> from step 5c.</li>
+            <li>Click <b>Save</b>.</li>
+          </ol>
+
+          <h3>Set redirect URLs</h3>
+          <ol class="steps">
+            <li>Go to <b>Authentication → URL Configuration</b>.</li>
+            <li>Set <b>Site URL</b> to your local dev URL for now: <code class="inline">http://localhost:5173</code> (you'll switch this to your Vercel URL after deploying).</li>
+            <li>
+              Under <b>Redirect URLs</b>, add both:
+              <ul>
+                <li><code class="inline">http://localhost:5173/**</code></li>
+                <li><code class="inline">https://YOUR-APP.vercel.app/**</code> <span class="pill dash">add after step 7</span></li>
+              </ul>
+            </li>
+            <li>Save.</li>
+          </ol>
+          <div class="callout note">
+            The <code class="inline">/**</code> wildcard lets Supabase redirect back
+            to any path in your app after login (e.g. an
+            <code class="inline">/auth/callback</code> route).
+          </div>
+        </section>
+
+        <!-- 7 -->
+        <section id="vercel">
+          <h2><span class="num">7</span> Deploy to Vercel</h2>
+          <p class="lead">Dashboard: <a href="https://vercel.com/dashboard" target="_blank">vercel.com/dashboard</a></p>
+          <p>First, commit and push the project to GitHub if you haven't:</p>
+          <pre><code>git add .
+git commit -m "Initial NoRespawn app"
+git push origin main</code></pre>
+          <ol class="steps">
+            <li>In Vercel, click <b>Add New… → Project</b>.</li>
+            <li>Import the <code class="inline">norespawn</code> repo from GitHub.</li>
+            <li>
+              Vercel auto-detects <b>Vite</b>. Confirm the build settings:
+              <table>
+                <tr><th>Setting</th><th>Value</th></tr>
+                <tr><td>Framework Preset</td><td><code>Vite</code></td></tr>
+                <tr><td>Build Command</td><td><code>npm run build</code></td></tr>
+                <tr><td>Output Directory</td><td><code>dist</code></td></tr>
+                <tr><td>Install Command</td><td><code>npm install</code></td></tr>
+              </table>
+            </li>
+            <li>
+              Expand <b>Environment Variables</b> and add the same two values from
+              <code class="inline">.env.local</code>:
+              <table>
+                <tr><th>Name</th><th>Value</th></tr>
+                <tr><td><code>VITE_SUPABASE_URL</code></td><td>your project URL</td></tr>
+                <tr><td><code>VITE_SUPABASE_ANON_KEY</code></td><td>your anon key</td></tr>
+              </table>
+            </li>
+            <li>Click <b>Deploy</b>. After a minute you'll get a live URL like <code class="inline">https://norespawn.vercel.app</code>.</li>
+          </ol>
+          <div class="callout note">
+            The repo includes <code class="inline">vercel.json</code> with a SPA
+            rewrite so client-side routes don't 404 on refresh. No extra config
+            needed.
+          </div>
+        </section>
+
+        <!-- 8 -->
+        <section id="post-deploy">
+          <h2><span class="num">8</span> Post-deploy URL wiring</h2>
+          <p class="lead">Now that you know your Vercel URL, fill in the placeholders from steps 5 &amp; 6.</p>
+          <ol class="steps">
+            <li>
+              <b>Google Cloud → Credentials →</b> your OAuth client:
+              <ul>
+                <li>Add <code class="inline">https://YOUR-APP.vercel.app</code> to <b>Authorized JavaScript origins</b>.</li>
+              </ul>
+            </li>
+            <li>
+              <b>Supabase → Authentication → URL Configuration</b>:
+              <ul>
+                <li>Change <b>Site URL</b> to <code class="inline">https://YOUR-APP.vercel.app</code>.</li>
+                <li>Add <code class="inline">https://YOUR-APP.vercel.app/**</code> to <b>Redirect URLs</b> (keep the localhost one for local dev).</li>
+              </ul>
+            </li>
+          </ol>
+          <div class="callout tip">
+            <b>Custom domain later?</b> Repeat this step with the custom domain in
+            both Google and Supabase. Vercel handles the HTTPS certificate
+            automatically.
+          </div>
+        </section>
+
+        <!-- 9 -->
+        <section id="keepalive">
+          <h2><span class="num">9</span> Keep-alive GitHub Action</h2>
+          <p class="lead">
+            Free Supabase projects pause after 7 days of inactivity. The repo
+            ships a workflow that pings it twice a week — you just need to add two
+            secrets.
+          </p>
+          <p>
+            The workflow lives at
+            <code class="inline">.github/workflows/supabase-keepalive.yml</code>.
+            On GitHub, go to your repo → <b>Settings → Secrets and variables →
+            Actions → New repository secret</b> and add:
+          </p>
+          <table>
+            <tr><th>Secret name</th><th>Value</th></tr>
+            <tr><td><code>SUPABASE_URL</code></td><td>your project URL (same as <code>VITE_SUPABASE_URL</code>)</td></tr>
+            <tr><td><code>SUPABASE_ANON_KEY</code></td><td>your anon key</td></tr>
+          </table>
+          <p>
+            To confirm it works, go to the repo's <b>Actions</b> tab → <b>Supabase
+            keep-alive</b> → <b>Run workflow</b>. A green run that logs
+            <code class="inline">HTTP 200</code> means you're set.
+          </p>
+          <div class="callout note">
+            It's scheduled for 09:00 UTC every Tuesday and Saturday — well within
+            the 7-day window. Adjust the <code class="inline">cron</code> in the
+            workflow file if you like.
+          </div>
+        </section>
+
+        <!-- 10 -->
+        <section id="oauth-code">
+          <h2><span class="num">10</span> Wire OAuth into the app <span class="pill dash">later</span></h2>
+          <p class="lead">
+            The landing page's "Sign in" button isn't wired up yet. When you're
+            ready, here's the minimal flow using the configured Supabase client.
+          </p>
+          <h3>Trigger Google login</h3>
+          <pre><code>import { supabase } from "@/lib/supabase"
+
+async function signInWithGoogle() {
+  const { error } = await supabase.auth.signInWithOAuth({
+    provider: "google",
+    options: {
+      redirectTo: `${window.location.origin}/auth/callback`,
+    },
+  })
+  if (error) console.error(error)
+}</code></pre>
+          <h3>Read the session anywhere</h3>
+          <pre><code>const { data: { session } } = await supabase.auth.getSession()
+
+// Or subscribe to changes:
+supabase.auth.onAuthStateChange((_event, session) => {
+  // update your app state with session?.user
+})</code></pre>
+          <h3>Sign out</h3>
+          <pre><code>await supabase.auth.signOut()</code></pre>
+          <div class="callout note">
+            Supabase handles the redirect dance, token exchange, and session
+            refresh. The <code class="inline">redirectTo</code> must be one of the
+            <b>Redirect URLs</b> you added in steps 6 &amp; 8.
+          </div>
+        </section>
+
+        <hr />
+
+        <!-- Checklist -->
+        <section id="checklist">
+          <h2><span class="num">✓</span> Final checklist</h2>
+          <p class="lead">Tick these off as you go (saved in your browser).</p>
+          <div id="checks">
+            <div class="check"><input type="checkbox" id="c1" /><label for="c1"><code class="inline">npm install</code> + <code class="inline">npm run dev</code> shows the landing page locally</label></div>
+            <div class="check"><input type="checkbox" id="c2" /><label for="c2">Supabase project created; Project URL + anon key copied</label></div>
+            <div class="check"><input type="checkbox" id="c3" /><label for="c3"><code class="inline">.env.local</code> filled in with both <code class="inline">VITE_</code> vars</label></div>
+            <div class="check"><input type="checkbox" id="c4" /><label for="c4">Google OAuth consent screen configured + yourself added as test user</label></div>
+            <div class="check"><input type="checkbox" id="c5" /><label for="c5">Google OAuth client created; redirect URI points at Supabase <code class="inline">/auth/v1/callback</code></label></div>
+            <div class="check"><input type="checkbox" id="c6" /><label for="c6">Google provider enabled in Supabase with Client ID + Secret</label></div>
+            <div class="check"><input type="checkbox" id="c7" /><label for="c7">Supabase Site URL + Redirect URLs set</label></div>
+            <div class="check"><input type="checkbox" id="c8" /><label for="c8">Pushed to GitHub and deployed on Vercel with env vars</label></div>
+            <div class="check"><input type="checkbox" id="c9" /><label for="c9">Vercel URL added to Google origins + Supabase redirect URLs</label></div>
+            <div class="check"><input type="checkbox" id="c10" /><label for="c10">Keep-alive secrets added; manual workflow run returns HTTP 200</label></div>
+          </div>
+        </section>
+
+        <footer>
+          NoRespawn setup guide · generated for a free-tier Supabase + Vercel
+          deployment. Open this file in any browser
+          (<code class="inline">docs/setup.html</code>).
+        </footer>
+      </main>
+    </div>
+
+    <script>
+      // Copy buttons on every code block
+      document.querySelectorAll("pre").forEach((pre) => {
+        const btn = document.createElement("button");
+        btn.className = "copy-btn";
+        btn.textContent = "Copy";
+        btn.addEventListener("click", () => {
+          const code = pre.querySelector("code");
+          navigator.clipboard.writeText(code ? code.innerText : pre.innerText);
+          btn.textContent = "Copied!";
+          setTimeout(() => (btn.textContent = "Copy"), 1500);
+        });
+        pre.appendChild(btn);
+      });
+
+      // Persist checklist state in localStorage
+      document.querySelectorAll('#checks input[type="checkbox"]').forEach((box) => {
+        const key = "norespawn-setup-" + box.id;
+        box.checked = localStorage.getItem(key) === "1";
+        box.addEventListener("change", () =>
+          localStorage.setItem(key, box.checked ? "1" : "0"),
+        );
+      });
+    </script>
+  </body>
+</html>
