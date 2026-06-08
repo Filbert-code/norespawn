@@ -14,13 +14,14 @@ import {
   RotateCcw,
   Skull,
   Swords,
+  Trash2,
   X,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { ConfirmDialog } from '@/mockups/components/ConfirmDialog'
 import { PlanSheet } from '@/components/PlanSheet'
 import { ScreenError, ScreenSpinner, ScreenSurface } from '@/screens/_shared/screen'
-import { useScheduledWorkouts } from '@/lib/queries/schedule'
+import { useScheduledWorkouts, useUnscheduleWorkout } from '@/lib/queries/schedule'
 import {
   useAbandonSession,
   useInProgressSession,
@@ -166,6 +167,10 @@ export function CalendarHomeScreen() {
     () => new Date(today.getFullYear(), today.getMonth(), 1),
   )
   const [confirmAbandon, setConfirmAbandon] = useState<string | null>(null)
+  const [confirmCancelSchedule, setConfirmCancelSchedule] = useState<{
+    id: string
+    name: string
+  } | null>(null)
   const [quickStartOpen, setQuickStartOpen] = useState(false)
   const [launchingId, setLaunchingId] = useState<string | null>(null)
   const [launchError, setLaunchError] = useState<string | null>(null)
@@ -180,6 +185,7 @@ export function CalendarHomeScreen() {
   const { data: inProgress } = useInProgressSession()
   const { data: plans } = usePlans()
   const abandon = useAbandonSession()
+  const unschedule = useUnscheduleWorkout()
   const startSession = useStartSession()
 
   async function startPlan(planId: string) {
@@ -382,6 +388,15 @@ export function CalendarHomeScreen() {
               isToday={isToday}
               isFuture={isFuture}
               onReschedule={goToSchedule}
+              onCancelSchedule={
+                selectedEntry.scheduledId && selectedEntry.status === 'scheduled'
+                  ? () =>
+                      setConfirmCancelSchedule({
+                        id: selectedEntry.scheduledId!,
+                        name: selectedEntry.workoutName,
+                      })
+                  : undefined
+              }
               onStart={() => selectedEntry.sessionId && goLive(selectedEntry.sessionId)}
               onResume={() => selectedEntry.sessionId && goLive(selectedEntry.sessionId)}
               onAbandon={() =>
@@ -457,6 +472,23 @@ export function CalendarHomeScreen() {
         }}
         onCancel={() => setConfirmAbandon(null)}
       />
+
+      <ConfirmDialog
+        open={confirmCancelSchedule !== null}
+        title="Cancel Workout?"
+        message={
+          confirmCancelSchedule
+            ? `Remove "${confirmCancelSchedule.name}" from the calendar. The plan itself stays in your library.`
+            : ''
+        }
+        confirmLabel={unschedule.isPending ? 'Cancelling…' : 'Cancel Workout'}
+        cancelLabel="Keep It"
+        onConfirm={() => {
+          if (confirmCancelSchedule) unschedule.mutate(confirmCancelSchedule.id)
+          setConfirmCancelSchedule(null)
+        }}
+        onCancel={() => setConfirmCancelSchedule(null)}
+      />
     </ScreenSurface>
   )
 }
@@ -496,6 +528,7 @@ function DayDetailCard({
   isToday,
   isFuture,
   onReschedule,
+  onCancelSchedule,
   onStart,
   onResume,
   onAbandon,
@@ -505,6 +538,7 @@ function DayDetailCard({
   isToday: boolean
   isFuture: boolean
   onReschedule: () => void
+  onCancelSchedule?: () => void
   onStart: () => void
   onResume: () => void
   onAbandon: () => void
@@ -575,19 +609,39 @@ function DayDetailCard({
             </button>
           </div>
         ) : isToday ? (
-          <button
-            onClick={onStart}
-            className="clip-bevel flex w-full items-center justify-center gap-2 bg-nr-crimson py-3 font-heading text-base font-bold uppercase tracking-widest text-nr-bone shadow-[0_0_22px_-4px] shadow-nr-ember/80 hover:bg-nr-ember"
-          >
-            <Play className="size-5" /> Start Workout
-          </button>
+          <div className="flex flex-col gap-2">
+            <button
+              onClick={onStart}
+              className="clip-bevel flex w-full items-center justify-center gap-2 bg-nr-crimson py-3 font-heading text-base font-bold uppercase tracking-widest text-nr-bone shadow-[0_0_22px_-4px] shadow-nr-ember/80 hover:bg-nr-ember"
+            >
+              <Play className="size-5" /> Start Workout
+            </button>
+            {onCancelSchedule && (
+              <button
+                onClick={onCancelSchedule}
+                className="clip-bevel-sm flex w-full items-center justify-center gap-1.5 border border-nr-bronze/40 py-2 font-heading text-xs font-semibold uppercase tracking-widest text-nr-bone/60 hover:border-nr-crimson hover:text-nr-ember"
+              >
+                <Trash2 className="size-3.5" /> Cancel Workout
+              </button>
+            )}
+          </div>
         ) : isFuture ? (
-          <button
-            onClick={onReschedule}
-            className="clip-bevel-sm w-full border border-nr-bronze/40 py-2.5 font-heading text-sm font-semibold uppercase tracking-widest text-nr-bronze hover:border-nr-bronze hover:text-nr-bone"
-          >
-            Edit / Reschedule
-          </button>
+          <div className="flex flex-col gap-2">
+            <button
+              onClick={onReschedule}
+              className="clip-bevel-sm w-full border border-nr-bronze/40 py-2.5 font-heading text-sm font-semibold uppercase tracking-widest text-nr-bronze hover:border-nr-bronze hover:text-nr-bone"
+            >
+              Edit / Reschedule
+            </button>
+            {onCancelSchedule && (
+              <button
+                onClick={onCancelSchedule}
+                className="clip-bevel-sm flex w-full items-center justify-center gap-1.5 border border-nr-crimson/40 bg-nr-crimson/5 py-2 font-heading text-xs font-semibold uppercase tracking-widest text-nr-ember hover:bg-nr-crimson/15"
+              >
+                <Trash2 className="size-3.5" /> Cancel Workout
+              </button>
+            )}
+          </div>
         ) : null}
       </div>
     </div>
