@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
   CalendarDays,
+  CalendarPlus,
   Check,
   ChevronDown,
   ChevronLeft,
@@ -12,18 +13,21 @@ import {
   Plus,
   RotateCcw,
   Skull,
+  Swords,
   X,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { ConfirmDialog } from '@/mockups/components/ConfirmDialog'
+import { PlanSheet } from '@/components/PlanSheet'
 import { ScreenError, ScreenSpinner, ScreenSurface } from '@/screens/_shared/screen'
 import { useScheduledWorkouts } from '@/lib/queries/schedule'
 import {
   useAbandonSession,
   useInProgressSession,
   useSessions,
+  useStartSession,
 } from '@/lib/queries/sessions'
-import { usePlans } from '@/lib/queries/plans'
+import { usePlans, type PlanSummary } from '@/lib/queries/plans'
 import type { ScheduledWorkout, WorkoutSession } from '@/lib/supabase'
 
 // ============================================================================
@@ -148,6 +152,9 @@ export function CalendarHomeScreen() {
     () => new Date(today.getFullYear(), today.getMonth(), 1),
   )
   const [confirmAbandon, setConfirmAbandon] = useState<string | null>(null)
+  const [quickStartOpen, setQuickStartOpen] = useState(false)
+  const [launchingId, setLaunchingId] = useState<string | null>(null)
+  const [launchError, setLaunchError] = useState<string | null>(null)
 
   // Pull a wide enough range to cover the visible week strip AND the month
   // picker grid in one query — picker shows 6 weeks centered on the chosen month.
@@ -159,6 +166,20 @@ export function CalendarHomeScreen() {
   const { data: inProgress } = useInProgressSession()
   const { data: plans } = usePlans()
   const abandon = useAbandonSession()
+  const startSession = useStartSession()
+
+  async function startPlan(planId: string) {
+    setLaunchingId(planId)
+    setLaunchError(null)
+    try {
+      const session = await startSession.mutateAsync({ workoutId: planId })
+      setQuickStartOpen(false)
+      navigate(`/live/${session.id}`)
+    } catch (e) {
+      setLaunchError((e as Error).message)
+      setLaunchingId(null)
+    }
+  }
 
   const planNames = useMemo(
     () => new Map((plans ?? []).map((p) => [p.workout.id, p.workout.name])),
@@ -372,9 +393,11 @@ export function CalendarHomeScreen() {
             />
           ) : (
             <EmptyDay
+              isToday={isToday}
               isFuture={isFuture}
               firstRun={(plans?.length ?? 0) === 0}
               onPlan={goToSchedule}
+              onQuickStart={() => setQuickStartOpen(true)}
             />
           )
         )}
@@ -389,6 +412,23 @@ export function CalendarHomeScreen() {
           onMonthChange={setPickerMonth}
           onPick={jumpToDate}
           onClose={() => setPickerOpen(false)}
+        />
+      )}
+
+      {quickStartOpen && (
+        <QuickStartSheet
+          plans={plans ?? []}
+          launchingId={launchingId}
+          launchError={launchError}
+          onClose={() => {
+            setQuickStartOpen(false)
+            setLaunchError(null)
+          }}
+          onStart={startPlan}
+          onForge={() => {
+            setQuickStartOpen(false)
+            navigate('/builder')
+          }}
         />
       )}
 
@@ -541,13 +581,17 @@ function DayDetailCard({
 }
 
 function EmptyDay({
+  isToday,
   isFuture,
   firstRun,
   onPlan,
+  onQuickStart,
 }: {
+  isToday: boolean
   isFuture: boolean
   firstRun: boolean
   onPlan: () => void
+  onQuickStart: () => void
 }) {
   const navigate = useNavigate()
   if (firstRun) {
@@ -572,6 +616,41 @@ function EmptyDay({
     )
   }
 
+  // For TODAY we want a path to "just start lifting" without scheduling first.
+  if (isToday) {
+    return (
+      <div className="clip-bevel flex flex-col items-center gap-3 border border-dashed border-nr-bronze/25 bg-nr-gunmetal/20 px-4 py-8 text-center">
+        <Skull className="size-8 text-nr-bone/15" />
+        <p className="text-sm uppercase tracking-widest text-nr-bone/40">No workout yet today</p>
+        <p className="-mt-1 text-[11px] uppercase tracking-wider text-nr-bone/35">
+          Pick a plan and begin, or schedule for later
+        </p>
+        <div className="flex w-full max-w-[260px] flex-col gap-2 pt-1">
+          <button
+            onClick={onQuickStart}
+            className="clip-bevel-sm flex w-full items-center justify-center gap-2 bg-nr-crimson py-2.5 font-heading text-xs font-bold uppercase tracking-widest text-nr-bone hover:bg-nr-ember"
+          >
+            <Swords className="size-4" /> Start a Workout
+          </button>
+          <div className="grid grid-cols-2 gap-2">
+            <button
+              onClick={onPlan}
+              className="clip-bevel-sm flex items-center justify-center gap-1 border border-nr-bronze/40 px-2 py-2 font-heading text-[10px] font-semibold uppercase tracking-widest text-nr-bronze hover:border-nr-crimson hover:text-nr-crimson"
+            >
+              <CalendarPlus className="size-3.5" /> Schedule
+            </button>
+            <button
+              onClick={() => navigate('/builder')}
+              className="clip-bevel-sm flex items-center justify-center gap-1 border border-nr-bronze/40 px-2 py-2 font-heading text-[10px] font-semibold uppercase tracking-widest text-nr-bronze hover:border-nr-crimson hover:text-nr-crimson"
+            >
+              <Plus className="size-3.5" /> Forge New
+            </button>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="clip-bevel flex flex-col items-center gap-3 border border-dashed border-nr-bronze/25 bg-nr-gunmetal/20 px-4 py-8 text-center">
       <Skull className="size-8 text-nr-bone/15" />
@@ -587,6 +666,108 @@ function EmptyDay({
         </button>
       )}
     </div>
+  )
+}
+
+function QuickStartSheet({
+  plans,
+  launchingId,
+  launchError,
+  onClose,
+  onStart,
+  onForge,
+}: {
+  plans: PlanSummary[]
+  launchingId: string | null
+  launchError: string | null
+  onClose: () => void
+  onStart: (planId: string) => void
+  onForge: () => void
+}) {
+  // Most-recent first so the plan you actually use today bubbles up.
+  const sorted = useMemo(() => {
+    const copy = [...plans]
+    copy.sort((a, b) => {
+      const at = a.lastPerformedAt
+        ? new Date(a.lastPerformedAt).getTime()
+        : new Date(a.workout.updated_at).getTime() / 2
+      const bt = b.lastPerformedAt
+        ? new Date(b.lastPerformedAt).getTime()
+        : new Date(b.workout.updated_at).getTime() / 2
+      return bt - at
+    })
+    return copy
+  }, [plans])
+
+  return (
+    <PlanSheet
+      title="Start a Workout"
+      subtitle={sorted.length > 0 ? 'Pick a plan and begin now' : 'No plans yet'}
+      onClose={onClose}
+      footer={
+        <button
+          onClick={onForge}
+          className="clip-bevel-sm mt-3 flex w-full items-center justify-center gap-2 border border-dashed border-nr-bronze/40 py-2.5 font-heading text-xs font-semibold uppercase tracking-widest text-nr-bronze hover:border-nr-crimson hover:text-nr-crimson"
+        >
+          <Plus className="size-4" /> Forge New Plan
+        </button>
+      }
+    >
+      {launchError && (
+        <p className="mb-2 rounded-sm border border-nr-crimson/40 bg-nr-crimson/10 px-3 py-2 text-[11px] uppercase tracking-wider text-nr-ember">
+          Could not start: {launchError}
+        </p>
+      )}
+      {sorted.length === 0 ? (
+        <p className="py-8 text-center text-[11px] uppercase tracking-widest text-nr-bone/40">
+          Forge your first plan to begin lifting
+        </p>
+      ) : (
+        <ul className="space-y-2">
+          {sorted.map((plan) => {
+            const starting = launchingId === plan.workout.id
+            const meta = `${plan.exerciseCount} exercises${
+              plan.timesPerformed > 0 ? ` · ${plan.timesPerformed} session${plan.timesPerformed === 1 ? '' : 's'}` : ''
+            }`
+            return (
+              <li key={plan.workout.id}>
+                <button
+                  onClick={() => onStart(plan.workout.id)}
+                  disabled={launchingId !== null}
+                  className={cn(
+                    'clip-bevel-sm flex w-full items-center gap-3 border bg-nr-black/30 px-3 py-2.5 text-left transition-colors',
+                    starting
+                      ? 'border-nr-ember bg-nr-crimson/10'
+                      : 'border-nr-bronze/25 hover:border-nr-crimson hover:bg-nr-crimson/10',
+                    'disabled:opacity-60',
+                  )}
+                >
+                  <span className="flex size-9 shrink-0 items-center justify-center rounded-sm border border-nr-bronze/30 bg-nr-black/50 text-nr-bronze">
+                    <Dumbbell className="size-4" />
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate font-heading text-sm uppercase tracking-wide text-nr-bone">
+                      {plan.workout.name}
+                    </p>
+                    <p className="truncate text-[10px] uppercase tracking-wider text-nr-bone/40">
+                      {meta}
+                    </p>
+                  </div>
+                  <span className="flex shrink-0 items-center gap-1 font-heading text-[11px] uppercase tracking-widest text-nr-ember">
+                    {starting ? (
+                      <span className="size-3.5 animate-spin rounded-full border-2 border-nr-ember border-t-transparent" />
+                    ) : (
+                      <Play className="size-3.5" fill="currentColor" />
+                    )}
+                    {starting ? 'Starting' : 'Start'}
+                  </span>
+                </button>
+              </li>
+            )
+          })}
+        </ul>
+      )}
+    </PlanSheet>
   )
 }
 

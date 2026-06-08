@@ -29,8 +29,6 @@ type LocationState = {
   /** When set, return to schedule with the new plan pre-selected. */
   from?: string
   date?: string
-  /** Set by Plans/PlanSheet "Start" → save (no-op on edit) and jump to live. */
-  start?: boolean
   /** Set by ScheduleWorkout "build from scratch" loopback. */
   planId?: string
 } | null
@@ -175,16 +173,6 @@ export function ForgePlanScreen() {
 
   const isLoading = catLoading || (editing && planLoading)
   const error = catError
-
-  // Auto-start path: invoked when Plans → Start tapped (no edits, just launch).
-  useEffect(() => {
-    if (state?.start && editing && existing && exercises.length > 0) {
-      ;(async () => {
-        const session = await startSession.mutateAsync({ workoutId: editing })
-        navigate(`/live/${session.id}`, { replace: true })
-      })()
-    }
-  }, [state?.start, editing, existing, exercises.length, startSession, navigate])
 
   return (
     <ScreenSurface>

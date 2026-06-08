@@ -19,6 +19,7 @@ import { PlanSheet, PlanSheetNumber, PlanSheetRow } from '@/mockups/components/P
 import { ScreenError, ScreenSpinner, ScreenSurface } from '@/screens/_shared/screen'
 import { useDeletePlan, usePlan, usePlans, type PlanSummary } from '@/lib/queries/plans'
 import { useExercises } from '@/lib/queries/exercises'
+import { useStartSession } from '@/lib/queries/sessions'
 import type { Exercise } from '@/lib/supabase'
 
 // ============================================================================
@@ -68,10 +69,26 @@ export function PlansScreen() {
   const navigate = useNavigate()
   const { data: plans, isLoading, error } = usePlans()
   const deletePlan = useDeletePlan()
+  const startSession = useStartSession()
   const [sort, setSort] = useState<SortKey>('recent')
   const [openMenu, setOpenMenu] = useState<string | null>(null)
   const [viewId, setViewId] = useState<string | null>(null)
   const [deleteId, setDeleteId] = useState<string | null>(null)
+  // Track which plan is mid-launch so we can disable that one card.
+  const [launchingId, setLaunchingId] = useState<string | null>(null)
+  const [launchError, setLaunchError] = useState<string | null>(null)
+
+  async function startPlan(planId: string) {
+    setLaunchingId(planId)
+    setLaunchError(null)
+    try {
+      const session = await startSession.mutateAsync({ workoutId: planId })
+      navigate(`/live/${session.id}`)
+    } catch (e) {
+      setLaunchError((e as Error).message)
+      setLaunchingId(null)
+    }
+  }
 
   const sorted = plans ? sortPlans(plans, sort) : []
   const empty = !isLoading && !error && sorted.length === 0
@@ -147,17 +164,24 @@ export function PlansScreen() {
           </div>
         )}
 
+        {launchError && (
+          <p className="rounded-sm border border-nr-crimson/40 bg-nr-crimson/10 px-3 py-2 text-[11px] uppercase tracking-wider text-nr-ember">
+            Could not start workout: {launchError}
+          </p>
+        )}
+
         {sorted.map((plan) => (
           <PlanCard
             key={plan.workout.id}
             plan={plan}
             menuOpen={openMenu === plan.workout.id}
+            starting={launchingId === plan.workout.id}
             onToggleMenu={() =>
               setOpenMenu((m) => (m === plan.workout.id ? null : plan.workout.id))
             }
             onCloseMenu={() => setOpenMenu(null)}
             onView={() => setViewId(plan.workout.id)}
-            onStart={() => navigate(`/forge/${plan.workout.id}`, { state: { start: true } })}
+            onStart={() => startPlan(plan.workout.id)}
             onEdit={() => navigate(`/forge/${plan.workout.id}`)}
             onSchedule={() => navigate('/schedule', { state: { planId: plan.workout.id } })}
             onDelete={() => setDeleteId(plan.workout.id)}
@@ -171,7 +195,14 @@ export function PlansScreen() {
         )}
       </div>
 
-      {viewId && <PlanDetailSheet planId={viewId} onClose={() => setViewId(null)} />}
+      {viewId && (
+        <PlanDetailSheet
+          planId={viewId}
+          starting={launchingId === viewId}
+          onClose={() => setViewId(null)}
+          onStart={() => startPlan(viewId)}
+        />
+      )}
 
       <ConfirmDialog
         open={deleteId !== null}
@@ -191,6 +222,7 @@ export function PlansScreen() {
 function PlanCard({
   plan,
   menuOpen,
+  starting,
   onToggleMenu,
   onCloseMenu,
   onView,
@@ -201,6 +233,7 @@ function PlanCard({
 }: {
   plan: PlanSummary
   menuOpen: boolean
+  starting: boolean
   onToggleMenu: () => void
   onCloseMenu: () => void
   onView: () => void
@@ -255,10 +288,11 @@ function PlanCard({
       <div className="mt-3.5 flex gap-2">
         <button
           onClick={onStart}
-          className="clip-bevel-sm flex flex-1 items-center justify-center gap-2 bg-nr-crimson py-2.5 font-heading text-sm font-bold uppercase tracking-widest text-nr-bone hover:bg-nr-ember"
+          disabled={starting}
+          className="clip-bevel-sm flex flex-1 items-center justify-center gap-2 bg-nr-crimson py-2.5 font-heading text-sm font-bold uppercase tracking-widest text-nr-bone hover:bg-nr-ember disabled:opacity-60"
         >
           <Play className="size-4" fill="currentColor" />
-          Start
+          {starting ? 'Starting…' : 'Start'}
         </button>
         <button
           onClick={onView}
@@ -315,8 +349,17 @@ function MenuItem({
   )
 }
 
-function PlanDetailSheet({ planId, onClose }: { planId: string; onClose: () => void }) {
-  const navigate = useNavigate()
+function PlanDetailSheet({
+  planId,
+  starting,
+  onClose,
+  onStart,
+}: {
+  planId: string
+  starting: boolean
+  onClose: () => void
+  onStart: () => void
+}) {
   const { data: detail, isLoading } = usePlan(planId)
   const { data: exercises } = useExercises()
   const byslug = new Map<string, Exercise>((exercises ?? []).map((e) => [e.slug, e]))
@@ -334,14 +377,12 @@ function PlanDetailSheet({ planId, onClose }: { planId: string; onClose: () => v
       onClose={onClose}
       footer={
         <button
-          onClick={() => {
-            onClose()
-            navigate(`/forge/${planId}`, { state: { start: true } })
-          }}
-          className="clip-bevel-sm mt-3 flex w-full items-center justify-center gap-2 bg-nr-crimson py-2.5 font-heading text-sm font-bold uppercase tracking-widest text-nr-bone hover:bg-nr-ember"
+          onClick={onStart}
+          disabled={starting}
+          className="clip-bevel-sm mt-3 flex w-full items-center justify-center gap-2 bg-nr-crimson py-2.5 font-heading text-sm font-bold uppercase tracking-widest text-nr-bone hover:bg-nr-ember disabled:opacity-60"
         >
           <Play className="size-4" fill="currentColor" />
-          Start
+          {starting ? 'Starting…' : 'Start'}
         </button>
       }
     >
