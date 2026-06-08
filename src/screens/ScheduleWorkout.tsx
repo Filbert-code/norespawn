@@ -108,6 +108,11 @@ export function ScheduleWorkoutScreen() {
       notes: note || null,
     })
     setScheduled(true)
+    // Brief beat so the "Scheduled" toast is visible, then return to the
+    // calendar focused on the target day so the user can see their schedule.
+    window.setTimeout(() => {
+      navigate('/', { replace: true, state: { focusDate: target.toISOString() } })
+    }, 750)
   }
 
   return (

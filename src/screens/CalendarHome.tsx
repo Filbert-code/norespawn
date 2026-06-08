@@ -1,5 +1,5 @@
-import { useMemo, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useEffect, useMemo, useState } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 import {
   CalendarDays,
   CalendarPlus,
@@ -144,9 +144,23 @@ function isoKey(d: Date): string {
 
 export function CalendarHomeScreen() {
   const navigate = useNavigate()
+  const location = useLocation()
   const today = useMemo(() => startOfToday(), [])
   const [weekStart, setWeekStart] = useState(() => startOfWeekMonday(today))
   const [selected, setSelected] = useState(today)
+
+  // ScheduleWorkout (and other flows) can navigate back here with a target
+  // day so the calendar lands focused on what the user just touched.
+  useEffect(() => {
+    const focusDate = (location.state as { focusDate?: string } | null)?.focusDate
+    if (!focusDate) return
+    const d = new Date(focusDate)
+    d.setHours(0, 0, 0, 0)
+    setSelected(d)
+    setWeekStart(startOfWeekMonday(d))
+    // Clear the state so back-nav / refresh doesn't keep snapping focus.
+    navigate(location.pathname, { replace: true })
+  }, [location.state, location.pathname, navigate])
   const [pickerOpen, setPickerOpen] = useState(false)
   const [pickerMonth, setPickerMonth] = useState(
     () => new Date(today.getFullYear(), today.getMonth(), 1),
