@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { ChevronLeft, GripVertical, Minus, Plus, Save, Swords, Timer, TimerReset } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -66,8 +66,61 @@ export function ForgePlanScreen() {
   const [restExercise, setRestExercise] = useState(120)
   const [order, setOrder] = useState<string[]>([])
   const [edits, setEdits] = useState<Record<string, Edit>>({})
-  const [dragIndex, setDragIndex] = useState<number | null>(null)
+  const [draggingSlug, setDraggingSlug] = useState<string | null>(null)
   const [seeded, setSeeded] = useState(false)
+
+  // Pointer-based drag reorder. HTML5 drag-and-drop doesn't fire on touch
+  // devices, so we track the drag manually via pointer events: the grip
+  // handle starts a drag, and a window-level move listener reorders rows by
+  // comparing the pointer's Y against each row's bounding box.
+  const rowRefs = useRef<Record<string, HTMLDivElement | null>>({})
+  const draggingSlugRef = useRef<string | null>(null)
+
+  useEffect(() => {
+    if (!draggingSlug) return
+    const handleMove = (e: PointerEvent) => {
+      const dragSlug = draggingSlugRef.current
+      if (!dragSlug) return
+      const y = e.clientY
+      let targetSlug: string | null = null
+      for (const slug of order) {
+        const el = rowRefs.current[slug]
+        if (!el) continue
+        const rect = el.getBoundingClientRect()
+        if (y >= rect.top && y <= rect.bottom) {
+          targetSlug = slug
+          break
+        }
+      }
+      if (!targetSlug || targetSlug === dragSlug) return
+      setOrder((prev) => {
+        const from = prev.indexOf(dragSlug)
+        const to = prev.indexOf(targetSlug!)
+        if (from === -1 || to === -1 || from === to) return prev
+        const next = [...prev]
+        const [moved] = next.splice(from, 1)
+        next.splice(to, 0, moved)
+        return next
+      })
+    }
+    const stop = () => {
+      draggingSlugRef.current = null
+      setDraggingSlug(null)
+    }
+    window.addEventListener('pointermove', handleMove)
+    window.addEventListener('pointerup', stop)
+    window.addEventListener('pointercancel', stop)
+    return () => {
+      window.removeEventListener('pointermove', handleMove)
+      window.removeEventListener('pointerup', stop)
+      window.removeEventListener('pointercancel', stop)
+    }
+  }, [draggingSlug, order])
+
+  const startDrag = (slug: string) => {
+    draggingSlugRef.current = slug
+    setDraggingSlug(slug)
+  }
 
   // Seed plan from either the existing record (edit) or fresh selection (create).
   useEffect(() => {
@@ -141,14 +194,6 @@ export function ForgePlanScreen() {
     if (!catalog) return []
     return order.map((s) => catalog.find((c) => c.slug === s)).filter((e): e is Exercise => !!e)
   }, [catalog, order])
-
-  const reorder = (from: number, to: number) =>
-    setOrder((prev) => {
-      const next = [...prev]
-      const [moved] = next.splice(from, 1)
-      next.splice(to, 0, moved)
-      return next
-    })
 
   const update = (slug: string, next: Partial<Edit>) =>
     setEdits((prev) => ({ ...prev, [slug]: { ...prev[slug], ...next } }))
@@ -268,19 +313,12 @@ export function ForgePlanScreen() {
               {exercises.map((ex, i) => (
                 <div
                   key={ex.slug}
-                  draggable
-                  onDragStart={() => setDragIndex(i)}
-                  onDragEnter={() => {
-                    if (dragIndex !== null && dragIndex !== i) {
-                      reorder(dragIndex, i)
-                      setDragIndex(i)
-                    }
+                  ref={(el) => {
+                    rowRefs.current[ex.slug] = el
                   }}
-                  onDragOver={(e) => e.preventDefault()}
-                  onDragEnd={() => setDragIndex(null)}
                   className={cn(
-                    'cursor-grab transition-opacity active:cursor-grabbing',
-                    dragIndex === i && 'opacity-40',
+                    'transition-opacity',
+                    draggingSlug === ex.slug && 'opacity-40',
                   )}
                 >
                   <ExerciseRow
@@ -295,6 +333,7 @@ export function ForgePlanScreen() {
                       }
                     }
                     onChange={(next) => update(ex.slug, next)}
+                    onGrab={() => startDrag(ex.slug)}
                   />
                 </div>
               ))}
@@ -337,11 +376,13 @@ function ExerciseRow({
   state,
   index,
   onChange,
+  onGrab,
 }: {
   exercise: Exercise
   state: Edit
   index: number
   onChange: (next: Partial<Edit>) => void
+  onGrab: () => void
 }) {
   const isTimed = exercise.tracking_type === 'timed'
   const isBodyweight = exercise.default_weight_lbs == null
@@ -349,7 +390,19 @@ function ExerciseRow({
   return (
     <div className="clip-bevel border border-nr-bronze/25 bg-nr-gunmetal/50 p-3">
       <div className="mb-2.5 flex items-center gap-2">
-        <GripVertical className="size-4 shrink-0 text-nr-bone/30" />
+        <button
+          type="button"
+          aria-label="Drag to reorder"
+          onPointerDown={(e) => {
+            // Only respond to the primary pointer; touch-none stops the page
+            // from scrolling so the gesture becomes a drag instead.
+            e.preventDefault()
+            onGrab()
+          }}
+          className="-m-1 flex size-7 shrink-0 cursor-grab touch-none items-center justify-center text-nr-bone/40 hover:text-nr-bone active:cursor-grabbing"
+        >
+          <GripVertical className="size-4" />
+        </button>
         <span className="font-mono text-xs text-nr-bronze">{index + 1}</span>
         <h3 className="font-heading text-sm font-semibold uppercase tracking-wide text-nr-bone">
           {exercise.name}

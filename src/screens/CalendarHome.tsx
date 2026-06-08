@@ -11,7 +11,6 @@ import {
   Flame,
   Play,
   Plus,
-  RotateCcw,
   Skull,
   Swords,
   Trash2,
@@ -382,7 +381,28 @@ export function CalendarHomeScreen() {
         {error && <ScreenError message={(error as Error).message} />}
 
         {!isLoading && !error && (
-          selectedEntry ? (
+          // An in-progress session always takes priority for "today" — even if
+          // its UTC start date doesn't line up with the local calendar day —
+          // so the user can always Resume / Cancel the workout they're mid-way
+          // through instead of being offered a fresh Start.
+          isToday && inProgress ? (
+            <DayDetailCard
+              entry={{
+                date: selected,
+                workoutName: selectedEntry?.workoutName ?? inProgress.workout_name_snapshot,
+                status: 'in_progress',
+                sessionId: inProgress.id,
+                scheduledId: selectedEntry?.scheduledId,
+              }}
+              isToday
+              isFuture={false}
+              onReschedule={goToSchedule}
+              onStart={() => goLive(inProgress.id)}
+              onResume={() => goLive(inProgress.id)}
+              onAbandon={() => setConfirmAbandon(inProgress.id)}
+              onViewSummary={() => goRecap(inProgress.id)}
+            />
+          ) : selectedEntry ? (
             <DayDetailCard
               entry={selectedEntry}
               isToday={isToday}
@@ -403,22 +423,6 @@ export function CalendarHomeScreen() {
                 selectedEntry.sessionId && setConfirmAbandon(selectedEntry.sessionId)
               }
               onViewSummary={() => selectedEntry.sessionId && goRecap(selectedEntry.sessionId)}
-            />
-          ) : inProgress && isToday ? (
-            <DayDetailCard
-              entry={{
-                date: selected,
-                workoutName: inProgress.workout_name_snapshot,
-                status: 'in_progress',
-                sessionId: inProgress.id,
-              }}
-              isToday
-              isFuture={false}
-              onReschedule={goToSchedule}
-              onStart={() => goLive(inProgress.id)}
-              onResume={() => goLive(inProgress.id)}
-              onAbandon={() => setConfirmAbandon(inProgress.id)}
-              onViewSummary={() => goRecap(inProgress.id)}
             />
           ) : (
             <EmptyDay
@@ -603,9 +607,9 @@ function DayDetailCard({
             </button>
             <button
               onClick={onAbandon}
-              className="clip-bevel-sm flex w-full items-center justify-center gap-1.5 border border-nr-bronze/40 py-2 font-heading text-xs font-semibold uppercase tracking-widest text-nr-bone/60 hover:border-nr-crimson hover:text-nr-ember"
+              className="clip-bevel-sm flex w-full items-center justify-center gap-1.5 border border-nr-crimson/40 bg-nr-crimson/5 py-2 font-heading text-xs font-semibold uppercase tracking-widest text-nr-ember hover:bg-nr-crimson/15"
             >
-              <RotateCcw className="size-3.5" /> Abandon
+              <Trash2 className="size-3.5" /> Cancel Workout
             </button>
           </div>
         ) : isToday ? (
