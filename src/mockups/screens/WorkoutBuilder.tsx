@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { ChevronDown, ChevronRight, ChevronUp, Settings, Skull, Trash2, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { PhoneFrame } from '@/mockups/components/PhoneFrame'
@@ -13,6 +13,9 @@ import {
 
 export function WorkoutBuilder() {
   const navigate = useNavigate()
+  const location = useLocation()
+  // D8: pass any in-flight scheduling context straight through to Forge Plan.
+  const sched = location.state as { from?: string; date?: string } | null
   const [activeGroup, setActiveGroup] = useState(BODY_GROUPS[0].slug)
   const [selected, setSelected] = useState<string[]>([
     'barbell_bench_press',
@@ -68,7 +71,11 @@ export function WorkoutBuilder() {
         <h1 className="font-heading text-2xl font-bold uppercase tracking-wide text-nr-bone">
           Build Workout
         </h1>
-        <button className="ml-auto flex size-9 items-center justify-center rounded-full border border-nr-bronze/40 text-nr-bronze transition-colors hover:border-nr-crimson hover:text-nr-crimson">
+        <button
+          onClick={() => navigate('/mockups/settings')}
+          aria-label="Settings"
+          className="ml-auto flex size-9 items-center justify-center rounded-full border border-nr-bronze/40 text-nr-bronze transition-colors hover:border-nr-crimson hover:text-nr-crimson"
+        >
           <Settings className="size-5" />
         </button>
       </header>
@@ -247,7 +254,7 @@ export function WorkoutBuilder() {
 
           <button
             disabled={selectedExercises.length === 0}
-            onClick={() => navigate('/mockups/forge-plan')}
+            onClick={() => navigate('/mockups/forge-plan', { state: sched })}
             className="clip-bevel flex shrink-0 items-center gap-1 bg-nr-crimson px-4 py-3 font-heading text-sm font-bold uppercase tracking-widest text-nr-bone shadow-[0_0_18px_-4px] shadow-nr-ember/80 transition-all hover:bg-nr-ember disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none"
           >
             Forge Plan

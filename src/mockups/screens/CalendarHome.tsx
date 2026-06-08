@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import {
   CalendarDays,
   Check,
@@ -9,11 +10,14 @@ import {
   Flame,
   Play,
   Plus,
+  RotateCcw,
   Skull,
   X,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { PhoneFrame } from '@/mockups/components/PhoneFrame'
+import { TabBar } from '@/mockups/components/TabBar'
+import { ConfirmDialog } from '@/mockups/components/ConfirmDialog'
 import {
   addDays,
   disciplineStreak,
@@ -58,9 +62,20 @@ function DayGlyph({ workout, muted }: { workout?: DayWorkout; muted: boolean }) 
 }
 
 export function CalendarHome() {
+  const navigate = useNavigate()
   const [weekStart, setWeekStart] = useState(() => startOfWeekMonday(today))
   const [selected, setSelected] = useState(today)
   const [pickerOpen, setPickerOpen] = useState(false)
+  const [firstRun, setFirstRun] = useState(false)
+  const [confirmAbandon, setConfirmAbandon] = useState(false)
+
+  const goToSchedule = () =>
+    navigate('/mockups/schedule', { state: { date: selected.toISOString() } })
+  const goLive = () => navigate('/mockups/live')
+  const goRecap = () => navigate('/mockups/recap')
+
+  // First-run preview suppresses all history so empty states are reviewable.
+  const wf = (d: Date) => (firstRun ? undefined : workoutForDate(d))
   // first-of-month the picker is currently showing
   const [pickerMonth, setPickerMonth] = useState(() => new Date(today.getFullYear(), today.getMonth(), 1))
 
@@ -77,10 +92,10 @@ export function CalendarHome() {
 
   const days = Array.from({ length: 7 }, (_, i) => addDays(weekStart, i))
   const weekEnd = addDays(weekStart, 6)
-  const streak = disciplineStreak()
+  const streak = firstRun ? 0 : disciplineStreak()
   const onCurrentWeek = sameDay(weekStart, startOfWeekMonday(today))
 
-  const selectedWorkout = workoutForDate(selected)
+  const selectedWorkout = wf(selected)
   const isToday = sameDay(selected, today)
   const isFuture = selected.getTime() > today.getTime()
 
@@ -106,6 +121,13 @@ export function CalendarHome() {
               Glory thru discipline
             </p>
           </div>
+          {/* demo-only: preview the first-run / empty state */}
+          <button
+            onClick={() => setFirstRun((f) => !f)}
+            className="clip-bevel-sm ml-auto border border-nr-bronze/30 px-2.5 py-1.5 font-heading text-[9px] uppercase tracking-widest text-nr-bone/45 hover:text-nr-bone"
+          >
+            {firstRun ? 'Demo: First-run' : 'Demo: Populated'}
+          </button>
         </header>
 
         {/* ---- Discipline streak ---- */}
@@ -128,7 +150,7 @@ export function CalendarHome() {
           <div className="ml-auto flex items-end gap-1">
             {Array.from({ length: 7 }, (_, i) => {
               const d = addDays(today, i - 6)
-              const w = workoutForDate(d)
+              const w = wf(d)
               return (
                 <span
                   key={i}
@@ -186,7 +208,7 @@ export function CalendarHome() {
           {days.map((d, i) => {
             const dToday = sameDay(d, today)
             const dSelected = sameDay(d, selected)
-            const w = workoutForDate(d)
+            const w = wf(d)
             return (
               <button
                 key={i}
@@ -233,11 +255,22 @@ export function CalendarHome() {
           </div>
 
           {selectedWorkout ? (
-            <DayDetailCard workout={selectedWorkout} isToday={isToday} isFuture={isFuture} />
+            <DayDetailCard
+              workout={selectedWorkout}
+              isToday={isToday}
+              isFuture={isFuture}
+              onReschedule={goToSchedule}
+              onStart={goLive}
+              onResume={goLive}
+              onAbandon={() => setConfirmAbandon(true)}
+              onViewSummary={goRecap}
+            />
           ) : (
-            <EmptyDay isFuture={isFuture} />
+            <EmptyDay isFuture={isFuture} firstRun={firstRun} onPlan={goToSchedule} />
           )}
         </div>
+
+        <TabBar />
 
         {/* ---- Date picker overlay ---- */}
         {pickerOpen && (
@@ -249,6 +282,15 @@ export function CalendarHome() {
             onClose={() => setPickerOpen(false)}
           />
         )}
+
+        <ConfirmDialog
+          open={confirmAbandon}
+          title="Abandon Session"
+          message="This marks today's session as abandoned. Logged sets are kept, but the workout won't count as completed."
+          confirmLabel="Abandon"
+          onConfirm={() => setConfirmAbandon(false)}
+          onCancel={() => setConfirmAbandon(false)}
+        />
       </div>
     </PhoneFrame>
   )
@@ -366,12 +408,23 @@ function DayDetailCard({
   workout,
   isToday,
   isFuture,
+  onReschedule,
+  onStart,
+  onResume,
+  onAbandon,
+  onViewSummary,
 }: {
   workout: DayWorkout
   isToday: boolean
   isFuture: boolean
+  onReschedule: () => void
+  onStart: () => void
+  onResume: () => void
+  onAbandon: () => void
+  onViewSummary: () => void
 }) {
   const completed = workout.status === 'completed'
+  const inProgress = workout.status === 'in_progress'
 
   return (
     <div className="clip-bevel border border-nr-bronze/30 bg-nr-gunmetal/50 p-4">
@@ -383,8 +436,21 @@ function DayDetailCard({
           <h4 className="font-heading text-lg font-bold uppercase tracking-wide text-nr-bone">
             {workout.workoutName}
           </h4>
-          <p className="text-[10px] uppercase tracking-widest text-nr-bone/45">
-            {completed ? 'Completed' : isToday ? 'Scheduled today' : isFuture ? 'Scheduled' : 'Missed'}
+          <p
+            className={cn(
+              'text-[10px] uppercase tracking-widest',
+              inProgress ? 'text-nr-ember' : 'text-nr-bone/45',
+            )}
+          >
+            {completed
+              ? 'Completed'
+              : inProgress
+                ? 'In progress · unfinished'
+                : isToday
+                  ? 'Scheduled today'
+                  : isFuture
+                    ? 'Scheduled'
+                    : 'Missed'}
           </p>
         </div>
       </div>
@@ -413,15 +479,39 @@ function DayDetailCard({
       {/* actions */}
       <div className="mt-4">
         {completed ? (
-          <button className="clip-bevel-sm w-full border border-nr-bronze/40 py-2.5 font-heading text-sm font-semibold uppercase tracking-widest text-nr-bronze hover:border-nr-bronze hover:text-nr-bone">
+          <button
+            onClick={onViewSummary}
+            className="clip-bevel-sm w-full border border-nr-bronze/40 py-2.5 font-heading text-sm font-semibold uppercase tracking-widest text-nr-bronze hover:border-nr-bronze hover:text-nr-bone"
+          >
             View Summary
           </button>
+        ) : inProgress ? (
+          <div className="flex flex-col gap-2">
+            <button
+              onClick={onResume}
+              className="clip-bevel flex w-full items-center justify-center gap-2 bg-nr-crimson py-3 font-heading text-base font-bold uppercase tracking-widest text-nr-bone shadow-[0_0_22px_-4px] shadow-nr-ember/80 hover:bg-nr-ember"
+            >
+              <Play className="size-5" /> Resume Workout
+            </button>
+            <button
+              onClick={onAbandon}
+              className="clip-bevel-sm flex w-full items-center justify-center gap-1.5 border border-nr-bronze/40 py-2 font-heading text-xs font-semibold uppercase tracking-widest text-nr-bone/60 hover:border-nr-crimson hover:text-nr-ember"
+            >
+              <RotateCcw className="size-3.5" /> Abandon
+            </button>
+          </div>
         ) : isToday ? (
-          <button className="clip-bevel flex w-full items-center justify-center gap-2 bg-nr-crimson py-3 font-heading text-base font-bold uppercase tracking-widest text-nr-bone shadow-[0_0_22px_-4px] shadow-nr-ember/80 hover:bg-nr-ember">
+          <button
+            onClick={onStart}
+            className="clip-bevel flex w-full items-center justify-center gap-2 bg-nr-crimson py-3 font-heading text-base font-bold uppercase tracking-widest text-nr-bone shadow-[0_0_22px_-4px] shadow-nr-ember/80 hover:bg-nr-ember"
+          >
             <Play className="size-5" /> Start Workout
           </button>
         ) : isFuture ? (
-          <button className="clip-bevel-sm w-full border border-nr-bronze/40 py-2.5 font-heading text-sm font-semibold uppercase tracking-widest text-nr-bronze hover:border-nr-bronze hover:text-nr-bone">
+          <button
+            onClick={onReschedule}
+            className="clip-bevel-sm w-full border border-nr-bronze/40 py-2.5 font-heading text-sm font-semibold uppercase tracking-widest text-nr-bronze hover:border-nr-bronze hover:text-nr-bone"
+          >
             Edit / Reschedule
           </button>
         ) : null}
@@ -430,7 +520,38 @@ function DayDetailCard({
   )
 }
 
-function EmptyDay({ isFuture }: { isFuture: boolean }) {
+function EmptyDay({
+  isFuture,
+  firstRun,
+  onPlan,
+}: {
+  isFuture: boolean
+  firstRun: boolean
+  onPlan: () => void
+}) {
+  // First-run: no plans exist yet, so nudge toward forging the first one.
+  if (firstRun) {
+    return (
+      <div className="clip-bevel flex flex-col items-center gap-3 border border-dashed border-nr-bronze/30 bg-nr-gunmetal/20 px-4 py-9 text-center">
+        <Skull className="size-9 text-nr-bone/15" />
+        <div>
+          <p className="font-heading text-sm uppercase tracking-widest text-nr-bone/70">
+            No plans yet
+          </p>
+          <p className="mt-1 text-[11px] uppercase tracking-wider text-nr-bone/35">
+            Forge your first plan to begin
+          </p>
+        </div>
+        <button
+          onClick={onPlan}
+          className="clip-bevel-sm flex items-center gap-1.5 bg-nr-crimson px-4 py-2 font-heading text-xs font-bold uppercase tracking-widest text-nr-bone hover:bg-nr-ember"
+        >
+          <Plus className="size-4" /> Forge a Plan
+        </button>
+      </div>
+    )
+  }
+
   return (
     <div className="clip-bevel flex flex-col items-center gap-3 border border-dashed border-nr-bronze/25 bg-nr-gunmetal/20 px-4 py-8 text-center">
       <Skull className="size-8 text-nr-bone/15" />
@@ -438,7 +559,10 @@ function EmptyDay({ isFuture }: { isFuture: boolean }) {
         {isFuture ? 'No workout planned' : 'Rest day'}
       </p>
       {isFuture && (
-        <button className="clip-bevel-sm flex items-center gap-1.5 border border-nr-bronze/40 px-4 py-2 font-heading text-xs font-semibold uppercase tracking-widest text-nr-bronze hover:border-nr-crimson hover:text-nr-crimson">
+        <button
+          onClick={onPlan}
+          className="clip-bevel-sm flex items-center gap-1.5 border border-nr-bronze/40 px-4 py-2 font-heading text-xs font-semibold uppercase tracking-widest text-nr-bronze hover:border-nr-crimson hover:text-nr-crimson"
+        >
           <Plus className="size-4" /> Plan a Workout
         </button>
       )}

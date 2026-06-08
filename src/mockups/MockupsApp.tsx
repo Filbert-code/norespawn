@@ -1,5 +1,5 @@
 import { NavLink, Route, Routes } from 'react-router-dom'
-import { CalendarDays, Dumbbell, LayoutGrid, LogIn, Palette, Skull, SlidersHorizontal, Timer } from 'lucide-react'
+import { Activity, CalendarDays, CalendarPlus, Dumbbell, LayoutGrid, Library, LogIn, Palette, ScrollText, Settings as SettingsIcon, Skull, SlidersHorizontal, Timer } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { DesignSystem } from '@/mockups/screens/DesignSystem'
 import { WorkoutBuilder } from '@/mockups/screens/WorkoutBuilder'
@@ -7,6 +7,11 @@ import { ForgePlan } from '@/mockups/screens/ForgePlan'
 import { CalendarHome } from '@/mockups/screens/CalendarHome'
 import { Login } from '@/mockups/screens/Login'
 import { LiveSession } from '@/mockups/screens/LiveSession'
+import { Settings } from '@/mockups/screens/Settings'
+import { PlanLibrary } from '@/mockups/screens/PlanLibrary'
+import { ScheduleWorkout } from '@/mockups/screens/ScheduleWorkout'
+import { SessionRecap } from '@/mockups/screens/SessionRecap'
+import { ExerciseDetail } from '@/mockups/screens/ExerciseDetail'
 import { TypographyLab } from '@/mockups/screens/TypographyLab'
 
 interface MockupEntry {
@@ -45,6 +50,41 @@ const MOCKUPS: MockupEntry[] = [
     blurb: 'Four-quadrant ring timer, live set/rep/weight/rest edits, event log.',
     status: 'ready',
     icon: Timer,
+  },
+  {
+    path: 'settings',
+    label: 'Settings',
+    blurb: 'Audio cues (rest-complete, countdown), volume, keep-awake, sign out.',
+    status: 'ready',
+    icon: SettingsIcon,
+  },
+  {
+    path: 'plans',
+    label: 'Plan Library',
+    blurb: 'Saved plans. Start, view full workout, schedule, edit, delete.',
+    status: 'ready',
+    icon: Library,
+  },
+  {
+    path: 'schedule',
+    label: 'Schedule Workout',
+    blurb: 'Assign a plan (or rest day) to a future calendar date.',
+    status: 'ready',
+    icon: CalendarPlus,
+  },
+  {
+    path: 'recap',
+    label: 'Session Recap',
+    blurb: 'Review a finished workout: sets, volume, PRs, event timeline.',
+    status: 'ready',
+    icon: ScrollText,
+  },
+  {
+    path: 'exercise',
+    label: 'Exercise Detail',
+    blurb: 'History trend, PRs, preference/intensity, alternatives.',
+    status: 'ready',
+    icon: Activity,
   },
   {
     path: 'design-system',
@@ -209,6 +249,46 @@ export function MockupsApp() {
             element={
               <Stage>
                 <LiveSession />
+              </Stage>
+            }
+          />
+          <Route
+            path="settings"
+            element={
+              <Stage>
+                <Settings />
+              </Stage>
+            }
+          />
+          <Route
+            path="plans"
+            element={
+              <Stage>
+                <PlanLibrary />
+              </Stage>
+            }
+          />
+          <Route
+            path="schedule"
+            element={
+              <Stage>
+                <ScheduleWorkout />
+              </Stage>
+            }
+          />
+          <Route
+            path="recap"
+            element={
+              <Stage>
+                <SessionRecap />
+              </Stage>
+            }
+          />
+          <Route
+            path="exercise"
+            element={
+              <Stage>
+                <ExerciseDetail />
               </Stage>
             }
           />

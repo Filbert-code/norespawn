@@ -21,6 +21,17 @@ A complete, click-by-click guide for standing up the whole stack — Supabase,
 Google OAuth, Vercel, and the keep-alive workflow — lives at
 [`docs/setup.html`](docs/setup.html). Open it in any browser.
 
+## Docs & design
+
+| Doc                                                       | What it covers                                                            |
+| --------------------------------------------------------- | ------------------------------------------------------------------------- |
+| [`docs/setup.html`](docs/setup.html)                      | End-to-end stack setup (Supabase, OAuth, Vercel).                         |
+| [`docs/data-models.html`](docs/data-models.html)          | The full data-model design + §15 v1 build-scope decisions.                |
+| [`docs/art-style-bible.md`](docs/art-style-bible.md)      | Grimdark art direction, palette, and the AI asset-generation pipeline.    |
+
+UI mockups for every screen live under `src/mockups/` and are browsable at
+`/mockups` while the dev server is running.
+
 ## Environment variables
 
 | Variable                 | Description                                         |
@@ -48,8 +59,12 @@ src/
     supabase.ts    Supabase browser client
     utils.ts       cn() helper
   App.tsx          Landing page
+  mockups/         Coded UI mockups (browse at /mockups)
+supabase/
+  migrations/      Postgres schema (tables, enums, RLS, views)
+  seed.sql         Lookup taxonomy + starter exercise catalog
 .github/workflows/
   supabase-keepalive.yml   Prevents free-tier auto-pause
 vercel.json        SPA rewrite for client-side routing
-docs/setup.html    Full setup guide
+docs/              Setup guide, data-model design, art style bible
 ```

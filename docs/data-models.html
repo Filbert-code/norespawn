@@ -209,6 +209,7 @@
           <li><a href="#relationships">Relationships &amp; big picture</a></li>
           <li><a href="#future">Future extensibility</a></li>
           <li><a href="#decisions">Resolved decisions</a></li>
+          <li><a href="#v1-scope">V1 build scope</a></li>
         </ol>
       </nav>
 
@@ -1443,7 +1444,7 @@ Legend:  ─&lt; one-to-many     ──&gt; many-to-one (FK)     &gt;── refe
               <tr><td><b>Tempo &amp; ROM</b></td><td><i>Discussion #9 (deferred).</i> <code>default_tempo</code> on <code>exercise</code> + per-set tempo columns.</td></tr>
               <tr><td><b>Gamification / scoring layer</b> (Warhammer feel)</td><td><i>Discussion #10 (separate layer).</i> XP/score per set/volume, difficulty tiers, streaks — reads from sessions; consumes <code>movement_pattern</code>/<code>mechanic</code> + volume metrics.</td></tr>
               <tr><td><b>Bodyweight tracking</b></td><td>New <code>user_bodyweight(user_id, weight_lbs, measured_at)</code> — same append-only pattern as scores; feeds bodyweight-exercise load &amp; analytics.</td></tr>
-              <tr><td><b>Personal records / progression</b></td><td>Derivable from <code>session_set</code> via a view or materialized <code>exercise_pr</code> table; no schema change to capture it.</td></tr>
+              <tr><td><b>Personal records / progression</b></td><td><b>V1 computes on read</b> (D11): a SQL view / client calc over completed <code>session_set</code> rows, est. 1RM via Epley. Promote to a materialized <code>exercise_pr</code> table only if volumes ever warrant it — no schema change to capture it.</td></tr>
               <tr><td><b>Programs / mesocycles</b> (multi-week plans)</td><td>New <code>program</code> + <code>program_workout</code> tables that reference existing <code>workout</code>s. Sessions still link to workouts.</td></tr>
               <tr><td><b>Cardio &amp; new metrics</b></td><td>The <code>tracking_type</code> enum + nullable metric columns absorb <code>distance_time</code> today; truly new metrics get new nullable columns.</td></tr>
               <tr><td><b>Richer event analytics</b></td><td>Promote hot fields out of <code>session_event.payload</code> into typed columns when patterns stabilize.</td></tr>
@@ -1483,11 +1484,52 @@ Legend:  ─&lt; one-to-many     ──&gt; many-to-one (FK)     &gt;── refe
           </ul>
           <p class="muted">Deferred for later: #6 computed metrics, #8 faceted tags, #9 tempo/ROM, #10 gamification layer (see §13).</p>
 
+          <div class="callout tip">
+            <b>Status.</b> The design is settled and shipped as Supabase migrations
+            (<code>supabase/migrations/*.sql</code>) — tables, enums, constraints, indexes,
+            pgvector, RLS policies — plus the lookup + starter-exercise seed and generated
+            client types. The <code>scheduled_workout</code> "tracker" table (calendar layer)
+            was added on top. See §15 for the v1 build-scope decisions layered over this model.
+          </div>
+        </section>
+
+        <!-- 15 -->
+        <section id="v1-scope">
+          <h2><span class="num">15</span> V1 build scope (pre-build review)</h2>
+          <p class="lead">
+            Outcomes of the final mockup review, now locked. These bound <i>what v1 surfaces</i>
+            on top of the model above — the schema already supports the deferred items, so each
+            slots in later without a destructive migration.
+          </p>
+          <table>
+            <thead><tr><th>#</th><th>Decision</th><th>What it means for v1 &amp; where it lives</th></tr></thead>
+            <tbody>
+              <tr><td>D1</td><td>App-shell / navigation</td><td><b>Persistent bottom tab bar</b> (Calendar · Plans · Settings); Live Session, Builder, Forge, Schedule, Recap &amp; Exercise Detail are full-screen takeovers. <code>TabBar</code> component.</td></tr>
+              <tr><td>D2</td><td>RPE capture</td><td><b>Per-set 1-tap RPE during rest + an end-of-session perceived-effort prompt</b>. Writes <code>session_set.actual_rpe</code> and <code>workout_session.perceived_effort</code> (§9).</td></tr>
+              <tr><td>D3</td><td>Preference / intensity input</td><td><b>Post-session "rate today's lifts"</b> nudge appends rows to <code>user_exercise_score</code> (§7). (Editable meters on Exercise Detail deferred.)</td></tr>
+              <tr><td>D4</td><td>End-of-workout branch</td><td><b>Go straight to Victory summary</b>; mid-session "+ Add Exercise" already covers adding work. No cooldown branch in v1.</td></tr>
+              <tr><td>D5</td><td>Resume in-progress session</td><td><b>Tapping an in-progress day prompts Resume or Abandon</b>. Uses <code>session_status</code> <code>in_progress</code>/<code>abandoned</code> (§3, §9), paired with D13.</td></tr>
+              <tr><td>D6</td><td>Warmup / per-set / supersets</td><td><b>Uniform sets×reps×weight only in v1.</b> Warmup/cooldown <code>set_role</code>, per-set <code>workout_set</code> pyramids, and <code>group_id</code> supersets stay in the schema but are <b>not surfaced</b>; warm/cool tags trimmed from the recap (§3, §8, §13).</td></tr>
+              <tr><td>D7</td><td>Save vs. Start in Forge Plan</td><td><b>Two actions: "Save Plan" and "Save &amp; Start"</b> — Start always persists <code>workout</code> + <code>workout_exercise</code> first (no ad-hoc workouts, §8).</td></tr>
+              <tr><td>D8</td><td>Build-then-schedule loop</td><td><b>Target date carried through the builder</b>; after Save, returns to Schedule with the new plan pre-selected (router state).</td></tr>
+              <tr><td>D9</td><td>Rest-day persistence</td><td><b>Rest day dropped from the v1 UI.</b> <code>scheduled_workout.workout_id</code> stays <b>NOT NULL</b> — no nullable-plan / sentinel-row complexity for now.</td></tr>
+              <tr><td>D10</td><td>One workout per day</td><td><b>Enforced</b> with a unique <code>(user_id, scheduled_date)</code> constraint on <code>scheduled_workout</code> (matches the single-workout day-detail UI).</td></tr>
+              <tr><td>D11</td><td>PR computation</td><td><b>Computed on read</b> from completed <code>session_set</code> rows (Epley 1RM) via a view / client calc — no PR table (§13).</td></tr>
+              <tr><td>D12</td><td>Empty / first-run states</td><td><b>Empty states + a "forge your first plan" nudge</b> for Calendar, Plans, and Exercise Detail (never-performed).</td></tr>
+              <tr><td>D13</td><td>Loading / error / offline</td><td><b>Local-first live session</b> — writes persist on-device instantly and flush to Supabase opportunistically (enables D5 resume); read-heavy screens use spinners + retry toasts.</td></tr>
+              <tr><td>D14</td><td>Destructive confirms</td><td><b>One reusable themed confirm modal</b> (<code>ConfirmDialog</code>) for delete-plan, sign-out, and abandon-session.</td></tr>
+              <tr><td>D15</td><td>Profile &amp; units</td><td><b>lbs-only</b>; a small Profile section in Settings (name, email, sign-out). kg toggle + bodyweight log deferred to v2 (§13).</td></tr>
+              <tr><td>D16</td><td>AI "Bob" / generation</td><td><b>Deferred to v2.</b> v1 ships the heuristic in-session suggestion only; <code>exercise_candidate</code> + embeddings (§6) wait.</td></tr>
+            </tbody>
+          </table>
+
           <div class="callout note">
-            <b>Next step.</b> The design is settled. When you're ready, I'll turn this into
-            Supabase SQL migrations (tables, enums, constraints, indexes, pgvector, RLS
-            policies) plus a seed file for the lookup tables and a starter set of
-            AI-generated exercises.
+            <b>Scheduling layer (<code>scheduled_workout</code>).</b> Added after the original
+            design as the calendar "tracker": <code>(user_id, workout_id, scheduled_date, status,
+            session_id, notes)</code>. Per D10 it carries a unique <code>(user_id,
+            scheduled_date)</code> constraint; per D9 <code>workout_id</code> is NOT NULL (no rest
+            rows). Starting a scheduled day spawns a <code>workout_session</code> and links it back
+            via <code>session_id</code>.
           </div>
         </section>
 

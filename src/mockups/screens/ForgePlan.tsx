@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { ChevronLeft, GripVertical, Minus, Plus, Swords, Timer, TimerReset } from 'lucide-react'
+import { useLocation, useNavigate } from 'react-router-dom'
+import { ChevronLeft, GripVertical, Minus, Plus, Save, Swords, Timer, TimerReset } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { PhoneFrame } from '@/mockups/components/PhoneFrame'
 import { getExercise, type MockExercise } from '@/mockups/data/exercises'
@@ -216,6 +216,11 @@ function ExerciseRow({
 
 export function ForgePlan() {
   const navigate = useNavigate()
+  const location = useLocation()
+  // D8: when we arrived here mid-scheduling, carry the target date back so the
+  // user can finish scheduling the plan they just built.
+  const sched = location.state as { from?: string; date?: string } | null
+  const fromSchedule = sched?.from === 'schedule'
 
   const [order, setOrder] = useState<string[]>(PLAN_SLUGS)
   const [dragIndex, setDragIndex] = useState<number | null>(null)
@@ -248,6 +253,17 @@ export function ForgePlan() {
 
   const update = (slug: string, next: Partial<SetReps>) =>
     setEdits((prev) => ({ ...prev, [slug]: { ...prev[slug], ...next } }))
+
+  // Save always persists the plan first (D7). If we came from scheduling,
+  // bounce back there with the new plan pre-selected (D8).
+  const savePlan = () => {
+    if (fromSchedule) {
+      navigate('/mockups/schedule', { state: { date: sched?.date, newPlan: name } })
+    } else {
+      navigate('/mockups/plans')
+    }
+  }
+  const saveAndStart = () => navigate('/mockups/live')
 
   return (
     <PhoneFrame>
@@ -328,12 +344,24 @@ export function ForgePlan() {
         </section>
       </div>
 
-      {/* ---- Launch ---- */}
-      <div className="absolute inset-x-0 bottom-0 z-20 border-t border-nr-bronze/30 bg-nr-black/95 p-3">
-        <button className="clip-bevel flex w-full items-center justify-center gap-2 bg-nr-crimson py-3.5 font-heading text-base font-bold uppercase tracking-widest text-nr-bone shadow-[0_0_22px_-4px] shadow-nr-ember/80 transition-all hover:bg-nr-ember">
-          <Swords className="size-5" />
-          Start Workout
+      {/* ---- Save / Launch ---- */}
+      <div className="absolute inset-x-0 bottom-0 z-20 flex gap-2 border-t border-nr-bronze/30 bg-nr-black/95 p-3">
+        <button
+          onClick={savePlan}
+          className="clip-bevel-sm flex flex-1 items-center justify-center gap-2 border border-nr-bronze/40 py-3.5 font-heading text-sm font-bold uppercase tracking-widest text-nr-bone/80 transition-colors hover:border-nr-bronze hover:text-nr-bone"
+        >
+          <Save className="size-5" />
+          {fromSchedule ? 'Save & Schedule' : 'Save Plan'}
         </button>
+        {!fromSchedule && (
+          <button
+            onClick={saveAndStart}
+            className="clip-bevel flex flex-1 items-center justify-center gap-2 bg-nr-crimson py-3.5 font-heading text-sm font-bold uppercase tracking-widest text-nr-bone shadow-[0_0_22px_-4px] shadow-nr-ember/80 transition-all hover:bg-nr-ember"
+          >
+            <Swords className="size-5" />
+            Save &amp; Start
+          </button>
+        )}
       </div>
     </PhoneFrame>
   )

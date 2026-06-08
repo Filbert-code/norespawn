@@ -22,7 +22,7 @@ const RELATIVE: Record<number, DayWorkout> = {
   [-3]: { status: 'completed', workoutName: 'Leg Day', durationMin: 61, totalSets: 21, effort: 9, bodyGroups: ['Legs'] },
   [-2]: { status: 'completed', workoutName: 'Push Day', durationMin: 49, totalSets: 18, effort: 7, bodyGroups: ['Chest', 'Shoulders'] },
   [-1]: { status: 'completed', workoutName: 'Arms & Core', durationMin: 38, totalSets: 14, effort: 6, bodyGroups: ['Arms', 'Core'] },
-  [0]: { status: 'scheduled', workoutName: 'Chest & Shoulders' },
+  [0]: { status: 'in_progress', workoutName: 'Chest & Shoulders' },
   [2]: { status: 'scheduled', workoutName: 'Leg Day' },
   [4]: { status: 'scheduled', workoutName: 'Pull Day' },
   [6]: { status: 'scheduled', workoutName: 'Push Day' },
