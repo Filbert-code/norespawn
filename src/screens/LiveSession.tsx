@@ -48,7 +48,7 @@ import {
   type LiveSessionState,
 } from '@/lib/live/store'
 import { acquireWakeLock, releaseWakeLock } from '@/lib/live/wake_lock'
-import { cues } from '@/lib/live/audio'
+import { cues, preloadCues } from '@/lib/live/audio'
 import { usePrefs } from '@/lib/prefs'
 import type { Exercise, SessionExercise, SessionSet } from '@/lib/supabase'
 
@@ -138,6 +138,12 @@ export function LiveSessionScreen() {
       releaseWakeLock()
     }
   }, [prefs.wakeLockEnabled])
+
+  // Warm the SFX decode cache so the first cue plays the sample, not the
+  // synth fallback.
+  useEffect(() => {
+    preloadCues()
+  }, [])
 
   // ---- derived shape ------------------------------------------------------
   type ExerciseView = {
