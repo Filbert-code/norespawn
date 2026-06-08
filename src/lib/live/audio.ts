@@ -14,7 +14,7 @@ type CueName = 'setComplete' | 'restCountdown' | 'restEnd' | 'sessionDone'
 const CUE_GAIN: Record<CueName, number> = {
   setComplete: 0.5, // recorded hot
   restEnd: 0.5, // recorded hot
-  restCountdown: 2.0, // recorded quiet — boost
+  restCountdown: 0.6, // bright anvil hit — plays 3x, keep moderate
   sessionDone: 1.0,
 }
 
