@@ -1,0 +1,1517 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NoRespawn — Data Model Design</title>
+    <style>
+      :root {
+        --bg: #0a0a0a;
+        --panel: #141414;
+        --panel-2: #1b1b1b;
+        --border: #2a2a2a;
+        --text: #e7e7e7;
+        --muted: #a1a1a1;
+        --accent: #ffffff;
+        --accent-soft: #2563eb;
+        --green: #22c55e;
+        --amber: #f59e0b;
+        --red: #ef4444;
+        --purple: #a855f7;
+        --code-bg: #0f0f0f;
+        --radius: 12px;
+        --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        --sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      }
+      * { box-sizing: border-box; }
+      html { scroll-behavior: smooth; }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font: 16px/1.6 var(--sans);
+        -webkit-font-smoothing: antialiased;
+      }
+      a { color: #93c5fd; }
+      .layout { display: flex; max-width: 1240px; margin: 0 auto; }
+      /* Sidebar */
+      nav.toc {
+        position: sticky;
+        top: 0;
+        align-self: flex-start;
+        width: 290px;
+        height: 100vh;
+        overflow-y: auto;
+        padding: 28px 18px;
+        border-right: 1px solid var(--border);
+        flex-shrink: 0;
+      }
+      nav.toc .brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 700;
+        font-size: 18px;
+        margin-bottom: 6px;
+      }
+      nav.toc .brand .logo {
+        width: 30px; height: 30px;
+        display: grid; place-items: center;
+        background: #b91c1c; color: #fff;
+        border-radius: 8px; font-weight: 800;
+      }
+      nav.toc .sub { color: var(--muted); font-size: 13px; margin-bottom: 22px; }
+      nav.toc ol { list-style: none; margin: 0; padding: 0; counter-reset: step; }
+      nav.toc ol li { counter-increment: step; }
+      nav.toc ol li a {
+        display: flex; gap: 10px; align-items: baseline;
+        padding: 8px 10px; border-radius: 8px;
+        color: var(--muted); text-decoration: none; font-size: 14px;
+      }
+      nav.toc ol li a::before {
+        content: counter(step);
+        font-variant-numeric: tabular-nums;
+        font-size: 12px; color: #666;
+        border: 1px solid var(--border); border-radius: 6px;
+        min-width: 22px; height: 22px; display: inline-grid; place-items: center;
+        flex-shrink: 0;
+      }
+      nav.toc ol li a:hover { background: var(--panel); color: var(--text); }
+      /* Main */
+      main { flex: 1; padding: 48px 56px 120px; max-width: 900px; min-width: 0; }
+      header.hero { margin-bottom: 40px; }
+      header.hero h1 { font-size: 34px; margin: 0 0 8px; letter-spacing: -0.5px; }
+      header.hero p { color: var(--muted); margin: 0; font-size: 17px; }
+      .stack-badges { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+      .badge {
+        font-size: 12px; color: var(--muted);
+        background: var(--panel); border: 1px solid var(--border);
+        padding: 4px 10px; border-radius: 999px;
+      }
+      section { margin-bottom: 52px; scroll-margin-top: 24px; }
+      section > h2 {
+        font-size: 22px; margin: 0 0 4px; letter-spacing: -0.3px;
+        display: flex; align-items: center; gap: 10px;
+      }
+      section > h2 .num {
+        font-size: 13px; color: #fff; background: #b91c1c;
+        width: 26px; height: 26px; border-radius: 7px;
+        display: inline-grid; place-items: center; font-weight: 700;
+      }
+      section > .lead { color: var(--muted); margin: 0 0 18px; }
+      h3 { font-size: 17px; margin: 30px 0 10px; }
+      h4 { font-size: 14px; margin: 20px 0 8px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+      p { margin: 12px 0; }
+      ul, ol.steps { padding-left: 22px; }
+      ol.steps > li { margin: 10px 0; }
+      li { margin: 5px 0; }
+      code.inline {
+        font-family: var(--mono); font-size: 13px;
+        background: var(--panel-2); border: 1px solid var(--border);
+        padding: 1px 6px; border-radius: 5px; color: #f3f3f3;
+      }
+      pre {
+        position: relative;
+        background: var(--code-bg); border: 1px solid var(--border);
+        border-radius: var(--radius); padding: 16px 16px; overflow-x: auto;
+        font-family: var(--mono); font-size: 13px; line-height: 1.55;
+      }
+      pre code { white-space: pre; }
+      .copy-btn {
+        position: absolute; top: 8px; right: 8px;
+        background: var(--panel-2); border: 1px solid var(--border);
+        color: var(--muted); font-size: 11px; padding: 4px 8px;
+        border-radius: 6px; cursor: pointer;
+      }
+      .copy-btn:hover { color: #fff; border-color: #555; }
+      .callout {
+        border: 1px solid var(--border); border-left-width: 3px;
+        background: var(--panel); border-radius: 10px;
+        padding: 12px 16px; margin: 16px 0; font-size: 14.5px;
+      }
+      .callout.note { border-left-color: var(--accent-soft); }
+      .callout.warn { border-left-color: var(--amber); }
+      .callout.tip { border-left-color: var(--green); }
+      .callout.why { border-left-color: var(--purple); }
+      .callout b { color: #fff; }
+      table {
+        width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 13.5px;
+      }
+      th, td { text-align: left; padding: 9px 12px; border: 1px solid var(--border); vertical-align: top; }
+      th { background: var(--panel); font-weight: 600; }
+      td code, th code { font-family: var(--mono); font-size: 12.5px; color: #f3f3f3; }
+      .muted { color: var(--muted); }
+      /* Entity / schema cards */
+      .entity {
+        border: 1px solid var(--border); border-radius: var(--radius);
+        background: var(--panel); margin: 22px 0; overflow: hidden;
+      }
+      .entity > .entity-head {
+        display: flex; align-items: center; gap: 10px;
+        padding: 12px 16px; background: var(--panel-2);
+        border-bottom: 1px solid var(--border);
+      }
+      .entity > .entity-head .tname {
+        font-family: var(--mono); font-size: 15px; font-weight: 700; color: #fff;
+      }
+      .entity > .entity-head .role { color: var(--muted); font-size: 13px; }
+      .entity .entity-body { padding: 4px 16px 14px; }
+      .entity table { margin: 12px 0 6px; }
+      .entity table th:first-child, .entity table td:first-child { width: 32%; }
+      /* type/key tags */
+      .tag {
+        display: inline-block; font-size: 10.5px; font-weight: 700;
+        padding: 1px 6px; border-radius: 5px; letter-spacing: 0.4px;
+        vertical-align: middle; margin-left: 6px;
+      }
+      .tag.pk { background: #3b2f07; color: #fbbf24; border: 1px solid #5a4514; }
+      .tag.fk { background: #07263b; color: #60a5fa; border: 1px solid #14405a; }
+      .tag.uq { background: #07371f; color: #4ade80; border: 1px solid #14502f; }
+      .tag.enum { background: #2b0740; color: #d8b4fe; border: 1px solid #4a1466; }
+      .tag.snap { background: #3b0707; color: #fca5a5; border: 1px solid #5a1414; }
+      .pill { font-size: 11px; padding: 2px 8px; border-radius: 999px; border: 1px solid var(--border); color: var(--muted); }
+      hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
+      .layer-grid { display: grid; grid-template-columns: 1fr; gap: 14px; margin: 20px 0; }
+      .layer {
+        border: 1px solid var(--border); border-left-width: 4px; border-radius: 10px;
+        padding: 14px 16px; background: var(--panel);
+      }
+      .layer h3 { margin: 0 0 4px; font-size: 16px; }
+      .layer.catalog { border-left-color: var(--green); }
+      .layer.plan { border-left-color: var(--accent-soft); }
+      .layer.log { border-left-color: var(--red); }
+      .layer .tables { font-family: var(--mono); font-size: 12.5px; color: var(--muted); margin-top: 8px; }
+      footer { color: var(--muted); font-size: 13px; border-top: 1px solid var(--border); padding-top: 20px; }
+      @media (max-width: 920px) {
+        nav.toc { display: none; }
+        main { padding: 32px 20px 80px; }
+        .entity table th:first-child, .entity table td:first-child { width: auto; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="layout">
+      <nav class="toc">
+        <div class="brand"><span class="logo">N</span> NoRespawn</div>
+        <div class="sub">Data model design</div>
+        <ol>
+          <li><a href="#overview">Overview &amp; the 3 layers</a></li>
+          <li><a href="#conventions">Conventions &amp; ground rules</a></li>
+          <li><a href="#enums">Enumerations &amp; taxonomy</a></li>
+          <li><a href="#exercise">Exercise (catalog)</a></li>
+          <li><a href="#relationships-graph">Exercise relationships (graph)</a></li>
+          <li><a href="#ai">AI generation &amp; de-dup</a></li>
+          <li><a href="#prefs">User exercise preferences</a></li>
+          <li><a href="#workout">Workout plan</a></li>
+          <li><a href="#session">Session (live workout)</a></li>
+          <li><a href="#events">Session event log</a></li>
+          <li><a href="#smart-defaults">Smart defaults &amp; views</a></li>
+          <li><a href="#relationships">Relationships &amp; big picture</a></li>
+          <li><a href="#future">Future extensibility</a></li>
+          <li><a href="#decisions">Resolved decisions</a></li>
+        </ol>
+      </nav>
+
+      <main>
+        <header class="hero">
+          <h1>NoRespawn — Data Model Design</h1>
+          <p>
+            A foundation-first design for the data that powers the app: the
+            exercise catalog, reusable workout plans, and the live sessions you
+            actually perform — built to be analyzed, extended, and fed to an LLM.
+          </p>
+          <div class="stack-badges">
+            <span class="badge">Postgres (Supabase)</span>
+            <span class="badge">Relational + normalized</span>
+            <span class="badge">Snapshot history</span>
+            <span class="badge">Event log</span>
+            <span class="badge">Multi-user ready</span>
+            <span class="badge">LLM-friendly</span>
+          </div>
+        </header>
+
+        <!-- 1 -->
+        <section id="overview">
+          <h2><span class="num">1</span> Overview &amp; the 3 layers</h2>
+          <p class="lead">
+            Everything in NoRespawn falls into one of three layers. Keeping them
+            separate is the single most important design decision — it's what
+            lets the app stay clean as features pile on.
+          </p>
+
+          <div class="layer-grid">
+            <div class="layer catalog">
+              <h3>① Catalog layer — "what exists"</h3>
+              <p class="muted" style="margin:4px 0">
+                The reusable library of exercises and their sensible defaults.
+                Global, slow-changing,                 de-duplicated. This is the menu you build
+                workouts from — now a small knowledge graph (relationships) fed by an
+                AI generation pipeline.
+              </p>
+              <div class="tables">exercise · exercise_relationship · exercise_candidate</div>
+            </div>
+            <div class="layer plan">
+              <h3>② Plan layer — "what I intend to do"</h3>
+              <p class="muted" style="margin:4px 0">
+                Reusable workout plans produced by the Workout Builder
+                ("Push Day A"). References catalog exercises but can override any
+                default (sets, reps, weight, rest). The Tracker schedules these.
+              </p>
+              <div class="tables">workout · workout_exercise · workout_set</div>
+            </div>
+            <div class="layer log">
+              <h3>③ Log layer — "what actually happened"</h3>
+              <p class="muted" style="margin:4px 0">
+                A performed instance on a real date/time: the Live Workout Game.
+                Records actual reps/weight/rest per set, what you skipped, and a
+                timeline of every change you made (fuel for Bob's suggestions).
+              </p>
+              <div class="tables">workout_session · session_exercise · session_set · session_event</div>
+            </div>
+          </div>
+
+          <div class="callout why">
+            <b>Why three layers instead of one?</b> A single "Workout" object that
+            mixes the plan with what happened forces painful choices later: editing
+            an exercise's defaults would rewrite history, you couldn't reuse a plan
+            without copy-pasting, and analytics ("planned vs. actual") become
+            impossible. Splitting them keeps each concern independent and queryable.
+          </div>
+
+          <div class="callout note">
+            <b>How the layers connect, briefly:</b> A <code class="inline">workout</code>
+            (plan) is a list of <code class="inline">exercise</code>s (catalog) with
+            optional overrides. When you press <b>Start Workout</b>, the app
+            <i>snapshots</i> that plan into a <code class="inline">workout_session</code>
+            (log) so later edits to the plan or catalog never alter your history.
+            Per-user feelings about an exercise (preference &amp; intensity) live in
+            their own time-stamped table so we can watch them drift over time.
+          </div>
+
+          <p class="muted">
+            The rest of this doc defines each table field-by-field, with the
+            reasoning behind the choices and notes on what we deliberately left
+            out for later.
+          </p>
+        </section>
+
+        <!-- 2 -->
+        <section id="conventions">
+          <h2><span class="num">2</span> Conventions &amp; ground rules</h2>
+          <p class="lead">
+            A handful of decisions applied consistently across every table.
+            Locking these down now is what makes the schema feel coherent.
+          </p>
+
+          <h3>Identifiers</h3>
+          <table>
+            <thead>
+              <tr><th>Kind of row</th><th>ID strategy</th><th>Why</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Catalog rows (<code>exercise</code>)</td>
+                <td><b>Human-readable slug</b> — <code>text</code> primary key, e.g. <code>"shoulder_press"</code></td>
+                <td>Stable, readable in URLs/queries/LLM tool calls, and naturally aids de-duplication.</td>
+              </tr>
+              <tr>
+                <td>Enumeration lookups (body groups, equipment…)</td>
+                <td><b>Slug</b> — <code>text</code> primary key, e.g. <code>"shoulders"</code></td>
+                <td>Same reasons; also lets us attach labels/metadata to each value.</td>
+              </tr>
+              <tr>
+                <td>User-owned records (workouts, sessions, sets, events, prefs)</td>
+                <td><b>UUID</b> — <code>uuid default gen_random_uuid()</code></td>
+                <td>Non-guessable, collision-free, safe to generate client-side, no enumeration leaks.</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h3>Ownership &amp; multi-user readiness</h3>
+          <p>
+            Even though you're the only user today, every user-owned table carries a
+            <code class="inline">user_id uuid</code> referencing
+            <code class="inline">auth.users(id)</code> (Supabase's built-in auth table).
+            This is free to add now and means multi-user becomes a non-event later —
+            no migration, just turn on the policies.
+          </p>
+          <div class="callout tip">
+            <b>The catalog is shared, feelings are personal.</b> The
+            <code class="inline">exercise</code> catalog has <em>no</em>
+            <code class="inline">user_id</code> — it's a global library. Anything
+            subjective or personal (preference, intensity, plans, sessions) is
+            scoped to a user.
+          </div>
+
+          <h3>Row Level Security (RLS)</h3>
+          <p>
+            Every user-owned table gets an RLS policy of the shape
+            <code class="inline">user_id = auth.uid()</code> for select/insert/update/delete.
+            The catalog and enum tables are world-readable (to signed-in users) but
+            writable only via admin/seed jobs. The client-side email allowlist we
+            already built is just a UI gate — <b>RLS is the real enforcement</b>.
+          </p>
+
+          <h3>Timestamps</h3>
+          <p>Every table carries, at minimum:</p>
+          <ul>
+            <li><code class="inline">created_at timestamptz not null default now()</code></li>
+            <li><code class="inline">updated_at timestamptz not null default now()</code> (bumped by a trigger on update)</li>
+          </ul>
+          <p>
+            All datetimes are <code class="inline">timestamptz</code> (UTC under the
+            hood, e.g. your <code class="inline">2026-06-07T14:27:30Z</code>). Never
+            naive timestamps — the calendar/Tracker depends on correct timezone math.
+          </p>
+
+          <h3>Units</h3>
+          <p>
+            Weight is always <b>pounds (lbs)</b>, stored as
+            <code class="inline">numeric</code> (not float — avoids
+            <code class="inline">2.5 + 2.5 = 5.0000001</code> rounding). Durations are
+            stored as <b>integer seconds</b> (<code class="inline">rest_seconds</code>,
+            <code class="inline">duration_seconds</code>) — trivial to format and to do
+            math on. Distances (for future cardio) would be <code class="inline">numeric</code>
+            meters. We standardize on one canonical unit per dimension and format in the UI.
+          </p>
+
+          <h3>The snapshot principle <span class="tag snap">SNAP</span></h3>
+          <p>
+            This is the backbone of history integrity. When a value is copied from a
+            higher layer into a lower one at a meaningful moment, we <b>freeze a copy</b>
+            rather than relying on a live reference:
+          </p>
+          <ul>
+            <li>Building a plan snapshots the exercise's <em>defaults</em> as the plan's starting numbers (then you can override).</li>
+            <li>Starting a session snapshots the <em>plan</em> into the session's planned columns.</li>
+            <li>Fields that are snapshots are marked with the <span class="tag snap">SNAP</span> tag throughout this doc.</li>
+          </ul>
+          <div class="callout why">
+            <b>Why snapshot instead of just joining back to the catalog?</b> Because
+            defaults, preferences, and even an exercise's name change over time. If
+            June's session merely pointed at the live catalog, editing
+            "shoulder press" in December would silently rewrite what June says you did.
+            Snapshots make every session an honest historical record, while the
+            <code class="inline">exercise_slug</code> reference is kept alongside for
+            grouping/analytics ("show all shoulder-press sessions").
+          </div>
+
+          <h3>Soft deletes</h3>
+          <p>
+            Catalog exercises use <code class="inline">is_archived boolean</code> rather
+            than hard deletes, so historical sessions that reference a retired exercise
+            never break. User data can be hard-deleted (cascades) or archived per table
+            as noted.
+          </p>
+        </section>
+
+        <!-- 3 -->
+        <section id="enums">
+          <h2><span class="num">3</span> Enumerations &amp; taxonomy</h2>
+          <p class="lead">
+            Constrained value sets. Two flavors, chosen deliberately per case.
+          </p>
+
+          <h3>Lookup tables vs. fixed enums</h3>
+          <table>
+            <thead>
+              <tr><th>Approach</th><th>Use for</th><th>Trade-off</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><b>Lookup table</b> (a real table with slug PK + label + metadata)</td>
+                <td>Taxonomy that grows or carries extra data: <code>body_group</code>, <code>body_sub_group</code>, <code>equipment</code></td>
+                <td>Add values with a plain <code>INSERT</code> (great for AI-generated exercises); can attach labels, icons, sort order, relationships. No migration to add a value.</td>
+              </tr>
+              <tr>
+                <td><b>Postgres <code>enum</code> type</b> (or a <code>CHECK</code> constraint)</td>
+                <td>Small, fixed, code-coupled sets: <code>tracking_type</code>, <code>session_status</code>, <code>set_status</code>, <code>event_type</code></td>
+                <td>DB-enforced and self-documenting; adding a value needs a tiny migration — which is appropriate because the app's code must handle it anyway.</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="callout note">
+            <b>Rule of thumb:</b> if a value's existence requires new UI/logic, it's a
+            fixed enum. If it's just more data of the same shape (another muscle group,
+            another piece of equipment), it's a lookup table.
+          </div>
+
+          <h3>Lookup table: <code>body_group</code></h3>
+          <p>Top-level muscle regions used to organize the Builder's body-group picker.</p>
+          <div class="entity">
+            <div class="entity-head"><span class="tname">body_group</span><span class="role">lookup</span></div>
+            <div class="entity-body">
+              <table>
+                <thead><tr><th>Column</th><th>Type</th><th>Notes</th></tr></thead>
+                <tbody>
+                  <tr><td><code>slug</code><span class="tag pk">PK</span></td><td><code>text</code></td><td>e.g. <code>shoulders</code>, <code>chest</code>, <code>back</code>, <code>legs</code>, <code>arms</code>, <code>core</code>, <code>glutes</code>, <code>full_body</code>, <code>cardio</code></td></tr>
+                  <tr><td><code>label</code></td><td><code>text</code></td><td>Display name, e.g. "Shoulders".</td></tr>
+                  <tr><td><code>sort_order</code></td><td><code>int</code></td><td>Controls ordering in the picker UI.</td></tr>
+                  <tr><td><code>icon</code></td><td><code>text</code> null</td><td>Optional icon name for the punchy UI.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <h3>Lookup table: <code>body_sub_group</code></h3>
+          <p>
+            Finer regions ("rear delts", "front delts") that belong to a parent group —
+            exactly the grouping your Builder uses to lay out exercise cards.
+          </p>
+          <div class="entity">
+            <div class="entity-head"><span class="tname">body_sub_group</span><span class="role">lookup</span></div>
+            <div class="entity-body">
+              <table>
+                <thead><tr><th>Column</th><th>Type</th><th>Notes</th></tr></thead>
+                <tbody>
+                  <tr><td><code>slug</code><span class="tag pk">PK</span></td><td><code>text</code></td><td>e.g. <code>rear_delts</code>, <code>front_delts</code>, <code>side_delts</code>, <code>biceps</code>, <code>triceps</code>, <code>quads</code>, <code>hamstrings</code>.</td></tr>
+                  <tr><td><code>body_group_slug</code><span class="tag fk">FK → body_group</span></td><td><code>text</code></td><td>Parent region. Lets us roll sub-groups up to a group.</td></tr>
+                  <tr><td><code>label</code></td><td><code>text</code></td><td>"Rear delts".</td></tr>
+                  <tr><td><code>sort_order</code></td><td><code>int</code></td><td>Ordering within its parent group.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="callout tip">
+            <b>One sub-group → one group.</b> We model the relationship as a simple
+            FK now (a sub-group has exactly one parent). If you later want an exercise
+            to credit multiple muscles (primary/secondary), that's a separate
+            many-to-many we flag in <a href="#future">Future extensibility</a> —
+            it doesn't change this table.
+          </div>
+
+          <h3>Lookup table: <code>equipment</code></h3>
+          <div class="entity">
+            <div class="entity-head"><span class="tname">equipment</span><span class="role">lookup</span></div>
+            <div class="entity-body">
+              <table>
+                <thead><tr><th>Column</th><th>Type</th><th>Notes</th></tr></thead>
+                <tbody>
+                  <tr><td><code>slug</code><span class="tag pk">PK</span></td><td><code>text</code></td><td>e.g. <code>barbell</code>, <code>dumbbell</code>, <code>cable</code>, <code>machine</code>, <code>bodyweight</code>, <code>kettlebell</code>, <code>band</code>, <code>smith_machine</code>.</td></tr>
+                  <tr><td><code>label</code></td><td><code>text</code></td><td>"Dumbbell".</td></tr>
+                  <tr><td><code>sort_order</code></td><td><code>int</code></td><td>UI ordering / filters.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <h3>Fixed enum: <code>tracking_type</code></h3>
+          <p>
+            <b>The field that future-proofs the whole app.</b> It declares <em>which
+            metrics a set records</em>, so the Live Workout knows what inputs to show
+            and analytics knows how to aggregate. Even though everything today is
+            weight×reps, defining this now avoids a brutal migration later.
+          </p>
+          <table>
+            <thead><tr><th>Value</th><th>What a set captures</th><th>Example exercises</th></tr></thead>
+            <tbody>
+              <tr><td><code>weight_reps</code></td><td>weight (lbs) + reps</td><td>Shoulder press, bench, squat</td></tr>
+              <tr><td><code>bodyweight_reps</code></td><td>reps (+ optional added weight)</td><td>Pull-ups, push-ups, dips</td></tr>
+              <tr><td><code>timed</code></td><td>duration (seconds), no reps</td><td>Plank, wall-sit, dead hang</td></tr>
+              <tr><td><code>distance_time</code></td><td>distance (m) + duration (s)</td><td>Treadmill run, row, bike <span class="pill">future cardio</span></td></tr>
+            </tbody>
+          </table>
+          <div class="callout why">
+            <b>Why one enum instead of separate tables per type?</b> All variants share
+            the same lifecycle (planned → performed, ordered within a workout, rest
+            between them). A single set table with nullable metric columns plus a
+            <code class="inline">tracking_type</code> discriminator keeps queries simple
+            and the UI logic in one place. We add a <code class="inline">CHECK</code> so
+            the right columns are non-null for each type.
+          </div>
+
+          <h3>Fixed enum: <code>session_status</code></h3>
+          <table>
+            <thead><tr><th>Value</th><th>Meaning</th></tr></thead>
+            <tbody>
+              <tr><td><code>in_progress</code></td><td>Live workout currently running.</td></tr>
+              <tr><td><code>completed</code></td><td>User ended the workout normally.</td></tr>
+              <tr><td><code>abandoned</code></td><td>Left without finishing (timed out / closed).</td></tr>
+            </tbody>
+          </table>
+
+          <h3>Fixed enum: <code>set_status</code></h3>
+          <table>
+            <thead><tr><th>Value</th><th>Meaning</th></tr></thead>
+            <tbody>
+              <tr><td><code>pending</code></td><td>Planned but not yet performed.</td></tr>
+              <tr><td><code>completed</code></td><td>The "+1 of 3" tap — set finished.</td></tr>
+              <tr><td><code>skipped</code></td><td>User skipped this set/exercise.</td></tr>
+            </tbody>
+          </table>
+
+          <h3>Fixed enum: <code>set_role</code></h3>
+          <p>Replaces dedicated warmup/cooldown tables — they're just flagged sets.</p>
+          <table>
+            <thead><tr><th>Value</th><th>Meaning</th></tr></thead>
+            <tbody>
+              <tr><td><code>working</code></td><td>Default — a real working set.</td></tr>
+              <tr><td><code>warmup</code></td><td>Warmup set (lighter, doesn't count toward progression).</td></tr>
+              <tr><td><code>cooldown</code></td><td>Cooldown / stretch set.</td></tr>
+            </tbody>
+          </table>
+
+          <h3>Fixed enum: <code>event_type</code> (session event log)</h3>
+          <p>The vocabulary of in-workout changes Bob can reason about. Intentionally small to start, easy to extend.</p>
+          <table>
+            <thead><tr><th>Value</th><th>Fired when…</th></tr></thead>
+            <tbody>
+              <tr><td><code>weight_changed</code></td><td>User adjusts weight on a set/exercise.</td></tr>
+              <tr><td><code>reps_changed</code></td><td>User adjusts target reps.</td></tr>
+              <tr><td><code>rest_changed</code></td><td>User changes set or end rest time.</td></tr>
+              <tr><td><code>set_added</code> / <code>set_removed</code></td><td>User adds/subtracts a set.</td></tr>
+              <tr><td><code>exercise_skipped</code></td><td>User skips an exercise.</td></tr>
+              <tr><td><code>set_completed</code></td><td>The "+1" tap (optional to log; useful for pacing analytics).</td></tr>
+              <tr><td><code>paused</code> / <code>resumed</code></td><td>Workout timer paused/resumed.</td></tr>
+            </tbody>
+          </table>
+
+          <h3>Fixed enum: <code>movement_pattern</code></h3>
+          <p>The biomechanical pattern of a movement — the backbone of balanced program generation and meaningful analytics (push/pull ratio, etc.).</p>
+          <table>
+            <thead><tr><th>Value</th><th>Examples</th></tr></thead>
+            <tbody>
+              <tr><td><code>horizontal_push</code></td><td>Bench press, push-up</td></tr>
+              <tr><td><code>vertical_push</code></td><td>Overhead/shoulder press</td></tr>
+              <tr><td><code>horizontal_pull</code></td><td>Row</td></tr>
+              <tr><td><code>vertical_pull</code></td><td>Pull-up, lat pulldown</td></tr>
+              <tr><td><code>hinge</code></td><td>Deadlift, RDL, hip thrust</td></tr>
+              <tr><td><code>squat</code></td><td>Back squat, goblet squat</td></tr>
+              <tr><td><code>lunge</code></td><td>Lunge, split squat, step-up</td></tr>
+              <tr><td><code>carry</code></td><td>Farmer's carry</td></tr>
+              <tr><td><code>core</code></td><td>Plank, anti-rotation, crunch</td></tr>
+              <tr><td><code>isolation</code></td><td>Curl, lateral raise (single-joint, no broad pattern)</td></tr>
+            </tbody>
+          </table>
+
+          <h3>Fixed enum: <code>mechanic</code></h3>
+          <table>
+            <thead><tr><th>Value</th><th>Meaning</th></tr></thead>
+            <tbody>
+              <tr><td><code>compound</code></td><td>Multi-joint (squat, bench, row).</td></tr>
+              <tr><td><code>isolation</code></td><td>Single-joint (curl, lateral raise, leg extension).</td></tr>
+            </tbody>
+          </table>
+
+          <h3>Fixed enum: <code>force_type</code></h3>
+          <table>
+            <thead><tr><th>Value</th><th>Meaning</th></tr></thead>
+            <tbody>
+              <tr><td><code>push</code></td><td>Resistance moves away from the body.</td></tr>
+              <tr><td><code>pull</code></td><td>Resistance moves toward the body.</td></tr>
+              <tr><td><code>static</code></td><td>Isometric hold (plank, wall-sit).</td></tr>
+            </tbody>
+          </table>
+
+          <h3>Fixed enum: <code>laterality</code></h3>
+          <p>Determines how reps/volume are counted and what the live UI shows — a correctness concern, not just a label.</p>
+          <table>
+            <thead><tr><th>Value</th><th>Meaning &amp; volume rule</th></tr></thead>
+            <tbody>
+              <tr><td><code>bilateral</code></td><td>Both sides at once (barbell squat). Reps count once.</td></tr>
+              <tr><td><code>unilateral</code></td><td>Worked one arm/leg at a time (single-arm DB row). <b>Still one set = one row</b>; the logged reps/weight are per-side (you do the same on each side), and volume counts <b>both</b> sides (×2).</td></tr>
+              <tr><td><code>alternating</code></td><td>Sides alternate within a set (alternating DB curl). Reps are the total across both sides.</td></tr>
+            </tbody>
+          </table>
+
+          <h3>Fixed enum: <code>relationship_type</code> (exercise graph)</h3>
+          <p>The edge vocabulary for the exercise relationship graph (§5).</p>
+          <table>
+            <thead><tr><th>Value</th><th>Meaning (from → to)</th></tr></thead>
+            <tbody>
+              <tr><td><code>progression</code></td><td><code>to</code> is a harder version of <code>from</code> (push-up → archer push-up).</td></tr>
+              <tr><td><code>regression</code></td><td><code>to</code> is an easier version (push-up → knee push-up).</td></tr>
+              <tr><td><code>substitute</code></td><td><code>to</code> trains the same thing with different equipment (barbell bench → dumbbell bench).</td></tr>
+              <tr><td><code>variation_of</code></td><td><code>to</code> is the canonical movement <code>from</code> is a variant of.</td></tr>
+              <tr><td><code>antagonist</code></td><td><code>to</code> works the opposing muscle group (biceps curl ↔ triceps extension) — for auto-supersets.</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+        <!-- 4 -->
+        <section id="exercise">
+          <h2><span class="num">4</span> Exercise (catalog)</h2>
+          <p class="lead">
+            The global, de-duplicated library of movements and their sensible
+            defaults. This is the menu the Workout Builder draws from. It holds
+            <b>no user-specific feelings</b> — preference and intensity now live in
+            their own per-user table (next section).
+          </p>
+
+          <h3>Defaults: flat columns, not a JSON blob</h3>
+          <p>
+            Your sketch nested defaults under a <code class="inline">"defaults": {…}</code>
+            object. In Postgres we flatten those into real typed columns
+            (<code class="inline">default_sets</code>, <code class="inline">default_reps</code>, …).
+          </p>
+          <div class="callout why">
+            <b>Why flatten?</b> Your stated goal is "all workout data easy to analyze
+            and structured into tables." Real columns get types, defaults, check
+            constraints, and indexes — you can write
+            <code class="inline">AVG(default_reps)</code> or filter
+            <code class="inline">WHERE default_weight &gt; 50</code> trivially. A JSONB
+            blob hides structure, can't be constrained, and is clumsy for the LLM tools
+            you want ("get chest exercises sorted by…"). We reserve JSONB only for
+            genuinely free-form data.
+          </div>
+
+          <div class="entity">
+            <div class="entity-head"><span class="tname">exercise</span><span class="role">catalog · global · no user_id</span></div>
+            <div class="entity-body">
+              <table>
+                <thead><tr><th>Column</th><th>Type</th><th>Notes</th></tr></thead>
+                <tbody>
+                  <tr><td><code>slug</code><span class="tag pk">PK</span></td><td><code>text</code></td><td>Human-readable id, e.g. <code>shoulder_press</code>. Derived from the normalized name.</td></tr>
+                  <tr><td><code>name</code></td><td><code>text</code></td><td>Display name, e.g. "Shoulder Press".</td></tr>
+                  <tr><td><code>name_normalized</code><span class="tag uq">UNIQUE</span></td><td><code>text</code></td><td><b>De-duplication key.</b> Lowercased, trimmed, whitespace-collapsed, punctuation-stripped. A unique index here is what stops "Shoulder Press" and "shoulder  press" from both being inserted.</td></tr>
+                  <tr><td><code>tracking_type</code><span class="tag enum">ENUM</span></td><td><code>tracking_type</code></td><td>Drives which set metrics apply. Default <code>weight_reps</code>.</td></tr>
+                  <tr><td><code>body_group_slug</code><span class="tag fk">FK → body_group</span></td><td><code>text</code></td><td>e.g. <code>shoulders</code>.</td></tr>
+                  <tr><td><code>body_sub_group_slug</code><span class="tag fk">FK → body_sub_group</span></td><td><code>text</code> null</td><td>e.g. <code>side_delts</code>. Nullable for whole-group movements.</td></tr>
+                  <tr><td><code>equipment_slug</code><span class="tag fk">FK → equipment</span></td><td><code>text</code> null</td><td>e.g. <code>dumbbell</code>.</td></tr>
+                  <tr><td colspan="3" class="muted" style="background:var(--panel-2)"><b>Classification</b> — powers balanced AI program generation, analytics &amp; LLM filtering</td></tr>
+                  <tr><td><code>movement_pattern</code><span class="tag enum">ENUM</span></td><td><code>movement_pattern</code></td><td>e.g. <code>vertical_push</code>. Push/pull/hinge/squat/… backbone.</td></tr>
+                  <tr><td><code>mechanic</code><span class="tag enum">ENUM</span></td><td><code>mechanic</code></td><td><code>compound</code> | <code>isolation</code>.</td></tr>
+                  <tr><td><code>force_type</code><span class="tag enum">ENUM</span></td><td><code>force_type</code></td><td><code>push</code> | <code>pull</code> | <code>static</code>.</td></tr>
+                  <tr><td><code>laterality</code><span class="tag enum">ENUM</span></td><td><code>laterality</code></td><td><code>bilateral</code> | <code>unilateral</code> | <code>alternating</code>. Drives rep/volume counting (§9).</td></tr>
+                  <tr><td colspan="3" class="muted" style="background:var(--panel-2)"><b>Defaults</b> (snapshotted into plans)</td></tr>
+                  <tr><td><code>default_sets</code></td><td><code>int</code></td><td>Default set count, e.g. 3.</td></tr>
+                  <tr><td><code>default_reps</code></td><td><code>int</code> null</td><td>Per-set reps target, e.g. 10. Null for <code>timed</code>.</td></tr>
+                  <tr><td><code>default_weight_lbs</code></td><td><code>numeric</code> null</td><td>Default load, e.g. 50. Null for bodyweight/timed.</td></tr>
+                  <tr><td><code>weight_increment_lbs</code></td><td><code>numeric</code> null</td><td>Smallest realistic load step (barbell 5, dumbbell 5, microplate 2.5). The live "+/- weight" buttons and AI suggestions ("apply +30") snap to this.</td></tr>
+                  <tr><td><code>default_duration_seconds</code></td><td><code>int</code> null</td><td>For <code>timed</code> exercises (plank = 60). Null otherwise.</td></tr>
+                  <tr><td><code>default_set_rest_seconds</code></td><td><code>int</code></td><td>Rest between sets. Default 45 (matches your spec).</td></tr>
+                  <tr><td><code>default_end_rest_seconds</code></td><td><code>int</code></td><td>Rest after the exercise finishes. Default 120.</td></tr>
+                  <tr><td colspan="3" class="muted" style="background:var(--panel-2)"><b>Media &amp; provenance</b> (§6 — catalog is AI-generated)</td></tr>
+                  <tr><td><code>image_url</code></td><td><code>text</code> null</td><td>Card image (Supabase Storage URL). One per exercise.</td></tr>
+                  <tr><td><code>instructions</code></td><td><code>text</code> null</td><td>Optional how-to / form cues.</td></tr>
+                  <tr><td><code>embedding</code></td><td><code>vector(1536)</code> null</td><td>§6 — pgvector embedding of name + description for semantic de-dup &amp; natural-language search.</td></tr>
+                  <tr><td><code>source</code></td><td><code>text</code></td><td><code>seed</code> | <code>ai</code> | <code>user</code> — provenance.</td></tr>
+                  <tr><td><code>ai_model</code></td><td><code>text</code> null</td><td>Model that generated it (e.g. for re-generation / quality audits).</td></tr>
+                  <tr><td><code>is_verified</code></td><td><code>boolean</code></td><td>Human-reviewed flag. AI rows can land unverified and be promoted (§6).</td></tr>
+                  <tr><td><code>is_archived</code></td><td><code>boolean</code></td><td>Soft delete. Retired exercises stay so old sessions don't break.</td></tr>
+                  <tr><td><code>created_at</code> / <code>updated_at</code></td><td><code>timestamptz</code></td><td>Standard timestamps.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <h3>De-duplication mechanism</h3>
+          <ol class="steps">
+            <li>On insert, compute <code class="inline">name_normalized</code> from <code class="inline">name</code> (lowercase → trim → collapse spaces → strip punctuation). A DB trigger or generated column keeps it authoritative.</li>
+            <li>A <code class="inline">UNIQUE</code> index on <code class="inline">name_normalized</code> makes a duplicate insert fail at the database level — the ultimate guard, even if app logic misses it.</li>
+            <li>For AI generation later, the tool does a normalized lookup first and either returns the existing slug or inserts a new one (an idempotent "find-or-create").</li>
+          </ol>
+          <div class="callout note">
+            <b>Variations are distinct rows, disambiguated by name.</b> "Dumbbell
+            Shoulder Press" and "Barbell Shoulder Press" normalize differently, so
+            they coexist. Exact-name de-dup is the floor; <b>semantic de-dup</b> (catching
+            near-duplicates an LLM would invent, like "Seated DB Press") is handled by the
+            embedding-based pipeline in <a href="#ai">§6</a>.
+          </div>
+
+          <h3>Example row</h3>
+          <pre><code>{
+  "slug": "dumbbell_shoulder_press",
+  "name": "Dumbbell Shoulder Press",
+  "name_normalized": "dumbbell shoulder press",
+  "tracking_type": "weight_reps",
+  "body_group_slug": "shoulders",
+  "body_sub_group_slug": "front_delts",
+  "equipment_slug": "dumbbell",
+  "movement_pattern": "vertical_push",
+  "mechanic": "compound",
+  "force_type": "push",
+  "laterality": "bilateral",
+  "default_sets": 3,
+  "default_reps": 10,
+  "default_weight_lbs": 50,
+  "weight_increment_lbs": 5,
+  "default_duration_seconds": null,
+  "default_set_rest_seconds": 45,
+  "default_end_rest_seconds": 120,
+  "image_url": "https://…/dumbbell_shoulder_press.png",
+  "source": "ai",
+  "ai_model": "gpt-x",
+  "is_verified": true,
+  "is_archived": false
+}</code></pre>
+
+          <h3>Sketch SQL</h3>
+          <pre><code>create table exercise (
+  slug                      text primary key,
+  name                      text not null,
+  name_normalized           text not null unique,
+  tracking_type             tracking_type not null default 'weight_reps',
+  body_group_slug           text not null references body_group(slug),
+  body_sub_group_slug       text references body_sub_group(slug),
+  equipment_slug            text references equipment(slug),
+  movement_pattern          movement_pattern,
+  mechanic                  mechanic,
+  force_type                force_type,
+  laterality                laterality not null default 'bilateral',
+  default_sets              int  not null default 3,
+  default_reps              int,
+  default_weight_lbs        numeric,
+  weight_increment_lbs      numeric,
+  default_duration_seconds  int,
+  default_set_rest_seconds  int  not null default 45,
+  default_end_rest_seconds  int  not null default 120,
+  image_url                 text,
+  instructions              text,
+  embedding                 vector(1536),          -- pgvector; for semantic de-dup &amp; search
+  source                    text not null default 'seed',
+  ai_model                  text,
+  is_verified               boolean not null default false,
+  is_archived               boolean not null default false,
+  created_at                timestamptz not null default now(),
+  updated_at                timestamptz not null default now()
+);</code></pre>
+        </section>
+
+        <!-- 5 -->
+        <section id="relationships-graph">
+          <h2><span class="num">5</span> Exercise relationships (the graph)</h2>
+          <p class="lead">
+            A tiny self-referencing table that turns a flat catalog into a
+            <b>knowledge graph</b>. One small table powers substitutions, progressions,
+            and auto-supersets — and gives the LLM real edges to traverse instead of
+            guessing from names.
+          </p>
+
+          <div class="entity">
+            <div class="entity-head"><span class="tname">exercise_relationship</span><span class="role">catalog · directed edges</span></div>
+            <div class="entity-body">
+              <table>
+                <thead><tr><th>Column</th><th>Type</th><th>Notes</th></tr></thead>
+                <tbody>
+                  <tr><td><code>from_slug</code><span class="tag fk">FK → exercise</span></td><td><code>text</code></td><td>Source exercise.</td></tr>
+                  <tr><td><code>to_slug</code><span class="tag fk">FK → exercise</span></td><td><code>text</code></td><td>Target exercise.</td></tr>
+                  <tr><td><code>type</code><span class="tag enum">ENUM</span></td><td><code>relationship_type</code></td><td><code>progression</code> / <code>regression</code> / <code>substitute</code> / <code>variation_of</code> / <code>antagonist</code>.</td></tr>
+                  <tr><td><code>note</code></td><td><code>text</code> null</td><td>Optional ("requires a band").</td></tr>
+                  <tr><td colspan="3" class="muted">Composite <b>PK</b> = <code>(from_slug, to_slug, type)</code>; <code>CHECK (from_slug &lt;&gt; to_slug)</code>.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <h3>What it unlocks</h3>
+          <ul>
+            <li><b>Equipment swaps</b> — "no barbell today" → follow <code class="inline">substitute</code> edges.</li>
+            <li><b>Make it harder/easier</b> — follow <code class="inline">progression</code> / <code class="inline">regression</code> for the live "level up" button.</li>
+            <li><b>Auto-supersets</b> — pair <code class="inline">antagonist</code>s (biceps ↔ triceps) when building or mid-workout.</li>
+            <li><b>Canonical rollups</b> — <code class="inline">variation_of</code> edges let analytics group all "shoulder press" variants and answer "most re-occurring movement" by family.</li>
+            <li><b>Smarter LLM</b> — the model traverses explicit edges rather than inferring relationships from text.</li>
+          </ul>
+
+          <div class="callout why">
+            <b>Why one generic edge table instead of columns like <code class="inline">harder_variant_slug</code>?</b>
+            Relationships are many-to-many and open-ended (an exercise can have several
+            substitutes and progressions). A generic edge table scales to any number of
+            links and new relationship kinds without schema changes — and it's the
+            classic, query-friendly way to model a graph in Postgres.
+          </div>
+          <div class="callout note">
+            <b>Direction &amp; inverses.</b> <code class="inline">progression</code> and
+            <code class="inline">regression</code> are inverses, so we store one direction
+            and infer the other in queries (or a view exposes both). <code class="inline">substitute</code>
+            and <code class="inline">antagonist</code> are effectively symmetric — the AI
+            pipeline inserts both directions to keep lookups simple.
+          </div>
+
+          <h3>Sketch SQL</h3>
+          <pre><code>create table exercise_relationship (
+  from_slug text not null references exercise(slug) on delete cascade,
+  to_slug   text not null references exercise(slug) on delete cascade,
+  type      relationship_type not null,
+  note      text,
+  primary key (from_slug, to_slug, type),
+  check (from_slug &lt;&gt; to_slug)
+);
+create index on exercise_relationship (to_slug, type);</code></pre>
+        </section>
+
+        <!-- 6 -->
+        <section id="ai">
+          <h2><span class="num">6</span> AI generation &amp; de-duplication</h2>
+          <p class="lead">
+            Since the catalog is <b>strictly AI-generated</b> for now, the pipeline that
+            feeds it is part of the data model. Goal: a pristine, de-duplicated catalog
+            even though an LLM (which loves inventing near-duplicates) is the only author.
+          </p>
+
+          <h3>Two layers of de-duplication</h3>
+          <ol class="steps">
+            <li><b>Exact</b> — the <code class="inline">name_normalized</code> unique index (§4). Floor-level guard.</li>
+            <li><b>Semantic</b> — an <code class="inline">embedding vector</code> (pgvector) on each exercise. Before inserting a candidate, compute its embedding and check cosine similarity against the catalog; if it's within a threshold of an existing row, treat it as a duplicate (or a <code class="inline">variation_of</code> edge) instead of a new exercise. This catches "Seated DB Press" vs. "Dumbbell Shoulder Press (Seated)" that normalized names miss.</li>
+          </ol>
+
+          <h3>Staging table: <code>exercise_candidate</code></h3>
+          <p>
+            AI output lands here first and is <b>promoted</b> to <code class="inline">exercise</code>
+            only after dedup + (optional) review. This keeps junk and dupes out of the
+            live catalog the app reads from.
+          </p>
+          <div class="entity">
+            <div class="entity-head"><span class="tname">exercise_candidate</span><span class="role">staging · AI pipeline</span></div>
+            <div class="entity-body">
+              <table>
+                <thead><tr><th>Column</th><th>Type</th><th>Notes</th></tr></thead>
+                <tbody>
+                  <tr><td><code>id</code><span class="tag pk">PK</span></td><td><code>uuid</code></td><td></td></tr>
+                  <tr><td><code>name</code></td><td><code>text</code></td><td>Proposed name.</td></tr>
+                  <tr><td><code>name_normalized</code></td><td><code>text</code></td><td>Computed, for the exact-match check.</td></tr>
+                  <tr><td><code>proposed</code></td><td><code>jsonb</code></td><td>The full proposed exercise (all the §4 fields) before validation — free-form is fine here.</td></tr>
+                  <tr><td><code>embedding</code></td><td><code>vector(1536)</code></td><td>For the semantic similarity check.</td></tr>
+                  <tr><td><code>ai_model</code> / <code>prompt</code></td><td><code>text</code></td><td>Provenance for audits / re-generation.</td></tr>
+                  <tr><td><code>status</code></td><td><code>text</code></td><td><code>pending</code> | <code>promoted</code> | <code>rejected_duplicate</code> | <code>rejected_invalid</code>.</td></tr>
+                  <tr><td><code>matched_exercise_slug</code></td><td><code>text</code> null</td><td>If flagged as a dupe, which existing row it matched.</td></tr>
+                  <tr><td><code>similarity</code></td><td><code>numeric</code> null</td><td>Cosine similarity to the matched row (audit trail for tuning the threshold).</td></tr>
+                  <tr><td><code>created_at</code></td><td><code>timestamptz</code></td><td></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <h3>The pipeline</h3>
+          <ol class="steps">
+            <li><b>Generate</b> → LLM proposes an exercise; insert into <code class="inline">exercise_candidate</code> (<code class="inline">pending</code>).</li>
+            <li><b>Embed</b> → compute the embedding from name + description.</li>
+            <li><b>De-dup check</b> → exact (normalized) then semantic (cosine ≥ threshold). On match → <code class="inline">rejected_duplicate</code> with <code class="inline">matched_exercise_slug</code> (optionally add a <code class="inline">variation_of</code> edge).</li>
+            <li><b>Validate</b> → enums/required fields sane? If not → <code class="inline">rejected_invalid</code>.</li>
+            <li><b>Promote</b> → insert into <code class="inline">exercise</code> (<code class="inline">source='ai'</code>, <code class="inline">is_verified=false</code>); mark candidate <code class="inline">promoted</code>.</li>
+          </ol>
+          <div class="callout tip">
+            <b>You get a hand-edit UI "for free" later.</b> The same promote/verify
+            machinery is exactly what a future manual-editing UI plugs into — flip
+            <code class="inline">is_verified</code>, edit fields, or author rows with
+            <code class="inline">source='user'</code>. No schema change needed.
+          </div>
+          <div class="callout note">
+            <b>pgvector indexing.</b> Add an HNSW (or IVFFlat) index on
+            <code class="inline">embedding</code> for fast similarity search as the
+            catalog grows. Threshold is configurable and the stored
+            <code class="inline">similarity</code> lets you tune it from real data.
+          </div>
+        </section>
+
+        <!-- 7 -->
+        <section id="prefs">
+          <h2><span class="num">7</span> User exercise preferences (over time)</h2>
+          <p class="lead">
+            Preference and intensity are <b>personal and they drift</b> — an exercise
+            you loved at score 8 might slip to 4 as it gets stale; intensity changes as
+            you get stronger. So they live here, scoped to a user and time-stamped, not
+            on the global exercise.
+          </p>
+
+          <h3>Design: append-only history, latest row wins</h3>
+          <p>
+            Rather than overwriting a single "current" value, every change inserts a
+            <b>new row</b> with an <code class="inline">effective_at</code> timestamp.
+            The current feeling is simply the most recent row for that
+            <code class="inline">(user, exercise)</code> pair. You get a full timeline
+            for free — perfect for the LLM ("preference for incline press has dropped
+            three months running") and for charts.
+          </p>
+          <div class="callout why">
+            <b>Why append-only instead of a row you keep updating?</b> An updated row
+            forgets the past. The whole point of pulling these out of
+            <code class="inline">exercise</code> was to <em>watch them change</em>. An
+            immutable log is the simplest structure that never loses history and is
+            trivial to query. It's also a natural fit for changes made mid-workout
+            (we can stamp which session caused the change).
+          </div>
+
+          <div class="entity">
+            <div class="entity-head"><span class="tname">user_exercise_score</span><span class="role">per-user · history · append-only</span></div>
+            <div class="entity-body">
+              <table>
+                <thead><tr><th>Column</th><th>Type</th><th>Notes</th></tr></thead>
+                <tbody>
+                  <tr><td><code>id</code><span class="tag pk">PK</span></td><td><code>uuid</code></td><td>Surrogate key.</td></tr>
+                  <tr><td><code>user_id</code><span class="tag fk">FK → auth.users</span></td><td><code>uuid</code></td><td>Owner. RLS scopes to <code>auth.uid()</code>.</td></tr>
+                  <tr><td><code>exercise_slug</code><span class="tag fk">FK → exercise</span></td><td><code>text</code></td><td>Which movement.</td></tr>
+                  <tr><td><code>preference_score</code></td><td><code>int</code></td><td>How much the user likes it. <code>CHECK between 1 and 10</code>.</td></tr>
+                  <tr><td><code>intensity_score</code></td><td><code>int</code></td><td>How hard it feels for this user. <code>CHECK between 1 and 10</code>.</td></tr>
+                  <tr><td><code>effective_at</code></td><td><code>timestamptz</code></td><td>When this feeling became true. Defaults to <code>now()</code>. The "latest wins" sort key.</td></tr>
+                  <tr><td><code>source</code></td><td><code>text</code></td><td><code>manual</code> | <code>in_workout</code> | <code>inferred</code> — how the change happened (you noted these get edited during workouts).</td></tr>
+                  <tr><td><code>session_id</code><span class="tag fk">FK → workout_session</span></td><td><code>uuid</code> null</td><td>If the change happened during a live workout, link it. Null for standalone edits.</td></tr>
+                  <tr><td><code>note</code></td><td><code>text</code> null</td><td>Optional free text ("tweaked shoulder, eased off").</td></tr>
+                  <tr><td><code>created_at</code></td><td><code>timestamptz</code></td><td>Insert time (usually == effective_at).</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="callout note">
+            <b>Each row is a full snapshot of both scores.</b> When the user changes
+            only preference, the app writes a new row carrying the <em>current</em>
+            intensity alongside the new preference. That keeps "latest row wins"
+            dead-simple — no need to merge across rows to reconstruct state. (If we
+            later want per-attribute granularity, the event-log pattern in §10 is the
+            template, but it's overkill here.)
+          </div>
+
+          <h3>Reading the current value</h3>
+          <p>A small view exposes "current scores" so the app and LLM tools don't repeat the query:</p>
+          <pre><code>create view current_exercise_score as
+select distinct on (user_id, exercise_slug)
+       user_id, exercise_slug, preference_score, intensity_score, effective_at
+from   user_exercise_score
+order  by user_id, exercise_slug, effective_at desc;</code></pre>
+          <p>
+            This directly powers your planned LLM tools — e.g. "get chest exercises
+            sorted by user preference" becomes a join of
+            <code class="inline">exercise</code> ↔
+            <code class="inline">current_exercise_score</code> filtered by body group,
+            ordered by <code class="inline">preference_score desc</code>.
+          </p>
+
+          <div class="callout tip">
+            <b>Seeding the first value &mdash; decided.</b> A brand-new user has no score
+            rows yet, and per your call we <b>show "unranked"</b>: "no row" simply means
+            no opinion, and the UI presents an unranked state rather than inventing a
+            number. No <code class="inline">baseline_intensity</code> on
+            <code class="inline">exercise</code> (see <a href="#decisions">Resolved
+            decisions</a>).
+          </div>
+        </section>
+
+        <!-- 8 -->
+        <section id="workout">
+          <h2><span class="num">8</span> Workout plan</h2>
+          <p class="lead">
+            A reusable plan — the output of the Workout Builder ("Push Day A"). It's an
+            ordered list of catalog exercises, each with its own planned numbers that
+            start from the exercise's defaults but can be overridden freely.
+          </p>
+
+          <h3>Three tables, increasing granularity</h3>
+          <ul>
+            <li><code class="inline">workout</code> — the plan header (name, owner).</li>
+            <li><code class="inline">workout_exercise</code> — one row per exercise in the plan, in order, with the planned numbers.</li>
+            <li><code class="inline">workout_set</code> — <em>optional</em> per-set overrides, only when sets should differ (pyramids, warmups).</li>
+          </ul>
+
+          <h4>workout — the plan header</h4>
+          <div class="entity">
+            <div class="entity-head"><span class="tname">workout</span><span class="role">plan · per-user</span></div>
+            <div class="entity-body">
+              <table>
+                <thead><tr><th>Column</th><th>Type</th><th>Notes</th></tr></thead>
+                <tbody>
+                  <tr><td><code>id</code><span class="tag pk">PK</span></td><td><code>uuid</code></td><td>Plan id.</td></tr>
+                  <tr><td><code>user_id</code><span class="tag fk">FK → auth.users</span></td><td><code>uuid</code></td><td>Owner.</td></tr>
+                  <tr><td><code>name</code></td><td><code>text</code></td><td>"Push Day A".</td></tr>
+                  <tr><td><code>notes</code></td><td><code>text</code> null</td><td>Optional description / intent.</td></tr>
+                  <tr><td><code>is_archived</code></td><td><code>boolean</code></td><td>Hide retired plans without deleting history.</td></tr>
+                  <tr><td><code>created_at</code> / <code>updated_at</code></td><td><code>timestamptz</code></td><td>Standard.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="callout note">
+            <b>Deliberately lean.</b> Things like "scheduled date" belong to the Tracker
+            and to sessions, not the reusable plan — a plan is a template you run on
+            many dates. We resist stuffing scheduling in here.
+          </div>
+
+          <h4>workout_exercise — an exercise within the plan</h4>
+          <div class="entity">
+            <div class="entity-head"><span class="tname">workout_exercise</span><span class="role">plan · ordered line items</span></div>
+            <div class="entity-body">
+              <table>
+                <thead><tr><th>Column</th><th>Type</th><th>Notes</th></tr></thead>
+                <tbody>
+                  <tr><td><code>id</code><span class="tag pk">PK</span></td><td><code>uuid</code></td><td></td></tr>
+                  <tr><td><code>workout_id</code><span class="tag fk">FK → workout</span></td><td><code>uuid</code></td><td><code>ON DELETE CASCADE</code> — delete a plan, its lines go too.</td></tr>
+                  <tr><td><code>exercise_slug</code><span class="tag fk">FK → exercise</span></td><td><code>text</code></td><td>Which catalog movement.</td></tr>
+                  <tr><td><code>position</code></td><td><code>int</code></td><td>Order within the workout. <code>UNIQUE(workout_id, position)</code>.</td></tr>
+                  <tr><td><code>group_id</code></td><td><code>uuid</code> null</td><td><b>Superset hook.</b> Null = standalone. Same value across rows = a superset/circuit. Lets us add supersets later with zero migration.</td></tr>
+                  <tr><td><code>planned_sets</code><span class="tag snap">SNAP</span></td><td><code>int</code></td><td>Starts as a copy of <code>exercise.default_sets</code>; user can override.</td></tr>
+                  <tr><td><code>planned_reps</code><span class="tag snap">SNAP</span></td><td><code>int</code> null</td><td>From default; override allowed.</td></tr>
+                  <tr><td><code>planned_weight_lbs</code><span class="tag snap">SNAP</span></td><td><code>numeric</code> null</td><td>From default; override allowed.</td></tr>
+                  <tr><td><code>planned_duration_seconds</code><span class="tag snap">SNAP</span></td><td><code>int</code> null</td><td>For timed exercises.</td></tr>
+                  <tr><td><code>planned_set_rest_seconds</code><span class="tag snap">SNAP</span></td><td><code>int</code></td><td>From default; override allowed.</td></tr>
+                  <tr><td><code>planned_end_rest_seconds</code><span class="tag snap">SNAP</span></td><td><code>int</code></td><td>From default; override allowed.</td></tr>
+                  <tr><td><code>tracking_type</code><span class="tag snap">SNAP</span></td><td><code>tracking_type</code></td><td>Copied from the exercise so the plan is self-describing even if the catalog later changes.</td></tr>
+                  <tr><td><code>notes</code></td><td><code>text</code> null</td><td>Per-exercise note in this plan.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="callout why">
+            <b>Why copy the defaults in (snapshot) instead of "override-or-fall-back-to-catalog"?</b>
+            Your spec says a user starts from defaults but can change sets/reps/weight/rest,
+            and "all of this data needs to be captured within the workout." If we stored only
+            sparse overrides and read the rest live from the catalog, editing the catalog would
+            silently mutate every saved plan. Copying the numbers in at build-time makes each
+            plan a stable, fully-specified document. We still keep
+            <code class="inline">exercise_slug</code> for grouping/analytics and to offer
+            "reset to current default."
+          </div>
+
+          <h4>workout_set — optional per-set plan</h4>
+          <p>
+            By default a <code class="inline">workout_exercise</code> implies N identical
+            sets (from <code class="inline">planned_sets</code>). You only need
+            <code class="inline">workout_set</code> rows when sets should
+            <em>differ</em> — pyramids (10/8/6), ramping weight, or a warmup set.
+          </p>
+          <div class="entity">
+            <div class="entity-head"><span class="tname">workout_set</span><span class="role">plan · optional per-set detail</span></div>
+            <div class="entity-body">
+              <table>
+                <thead><tr><th>Column</th><th>Type</th><th>Notes</th></tr></thead>
+                <tbody>
+                  <tr><td><code>id</code><span class="tag pk">PK</span></td><td><code>uuid</code></td><td></td></tr>
+                  <tr><td><code>workout_exercise_id</code><span class="tag fk">FK → workout_exercise</span></td><td><code>uuid</code></td><td><code>ON DELETE CASCADE</code>.</td></tr>
+                  <tr><td><code>set_number</code></td><td><code>int</code></td><td>1-based order. <code>UNIQUE(workout_exercise_id, set_number)</code>.</td></tr>
+                  <tr><td><code>set_role</code><span class="tag enum">ENUM</span></td><td><code>set_role</code></td><td><code>working</code> / <code>warmup</code> / <code>cooldown</code>.</td></tr>
+                  <tr><td><code>target_reps</code></td><td><code>int</code> null</td><td>This set's target reps.</td></tr>
+                  <tr><td><code>target_weight_lbs</code></td><td><code>numeric</code> null</td><td>This set's target load.</td></tr>
+                  <tr><td><code>target_duration_seconds</code></td><td><code>int</code> null</td><td>For timed sets.</td></tr>
+                  <tr><td><code>set_rest_seconds</code></td><td><code>int</code> null</td><td>Override rest after this specific set.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="callout tip">
+            <b>"Expand on demand."</b> If no <code class="inline">workout_set</code> rows
+            exist, the app generates <code class="inline">planned_sets</code> identical
+            sets when a session starts. If they do exist, they win. This keeps the
+            common case (3×10) zero-overhead while supporting pyramids cleanly — and it
+            mirrors the session layer's per-set rows for a clean snapshot in §9.
+          </div>
+        </section>
+
+        <!-- 9 -->
+        <section id="session">
+          <h2><span class="num">9</span> Session (live workout)</h2>
+          <p class="lead">
+            What actually happened on a real date/time — the Live Workout Game. When
+            you press <b>Start Workout</b>, the plan is snapshotted into a session, and
+            from then on the session records reality: actual reps, actual weight, actual
+            rest, what you skipped, and timestamps for pacing.
+          </p>
+
+          <h3>Three tables, mirroring the plan</h3>
+          <ul>
+            <li><code class="inline">workout_session</code> — the performed instance header (status, timers, the <code class="inline">datetime</code> from your sketch).</li>
+            <li><code class="inline">session_exercise</code> — snapshot of each planned exercise, plus live status.</li>
+            <li><code class="inline">session_set</code> — the heart of it: <b>planned vs. actual</b> for every individual set.</li>
+          </ul>
+          <div class="callout why">
+            <b>Why mirror the plan instead of just pointing at it?</b> <b>History
+            integrity.</b> Editing or deleting "Push Day A" tomorrow must not alter what
+            you did today, so the session carries its own snapshot of every number.
+            <b>You always start from a saved plan</b> (your decision — no ad-hoc
+            workouts), so <code class="inline">workout_id</code> is required; the snapshot
+            is what lets you then freely alter the workout <em>during</em> the session
+            without corrupting the original plan.
+          </div>
+
+          <h4>workout_session — the performed instance</h4>
+          <div class="entity">
+            <div class="entity-head"><span class="tname">workout_session</span><span class="role">log · per-user</span></div>
+            <div class="entity-body">
+              <table>
+                <thead><tr><th>Column</th><th>Type</th><th>Notes</th></tr></thead>
+                <tbody>
+                  <tr><td><code>id</code><span class="tag pk">PK</span></td><td><code>uuid</code></td><td>Session id.</td></tr>
+                  <tr><td><code>user_id</code><span class="tag fk">FK → auth.users</span></td><td><code>uuid</code></td><td>Owner.</td></tr>
+                  <tr><td><code>workout_id</code><span class="tag fk">FK → workout</span></td><td><code>uuid</code> <b>not null</b></td><td>Plan it came from. <b>Required</b> (no ad-hoc workouts). <code>ON DELETE RESTRICT</code> — archive a plan rather than delete one with history.</td></tr>
+                  <tr><td><code>workout_name_snapshot</code><span class="tag snap">SNAP</span></td><td><code>text</code> not null</td><td>Plan name at start time, so history reads correctly even if the plan is later renamed.</td></tr>
+                  <tr><td><code>status</code><span class="tag enum">ENUM</span></td><td><code>session_status</code></td><td><code>in_progress</code> / <code>completed</code> / <code>abandoned</code>.</td></tr>
+                  <tr><td><code>started_at</code></td><td><code>timestamptz</code></td><td>Your <code>"datetime": "2026-06-07T14:27:30Z"</code> — when the overall timer started.</td></tr>
+                  <tr><td><code>ended_at</code></td><td><code>timestamptz</code> null</td><td>When ended; null while in progress.</td></tr>
+                  <tr><td><code>total_active_seconds</code></td><td><code>int</code> null</td><td>Working time (excludes pauses). The top-of-screen overall timer, persisted on finish.</td></tr>
+                  <tr><td><code>total_rest_seconds</code></td><td><code>int</code> null</td><td>Aggregate rest. Cheap analytics; also derivable from sets.</td></tr>
+                  <tr><td><code>perceived_effort</code></td><td><code>int</code> null</td><td>Optional post-workout RPE 1&ndash;10.</td></tr>
+                  <tr><td><code>notes</code></td><td><code>text</code> null</td><td>How it went.</td></tr>
+                  <tr><td><code>created_at</code> / <code>updated_at</code></td><td><code>timestamptz</code></td><td>Standard.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <h4>session_exercise — a performed exercise</h4>
+          <div class="entity">
+            <div class="entity-head"><span class="tname">session_exercise</span><span class="role">log · snapshot + live status</span></div>
+            <div class="entity-body">
+              <table>
+                <thead><tr><th>Column</th><th>Type</th><th>Notes</th></tr></thead>
+                <tbody>
+                  <tr><td><code>id</code><span class="tag pk">PK</span></td><td><code>uuid</code></td><td></td></tr>
+                  <tr><td><code>session_id</code><span class="tag fk">FK → workout_session</span></td><td><code>uuid</code></td><td><code>ON DELETE CASCADE</code>.</td></tr>
+                  <tr><td><code>exercise_slug</code><span class="tag fk">FK → exercise</span></td><td><code>text</code></td><td>Kept for grouping/analytics ("all shoulder-press history").</td></tr>
+                  <tr><td><code>source_workout_exercise_id</code></td><td><code>uuid</code> null</td><td>Provenance link to the plan line (no FK enforcement needed; plan may change).</td></tr>
+                  <tr><td><code>position</code></td><td><code>int</code></td><td>Order in this session.</td></tr>
+                  <tr><td><code>group_id</code></td><td><code>uuid</code> null</td><td>Superset grouping, carried from the plan.</td></tr>
+                  <tr><td><code>exercise_name_snapshot</code><span class="tag snap">SNAP</span></td><td><code>text</code></td><td>Name as shown that day.</td></tr>
+                  <tr><td><code>tracking_type</code><span class="tag snap">SNAP</span></td><td><code>tracking_type</code></td><td>Which metrics apply.</td></tr>
+                  <tr><td><code>laterality</code><span class="tag snap">SNAP</span></td><td><code>laterality</code></td><td>Snapshotted so analytics know how to total reps/volume (unilateral counts both sides). The live UI still shows one set per row (§3).</td></tr>
+                  <tr><td><code>planned_set_rest_seconds</code><span class="tag snap">SNAP</span></td><td><code>int</code></td><td>Planned rest between sets at start.</td></tr>
+                  <tr><td><code>planned_end_rest_seconds</code><span class="tag snap">SNAP</span></td><td><code>int</code></td><td>Planned end rest at start.</td></tr>
+                  <tr><td><code>status</code><span class="tag enum">ENUM</span></td><td><code>set_status</code></td><td>Reused: <code>pending</code> / <code>completed</code> / <code>skipped</code> at the exercise level.</td></tr>
+                  <tr><td><code>started_at</code> / <code>ended_at</code></td><td><code>timestamptz</code> null</td><td>When this exercise began/finished.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <h4>session_set — planned vs. actual (the core record)</h4>
+          <p>
+            One row per set, created up-front in <code class="inline">pending</code>
+            state (snapshotting the plan), then filled in as you perform. This is what
+            makes the "+1 of 3" flow, partial workouts, and real analytics possible.
+          </p>
+          <div class="entity">
+            <div class="entity-head"><span class="tname">session_set</span><span class="role">log · one row per set</span></div>
+            <div class="entity-body">
+              <table>
+                <thead><tr><th>Column</th><th>Type</th><th>Notes</th></tr></thead>
+                <tbody>
+                  <tr><td><code>id</code><span class="tag pk">PK</span></td><td><code>uuid</code></td><td></td></tr>
+                  <tr><td><code>session_exercise_id</code><span class="tag fk">FK → session_exercise</span></td><td><code>uuid</code></td><td><code>ON DELETE CASCADE</code>.</td></tr>
+                  <tr><td><code>set_number</code></td><td><code>int</code></td><td>1-based. <code>UNIQUE(session_exercise_id, set_number)</code>.</td></tr>
+                  <tr><td><code>set_role</code><span class="tag enum">ENUM</span></td><td><code>set_role</code></td><td><code>working</code> / <code>warmup</code> / <code>cooldown</code>.</td></tr>
+                  <tr><td><code>status</code><span class="tag enum">ENUM</span></td><td><code>set_status</code></td><td><code>pending</code> → <code>completed</code> (the "+1" tap) or <code>skipped</code>.</td></tr>
+                  <tr><td><code>planned_reps</code><span class="tag snap">SNAP</span></td><td><code>int</code> null</td><td>Target at start of session.</td></tr>
+                  <tr><td><code>planned_weight_lbs</code><span class="tag snap">SNAP</span></td><td><code>numeric</code> null</td><td>Target load.</td></tr>
+                  <tr><td><code>planned_duration_seconds</code><span class="tag snap">SNAP</span></td><td><code>int</code> null</td><td>Target hold (timed).</td></tr>
+                  <tr><td><code>planned_rest_seconds</code><span class="tag snap">SNAP</span></td><td><code>int</code></td><td>Planned rest after this set.</td></tr>
+                  <tr><td><code>actual_reps</code></td><td><code>int</code> null</td><td>What you actually did.</td></tr>
+                  <tr><td><code>actual_weight_lbs</code></td><td><code>numeric</code> null</td><td>Actual load lifted.</td></tr>
+                  <tr><td><code>actual_duration_seconds</code></td><td><code>int</code> null</td><td>Actual hold time.</td></tr>
+                  <tr><td><code>actual_rest_seconds</code></td><td><code>int</code> null</td><td>How long you actually rested (measured by the rest timer).</td></tr>
+                  <tr><td><code>actual_rpe</code></td><td><code>int</code> null</td><td>Per-set perceived effort 1&ndash;10 (your Q7). Complements the session-level <code>perceived_effort</code>.</td></tr>
+                  <tr><td><code>started_at</code></td><td><code>timestamptz</code> null</td><td>When the set timer started.</td></tr>
+                  <tr><td><code>completed_at</code></td><td><code>timestamptz</code> null</td><td>When you tapped "+1". (Pacing analytics derive from these.)</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="callout tip">
+            <b>Planned vs. actual is the analytics goldmine.</b> Because every set
+            stores both, you can ask: did you hit your targets? are you progressively
+            overloading? how does actual rest compare to planned (are you rushing)?
+            And it's exactly the diff Bob compares to make suggestions — though the
+            <em>sequence</em> of changes lives in the event log (§10).
+          </div>
+          <div class="callout note">
+            <b>Unilateral volume (§3) — one row per set.</b> A single-arm exercise still
+            records <b>one <code class="inline">session_set</code> row per set</b>, and the
+            live UI shows one set (never a separate "left" and "right"). The logged
+            reps/weight describe what you did <em>per side</em> (you perform the same on
+            each arm), and analytics multiply by 2 when
+            <code class="inline">laterality = unilateral</code> to get true working
+            volume. <code class="inline">bilateral</code> and
+            <code class="inline">alternating</code> count their reps as-is.
+          </div>
+          <div class="callout tip">
+            <b>If you ever need to log asymmetric sides</b> (e.g. 10 reps left, 8 right
+            after an injury), we add optional nullable <code class="inline">actual_reps_right</code>
+            / <code class="inline">actual_weight_lbs_right</code> override columns later —
+            the main columns stay the "both sides" value, so it's a non-breaking add and
+            the UI stays single-set by default.
+          </div>
+
+          <h3>Lifecycle of a session</h3>
+          <ol class="steps">
+            <li><b>Start Workout</b> → insert <code class="inline">workout_session</code> (<code class="inline">in_progress</code>, <code class="inline">workout_id</code> required), then snapshot each plan exercise into <code class="inline">session_exercise</code> and expand its sets into <code class="inline">session_set</code> rows (all <code class="inline">pending</code>). Planned numbers prefer your <b>last-performed</b> values where available (§11) and fall back to the plan/catalog defaults.</li>
+            <li><b>During</b> → as you tap "+1", flip a set to <code class="inline">completed</code> and write the actuals + <code class="inline">completed_at</code>; the rest timer fills <code class="inline">actual_rest_seconds</code>. Any change (more weight, extra rest, added set) writes the actuals here <em>and</em> appends a <code class="inline">session_event</code> (§10).</li>
+            <li><b>Finish</b> → set <code class="inline">status = completed</code>, stamp <code class="inline">ended_at</code> and the timer totals. (Leaving early without finishing → <code class="inline">abandoned</code>.)</li>
+          </ol>
+        </section>
+
+        <!-- 10 -->
+        <section id="events">
+          <h2><span class="num">10</span> Session event log</h2>
+          <p class="lead">
+            A lightweight, append-only timeline of everything you change mid-workout.
+            This is the raw material for Bob's between-rounds suggestions — without it,
+            he can see the final numbers but not the <em>story</em> of how you got there.
+          </p>
+
+          <div class="callout why">
+            <b>Why a separate log when sets already store planned vs. actual?</b>
+            Planned-vs-actual is a single before/after. Your suggestion examples need
+            <em>sequence and repetition</em>: "you added rest <b>two sets in a row</b>",
+            "you bumped weight by 10, then 20 — want 30 and 40 next?". That's a series of
+            timestamped events, which a set row can't express. The log captures the
+            narrative; the set row captures the outcome.
+          </div>
+
+          <h3>Lightweight now, extensible later</h3>
+          <p>
+            "Lightweight" means: <b>one table</b>, a typed <code class="inline">event_type</code>,
+            and a flexible <code class="inline">payload jsonb</code> for the specifics.
+            We don't model a bespoke column set per event type yet. When patterns
+            stabilize, we promote hot fields out of JSON into real columns — a
+            non-breaking change.
+          </p>
+
+          <div class="entity">
+            <div class="entity-head"><span class="tname">session_event</span><span class="role">log · append-only · per-user</span></div>
+            <div class="entity-body">
+              <table>
+                <thead><tr><th>Column</th><th>Type</th><th>Notes</th></tr></thead>
+                <tbody>
+                  <tr><td><code>id</code><span class="tag pk">PK</span></td><td><code>uuid</code></td><td></td></tr>
+                  <tr><td><code>session_id</code><span class="tag fk">FK → workout_session</span></td><td><code>uuid</code></td><td><code>ON DELETE CASCADE</code>.</td></tr>
+                  <tr><td><code>user_id</code><span class="tag fk">FK → auth.users</span></td><td><code>uuid</code></td><td>Denormalized for simple RLS.</td></tr>
+                  <tr><td><code>session_exercise_id</code></td><td><code>uuid</code> null</td><td>Context: which exercise (if applicable).</td></tr>
+                  <tr><td><code>session_set_id</code></td><td><code>uuid</code> null</td><td>Context: which set (if applicable).</td></tr>
+                  <tr><td><code>event_type</code><span class="tag enum">ENUM</span></td><td><code>event_type</code></td><td><code>weight_changed</code>, <code>rest_changed</code>, <code>set_added</code>, …</td></tr>
+                  <tr><td><code>occurred_at</code></td><td><code>timestamptz</code></td><td>When it happened (ordering key). Default <code>now()</code>.</td></tr>
+                  <tr><td><code>payload</code></td><td><code>jsonb</code></td><td>The flexible bit: old/new values, deltas, units. Shape depends on <code>event_type</code>.</td></tr>
+                  <tr><td><code>created_at</code></td><td><code>timestamptz</code></td><td>Insert time.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <h3>Example events (mapping your two suggestions)</h3>
+          <p><b>Suggestion 1</b> — "you added rest after your last sets, apply to all?" comes from repeated <code class="inline">rest_changed</code> events:</p>
+          <pre><code>[
+  { "event_type": "rest_changed", "occurred_at": "…T14:32:10Z",
+    "session_set_id": "set-2",
+    "payload": { "field": "set_rest_seconds", "from": 45, "to": 60 } },
+  { "event_type": "rest_changed", "occurred_at": "…T14:36:40Z",
+    "session_set_id": "set-3",
+    "payload": { "field": "set_rest_seconds", "from": 45, "to": 60 } }
+]</code></pre>
+          <p><b>Suggestion 2</b> — "you went +10 then +20, apply +30/+40 to the last sets?" comes from a sequence of <code class="inline">weight_changed</code> events:</p>
+          <pre><code>[
+  { "event_type": "weight_changed", "occurred_at": "…T14:30:00Z",
+    "session_set_id": "set-1",
+    "payload": { "from_lbs": 50, "to_lbs": 60, "delta_lbs": 10 } },
+  { "event_type": "weight_changed", "occurred_at": "…T14:34:00Z",
+    "session_set_id": "set-2",
+    "payload": { "from_lbs": 60, "to_lbs": 80, "delta_lbs": 20 } }
+]</code></pre>
+
+          <div class="callout note">
+            <b>How Bob uses it.</b> Between rounds (during rest), the app queries the
+            session's events since the workout started, looks for patterns (monotonic
+            weight increases, repeated rest bumps), and proposes an action. If the user
+            accepts, the app writes the new actuals to the upcoming
+            <code class="inline">session_set</code> rows and logs the change as more
+            events — the loop closes on itself.
+          </div>
+          <div class="callout tip">
+            <b>It also doubles as an audit trail and undo source.</b> Because it's an
+            ordered, immutable record of intent, you can reconstruct exactly what the
+            user did and when — useful for debugging, undo, and future ML on workout
+            behavior.
+          </div>
+        </section>
+
+        <!-- 11 -->
+        <section id="smart-defaults">
+          <h2><span class="num">11</span> Smart defaults &amp; derived views</h2>
+          <p class="lead">
+            A small but high-impact idea (§5 of our discussion): the app should feel like
+            it <b>remembers</b> you. Instead of always starting a session from the
+            catalog's static defaults, seed planned numbers from <b>what you actually
+            lifted last time</b>.
+          </p>
+
+          <div class="callout why">
+            <b>Why a view, not new columns?</b> "Last performed" is fully derivable from
+            data we already store in <code class="inline">session_set</code>. Computing it
+            on the fly (a view) means there's nothing extra to write, nothing to keep in
+            sync, and no risk of drift. It reads the log we already trust.
+          </div>
+
+          <h3>View: <code>user_exercise_last_performed</code></h3>
+          <p>The most recent completed set per <code class="inline">(user, exercise)</code> — the basis for smart seeding and quick "last time you did…" UI.</p>
+          <pre><code>create view user_exercise_last_performed as
+select distinct on (ws.user_id, se.exercise_slug)
+       ws.user_id,
+       se.exercise_slug,
+       ss.actual_weight_lbs,
+       ss.actual_reps,
+       ss.actual_duration_seconds,
+       ws.started_at as performed_at
+from   session_set ss
+join   session_exercise se on se.id = ss.session_exercise_id
+join   workout_session  ws on ws.id = se.session_id
+where  ss.status = 'completed'
+order  by ws.user_id, se.exercise_slug, ws.started_at desc;</code></pre>
+
+          <h3>Seeding precedence at "Start Workout"</h3>
+          <p>When expanding a plan into a session, each planned number is filled by the first available of:</p>
+          <ol class="steps">
+            <li><b>Last-performed</b> value for that user + exercise (this view), if any — so progressive overload carries forward automatically.</li>
+            <li>The plan's <code class="inline">workout_set</code> / <code class="inline">workout_exercise</code> snapshot.</li>
+            <li>The catalog <code class="inline">exercise</code> default (the ultimate fallback for a brand-new exercise).</li>
+          </ol>
+          <div class="callout note">
+            <b>Composability.</b> This view also powers analytics and is a natural input
+            to Bob ("last time you hit 8×60 lb — try 8×65?"). If performance ever
+            demands it, the view can be promoted to a materialized view or a maintained
+            <code class="inline">user_exercise_stats</code> table with zero change to the
+            tables above.
+          </div>
+        </section>
+
+        <!-- 12 -->
+        <section id="relationships">
+          <h2><span class="num">12</span> Relationships &amp; the big picture</h2>
+          <p class="lead">
+            The full table inventory and how everything connects. Read the arrows as
+            "points to / belongs to."
+          </p>
+
+          <h3>Table inventory</h3>
+          <table>
+            <thead><tr><th>Table</th><th>Layer</th><th>Grain (one row =)</th></tr></thead>
+            <tbody>
+              <tr><td><code>body_group</code></td><td>lookup</td><td>a top-level muscle region</td></tr>
+              <tr><td><code>body_sub_group</code></td><td>lookup</td><td>a sub-region within a group</td></tr>
+              <tr><td><code>equipment</code></td><td>lookup</td><td>a piece of equipment</td></tr>
+              <tr><td><code>exercise</code></td><td>catalog</td><td>a movement + its defaults &amp; classification</td></tr>
+              <tr><td><code>exercise_relationship</code></td><td>catalog</td><td>a directed edge between two exercises</td></tr>
+              <tr><td><code>exercise_candidate</code></td><td>staging</td><td>an AI-proposed exercise awaiting dedup/promotion</td></tr>
+              <tr><td><code>user_exercise_score</code></td><td>per-user history</td><td>a preference/intensity reading at a point in time</td></tr>
+              <tr><td><code>workout</code></td><td>plan</td><td>a reusable workout plan</td></tr>
+              <tr><td><code>workout_exercise</code></td><td>plan</td><td>an exercise line in a plan</td></tr>
+              <tr><td><code>workout_set</code></td><td>plan (optional)</td><td>a planned individual set</td></tr>
+              <tr><td><code>workout_session</code></td><td>log</td><td>one performed workout</td></tr>
+              <tr><td><code>session_exercise</code></td><td>log</td><td>a performed exercise in a session</td></tr>
+              <tr><td><code>session_set</code></td><td>log</td><td>a performed set (planned vs actual)</td></tr>
+              <tr><td><code>session_event</code></td><td>log</td><td>one mid-workout change</td></tr>
+              <tr><td><code>user_exercise_last_performed</code></td><td>view (derived)</td><td>your latest completed set per exercise (smart defaults)</td></tr>
+            </tbody>
+          </table>
+
+          <h3>Relationship map</h3>
+          <pre><code>auth.users (Supabase)
+  ├─&lt; user_exercise_score      &gt;── exercise
+  ├─&lt; workout
+  │      └─&lt; workout_exercise   &gt;── exercise
+  │             └─&lt; workout_set
+  └─&lt; workout_session          ──&gt; workout            (REQUIRED — no ad-hoc)
+         ├─&lt; session_exercise   &gt;── exercise
+         │      └─&lt; session_set
+         └─&lt; session_event      ··&gt; session_exercise / session_set (context)
+
+exercise ─&lt; exercise_relationship &gt;─ exercise          (self-referencing graph)
+exercise_candidate ··&gt; exercise                        (promoted into)
+
+body_group
+  └─&lt; body_sub_group
+exercise ──&gt; body_group, body_sub_group, equipment
+
+Legend:  ─&lt; one-to-many     ──&gt; many-to-one (FK)     &gt;── reference     ··&gt; soft/context link</code></pre>
+
+          <h3>Cardinalities at a glance</h3>
+          <ul>
+            <li>A <b>user</b> has many plans, many sessions, and many score readings.</li>
+            <li>A <b>plan</b> has many <code class="inline">workout_exercise</code>s; each may have many optional <code class="inline">workout_set</code>s.</li>
+            <li>A <b>session</b> has many <code class="inline">session_exercise</code>s (each with many <code class="inline">session_set</code>s) and many <code class="inline">session_event</code>s.</li>
+            <li>An <b>exercise</b> is referenced by plans, sessions, and score readings, but owns none of them — it's the shared vocabulary.</li>
+          </ul>
+
+          <div class="callout tip">
+            <b>Snapshot boundaries (where the arrows intentionally "go cold").</b>
+            <code class="inline">workout_exercise</code> → <code class="inline">exercise</code>
+            and <code class="inline">session_*</code> → <code class="inline">workout_*</code>
+            keep the reference for analytics, but the numbers are copied, not read live.
+            That's the deliberate firewall that protects history.
+          </div>
+        </section>
+
+        <!-- 13 -->
+        <section id="future">
+          <h2><span class="num">13</span> Future extensibility</h2>
+          <p class="lead">
+            Things we deliberately left out of V1, each designed to slot in <b>without
+            a destructive migration</b> thanks to the choices above.
+          </p>
+          <table>
+            <thead><tr><th>Future feature</th><th>How it slots in</th></tr></thead>
+            <tbody>
+              <tr><td><b>Supersets / circuits</b></td><td>Already hooked: populate <code>group_id</code> on <code>workout_exercise</code> / <code>session_exercise</code>. Maybe add a small <code>workout_group</code> table for group-level rest.</td></tr>
+              <tr><td><b>Explicit exercise aliases</b> ("DB OHP" → dumbbell shoulder press)</td><td>Mostly covered now by semantic de-dup (§6) + <code>variation_of</code> edges (§5). If you want hard string aliases, add <code>exercise_alias(alias_normalized PK, exercise_slug FK)</code>.</td></tr>
+              <tr><td><b>Multiple muscles worked</b> (primary/secondary)</td><td>New join table <code>exercise_muscle(exercise_slug, body_sub_group_slug, role)</code>. The single <code>body_sub_group_slug</code> stays as the "primary".</td></tr>
+              <tr><td><b>Computed training metrics</b> (vol load, est. 1RM, bodyweight factor)</td><td><i>Discussion #6 (deferred).</i> Mostly derivable as views over <code>session_set</code>; a <code>bodyweight_load_factor</code> column on <code>exercise</code> + a bodyweight log enable effective-load math.</td></tr>
+              <tr><td><b>Faceted tags</b></td><td><i>Discussion #8 (deferred).</i> <code>tag</code> + <code>exercise_tag</code> join ("home_friendly", "no_equipment", "posterior_chain") for retrieval &amp; LLM context.</td></tr>
+              <tr><td><b>Tempo &amp; ROM</b></td><td><i>Discussion #9 (deferred).</i> <code>default_tempo</code> on <code>exercise</code> + per-set tempo columns.</td></tr>
+              <tr><td><b>Gamification / scoring layer</b> (Warhammer feel)</td><td><i>Discussion #10 (separate layer).</i> XP/score per set/volume, difficulty tiers, streaks — reads from sessions; consumes <code>movement_pattern</code>/<code>mechanic</code> + volume metrics.</td></tr>
+              <tr><td><b>Bodyweight tracking</b></td><td>New <code>user_bodyweight(user_id, weight_lbs, measured_at)</code> — same append-only pattern as scores; feeds bodyweight-exercise load &amp; analytics.</td></tr>
+              <tr><td><b>Personal records / progression</b></td><td>Derivable from <code>session_set</code> via a view or materialized <code>exercise_pr</code> table; no schema change to capture it.</td></tr>
+              <tr><td><b>Programs / mesocycles</b> (multi-week plans)</td><td>New <code>program</code> + <code>program_workout</code> tables that reference existing <code>workout</code>s. Sessions still link to workouts.</td></tr>
+              <tr><td><b>Cardio &amp; new metrics</b></td><td>The <code>tracking_type</code> enum + nullable metric columns absorb <code>distance_time</code> today; truly new metrics get new nullable columns.</td></tr>
+              <tr><td><b>Richer event analytics</b></td><td>Promote hot fields out of <code>session_event.payload</code> into typed columns when patterns stabilize.</td></tr>
+              <tr><td><b>Sharing plans between users</b></td><td><code>user_id</code> already present everywhere; add visibility/ownership columns or a copy-on-import flow.</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+        <!-- 14 -->
+        <section id="decisions">
+          <h2><span class="num">14</span> Resolved decisions</h2>
+          <p class="lead">
+            Your answers to the original open questions, now baked into the model above.
+          </p>
+          <table>
+            <thead><tr><th>#</th><th>Question</th><th>Decision &amp; where it lives</th></tr></thead>
+            <tbody>
+              <tr><td>1</td><td>Seeding the first preference/intensity</td><td><b>Show "unranked"</b> — no row = neutral/unranked in the UI; no <code>baseline_intensity</code> on <code>exercise</code> (§7).</td></tr>
+              <tr><td>2</td><td>Score scale</td><td><b>Integer 1&ndash;10</b> (<code>CHECK between 1 and 10</code>) for preference, intensity, and RPE (§7, §9).</td></tr>
+              <tr><td>3</td><td>Ad-hoc workouts</td><td><b>Not allowed</b> — must save a plan first; <code>workout_session.workout_id</code> is <b>NOT NULL</b>. Mid-workout alteration still fully supported via the session snapshot + event log (§9).</td></tr>
+              <tr><td>4</td><td>Per-set planning</td><td><b>Kept</b> — <code>workout_set</code> stays (optional), mainly to capture per-set changes made live (§8).</td></tr>
+              <tr><td>5</td><td>Log <code>set_completed</code> events?</td><td><b>Yes</b> — logged for pacing analytics; the event log records completions as well as changes (§10).</td></tr>
+              <tr><td>6</td><td>Images per exercise</td><td><b>One</b> — single <code>image_url</code>; multi-media deferred (§4, §13).</td></tr>
+              <tr><td>7</td><td>RPE granularity</td><td><b>Per-set + per-session</b> — added <code>session_set.actual_rpe</code> alongside <code>workout_session.perceived_effort</code> (§9).</td></tr>
+              <tr><td>8</td><td>Catalog editing</td><td><b>AI-generated only</b> for now; hand-edit UI deferred, but the promote/verify pipeline (§6) makes adding it trivial later.</td></tr>
+            </tbody>
+          </table>
+
+          <h3>New design elements folded in (from our re-evaluation)</h3>
+          <ul>
+            <li><b>#1 Exercise relationship graph</b> — <code class="inline">exercise_relationship</code> (§5).</li>
+            <li><b>#2 Movement classification</b> — <code class="inline">movement_pattern</code>, <code class="inline">mechanic</code>, <code class="inline">force_type</code>, <code class="inline">laterality</code> on <code class="inline">exercise</code> (§3, §4).</li>
+            <li><b>#3 Laterality &amp; volume semantics</b> — single <code class="inline">session_set</code> row per set; <code class="inline">laterality</code> drives volume counting (×2 for unilateral), UI stays one-set-per-row (§9).</li>
+            <li><b>#4 Semantic de-dup + AI staging</b> — <code class="inline">embedding</code> + <code class="inline">exercise_candidate</code> (§6).</li>
+            <li><b>#5 Smart "last-performed" defaults</b> — <code class="inline">user_exercise_last_performed</code> view (§11).</li>
+            <li><b>#7 Realistic weight increment</b> — <code class="inline">weight_increment_lbs</code> on <code class="inline">exercise</code> (§4).</li>
+          </ul>
+          <p class="muted">Deferred for later: #6 computed metrics, #8 faceted tags, #9 tempo/ROM, #10 gamification layer (see §13).</p>
+
+          <div class="callout note">
+            <b>Next step.</b> The design is settled. When you're ready, I'll turn this into
+            Supabase SQL migrations (tables, enums, constraints, indexes, pgvector, RLS
+            policies) plus a seed file for the lookup tables and a starter set of
+            AI-generated exercises.
+          </div>
+        </section>
+
+        <footer>
+          NoRespawn — data model design draft. This is a living document; react to
+          anything and we'll iterate before writing migrations.
+        </footer>
+      </main>
+    </div>
+
+    <script>
+      // Copy buttons for every <pre>
+      document.querySelectorAll("pre").forEach((pre) => {
+        const btn = document.createElement("button");
+        btn.className = "copy-btn";
+        btn.textContent = "Copy";
+        btn.addEventListener("click", () => {
+          const code = pre.querySelector("code");
+          navigator.clipboard.writeText(code ? code.innerText : pre.innerText);
+          btn.textContent = "Copied!";
+          setTimeout(() => (btn.textContent = "Copy"), 1400);
+        });
+        pre.appendChild(btn);
+      });
+    </script>
+  </body>
+</html>
