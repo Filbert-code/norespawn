@@ -141,7 +141,7 @@ export function PlansScreen() {
         </div>
       )}
 
-      <div className="relative flex-1 space-y-3 overflow-y-auto px-5 py-4">
+      <div className="relative flex-1 space-y-3 overflow-y-auto px-5 pb-[calc(env(safe-area-inset-bottom,0px)+6rem)] pt-4">
         {isLoading && <ScreenSpinner />}
         {error && <ScreenError message={(error as Error).message} />}
         {empty && (

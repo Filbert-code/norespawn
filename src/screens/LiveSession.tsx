@@ -25,7 +25,8 @@ import {
 import { cn } from '@/lib/utils'
 import { ScreenError, ScreenSpinner } from '@/screens/_shared/screen'
 import { PlanSheet, PlanSheetRow } from '@/components/PlanSheet'
-import { useSession } from '@/lib/queries/sessions'
+import { ConfirmDialog } from '@/mockups/components/ConfirmDialog'
+import { useAbandonSession, useSession } from '@/lib/queries/sessions'
 import { useExercises, exercisesByGroup, subGroupSlugsForGroup } from '@/lib/queries/exercises'
 import { useBodyGroups } from '@/lib/queries/exercises'
 import {
@@ -236,6 +237,8 @@ export function LiveSessionScreen() {
   const [showQueue, setShowQueue] = useState(false)
   const [picker, setPicker] = useState<PickerMode | null>(null)
   const [suggestion, setSuggestion] = useState<string | null>(null)
+  const [confirmAbandon, setConfirmAbandon] = useState(false)
+  const abandonSession = useAbandonSession()
 
   // ---- core actions -------------------------------------------------------
   const advanceAfterSet = useCallback(
@@ -801,12 +804,23 @@ export function LiveSessionScreen() {
           subtitle="Completed & current locked · edit upcoming"
           onClose={() => setShowQueue(false)}
           footer={
-            <button
-              onClick={() => setPicker({ kind: 'add' })}
-              className="clip-bevel-sm mt-3 flex w-full items-center justify-center gap-2 border border-dashed border-nr-bronze/40 py-2.5 font-heading text-xs font-semibold uppercase tracking-widest text-nr-bronze hover:border-nr-crimson hover:text-nr-crimson"
-            >
-              <Plus className="size-4" /> Add Exercise
-            </button>
+            <div className="mt-3 space-y-2">
+              <button
+                onClick={() => setPicker({ kind: 'add' })}
+                className="clip-bevel-sm flex w-full items-center justify-center gap-2 border border-dashed border-nr-bronze/40 py-2.5 font-heading text-xs font-semibold uppercase tracking-widest text-nr-bronze hover:border-nr-crimson hover:text-nr-crimson"
+              >
+                <Plus className="size-4" /> Add Exercise
+              </button>
+              <button
+                onClick={() => {
+                  setShowQueue(false)
+                  setConfirmAbandon(true)
+                }}
+                className="clip-bevel-sm flex w-full items-center justify-center gap-2 border border-nr-crimson/40 bg-nr-crimson/5 py-2.5 font-heading text-xs font-semibold uppercase tracking-widest text-nr-ember hover:bg-nr-crimson/15"
+              >
+                <X className="size-4" strokeWidth={3} /> Abandon Workout
+              </button>
+            </div>
           }
         >
           <ul className="space-y-2">
@@ -882,6 +896,27 @@ export function LiveSessionScreen() {
           onClose={() => setPicker(null)}
         />
       )}
+
+      <ConfirmDialog
+        open={confirmAbandon}
+        title="Abandon workout?"
+        message="All progress in this session will be discarded. This cannot be undone."
+        confirmLabel={abandonSession.isPending ? 'Abandoning…' : 'Abandon'}
+        cancelLabel="Keep Going"
+        danger
+        onConfirm={async () => {
+          if (!sessionId) return
+          try {
+            await abandonSession.mutateAsync(sessionId)
+            clearLiveState(sessionId)
+            setActiveSessionId(null)
+            navigate('/', { replace: true })
+          } catch {
+            setConfirmAbandon(false)
+          }
+        }}
+        onCancel={() => setConfirmAbandon(false)}
+      />
     </div>
   )
 }

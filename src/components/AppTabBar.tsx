@@ -10,12 +10,17 @@ const TABS = [
   { to: '/settings', label: 'Settings', icon: SettingsIcon },
 ]
 
-export function AppTabBar() {
+export function AppTabBar({ className }: { className?: string }) {
   const navigate = useNavigate()
   const { pathname } = useLocation()
 
   return (
-    <nav className="relative z-20 flex shrink-0 border-t border-nr-bronze/25 bg-nr-black/95 px-2 pb-[max(env(safe-area-inset-bottom),1rem)] pt-2 backdrop-blur">
+    <nav
+      className={cn(
+        'flex border-t border-nr-bronze/25 bg-nr-black/95 px-2 pb-[max(env(safe-area-inset-bottom),1rem)] pt-2 backdrop-blur',
+        className,
+      )}
+    >
       {TABS.map((t) => {
         const active = pathname === t.to
         return (
@@ -44,3 +49,10 @@ export function AppTabBar() {
     </nav>
   )
 }
+
+// Approximate tab bar height + safe area; screens use this to keep their
+// trailing content scrollable above the floating tab bar.
+//   1rem (pb baseline) + 0.5rem (pt) + 5-line button (icon + label + accent)
+// Combined with safe-area-inset-bottom this lands ~80–96px on most devices.
+// Tailwind classes — keep these in sync if the bar's vertical rhythm changes.
+export const TAB_BAR_PB = 'pb-[calc(env(safe-area-inset-bottom,0px)+5.25rem)]'

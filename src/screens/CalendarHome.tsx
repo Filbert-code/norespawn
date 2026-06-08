@@ -360,7 +360,7 @@ export function CalendarHomeScreen() {
         })}
       </div>
 
-      <div className="flex-1 overflow-y-auto px-4 pb-6 pt-3">
+      <div className="flex-1 overflow-y-auto px-4 pb-[calc(env(safe-area-inset-bottom,0px)+6rem)] pt-3">
         <div className="mb-2 flex items-center gap-2">
           <h3 className="font-heading text-lg font-bold uppercase tracking-widest text-nr-bone">
             {isToday ? 'Today' : selectedLabel}

@@ -30,7 +30,7 @@ export function SettingsScreen() {
         </h1>
       </header>
 
-      <div className="relative flex-1 space-y-7 overflow-y-auto px-5 py-6 pb-24">
+      <div className="relative flex-1 space-y-7 overflow-y-auto px-5 py-6 pb-[calc(env(safe-area-inset-bottom,0px)+6rem)]">
         <Section title="Profile">
           <div className="flex items-center gap-3 py-3.5">
             <span className="flex size-12 shrink-0 items-center justify-center rounded-full border border-nr-bronze/40 bg-nr-crimson/15 font-heading text-lg font-bold uppercase text-nr-ember">

@@ -12,7 +12,12 @@ export function ScreenSurface({
   children: React.ReactNode
 }) {
   return (
-    <div className={cn('relative flex h-full flex-col bg-nr-black text-nr-bone', className)}>
+    <div
+      className={cn(
+        'relative flex min-h-0 flex-1 flex-col bg-nr-black text-nr-bone',
+        className,
+      )}
+    >
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(120%_70%_at_50%_-10%,rgba(122,30,30,0.18),transparent_60%)]" />
       <div className="pointer-events-none absolute inset-0 shadow-[inset_0_0_90px_20px_rgba(0,0,0,0.75)]" />
       {children}
