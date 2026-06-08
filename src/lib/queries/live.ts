@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase, unwrap } from '@/lib/db'
 import { qk } from '@/lib/queries/keys'
 import { useAuth } from '@/lib/auth'
+import type { SessionDetail } from '@/lib/queries/sessions'
 import type {
   SessionEvent,
   SessionEventInsert,
@@ -87,7 +88,10 @@ export function useAppendEvent() {
   })
 }
 
-/** Append a new set row to an existing session_exercise (mid-session "Add Set"). */
+/** Append a new set row to an existing session_exercise (mid-session "Add Set").
+ * Optimistically extends the cached SessionDetail so the ring grows the moment
+ * the user taps; the real row replaces the placeholder when the insert lands.
+ */
 export function useAddSessionSet() {
   const qc = useQueryClient()
   const { user } = useAuth()
@@ -125,8 +129,55 @@ export function useAddSessionSet() {
       )
       return inserted
     },
-    onSuccess: (_, v) => {
-      qc.invalidateQueries({ queryKey: qk.sessions.detail(v.sessionId) })
+    onMutate: async (input) => {
+      const key = qk.sessions.detail(input.sessionId)
+      await qc.cancelQueries({ queryKey: key })
+      const prev = qc.getQueryData<SessionDetail>(key)
+      const tempId = `temp-${Date.now()}`
+      if (prev) {
+        const optimistic: SessionSet = {
+          id: tempId,
+          session_exercise_id: input.sessionExerciseId,
+          set_number: input.setNumber,
+          set_role: 'working',
+          status: 'pending',
+          planned_reps: input.plannedReps ?? null,
+          planned_weight_lbs: input.plannedWeightLbs ?? null,
+          planned_duration_seconds: null,
+          planned_rest_seconds: input.plannedRestSeconds,
+          actual_reps: null,
+          actual_weight_lbs: null,
+          actual_duration_seconds: null,
+          actual_rest_seconds: null,
+          actual_rpe: null,
+          started_at: null,
+          completed_at: null,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        }
+        qc.setQueryData<SessionDetail>(key, {
+          ...prev,
+          sets: [...prev.sets, optimistic],
+        })
+      }
+      return { prev, tempId }
+    },
+    onError: (_err, input, ctx) => {
+      if (ctx?.prev) qc.setQueryData(qk.sessions.detail(input.sessionId), ctx.prev)
+    },
+    onSuccess: (real, input, ctx) => {
+      // Swap the placeholder for the real row so subsequent updates target it.
+      const key = qk.sessions.detail(input.sessionId)
+      const cur = qc.getQueryData<SessionDetail>(key)
+      if (cur && ctx?.tempId) {
+        qc.setQueryData<SessionDetail>(key, {
+          ...cur,
+          sets: cur.sets.map((s) => (s.id === ctx.tempId ? real : s)),
+        })
+      }
+    },
+    onSettled: (_data, _err, input) => {
+      qc.invalidateQueries({ queryKey: qk.sessions.detail(input.sessionId) })
     },
   })
 }

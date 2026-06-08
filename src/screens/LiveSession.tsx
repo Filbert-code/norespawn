@@ -158,12 +158,18 @@ export function LiveSessionScreen() {
   const nextView = state ? exerciseViews[state.exIndex + 1] : null
 
   // ---- master tick (drives session/work/rest timers) ----------------------
+  // Depend ONLY on the gates that should pause/resume the interval (phase +
+  // running). Including the whole `state` object would tear the interval down
+  // on every reps/weight/rest tap, which made the displayed timer freeze for
+  // up to a second before snapping back.
   const [tickNow, setTickNow] = useState(() => Date.now())
+  const phase = state?.phase
+  const running = state?.running
   useEffect(() => {
-    if (!state || state.phase === 'done' || !state.running) return
+    if (!phase || phase === 'done' || !running) return
     const id = window.setInterval(() => setTickNow(Date.now()), 1000)
     return () => clearInterval(id)
-  }, [state])
+  }, [phase, running])
 
   const sessionSeconds = useMemo(() => {
     if (!state) return 0
