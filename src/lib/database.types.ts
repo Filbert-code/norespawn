@@ -836,6 +836,35 @@ export type Database = {
           },
         ]
       }
+      personal_records: {
+        Row: {
+          best_set_volume_lbs: number | null
+          best_weight_at: string | null
+          best_weight_lbs: number | null
+          best_weight_reps: number | null
+          est_one_rm_lbs: number | null
+          exercise_slug: string | null
+          one_rm_at: string | null
+          one_rm_reps: number | null
+          one_rm_weight_lbs: number | null
+          rep_pr_at: string | null
+          rep_pr_reps: number | null
+          rep_pr_weight_lbs: number | null
+          set_volume_at: string | null
+          set_volume_reps: number | null
+          set_volume_weight_lbs: number | null
+          user_id: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "session_exercise_exercise_slug_fkey"
+            columns: ["exercise_slug"]
+            isOneToOne: false
+            referencedRelation: "exercise"
+            referencedColumns: ["slug"]
+          },
+        ]
+      }
       user_exercise_last_performed: {
         Row: {
           actual_duration_seconds: number | null
@@ -857,7 +886,61 @@ export type Database = {
       }
     }
     Functions: {
-      [_ in never]: never
+      finalize_session: {
+        Args: {
+          p_exercise_scores?: Json
+          p_notes?: string
+          p_perceived_effort?: number
+          p_session_id: string
+          p_total_active_seconds?: number
+          p_total_rest_seconds?: number
+        }
+        Returns: {
+          created_at: string
+          ended_at: string | null
+          id: string
+          notes: string | null
+          perceived_effort: number | null
+          started_at: string
+          status: Database["public"]["Enums"]["session_status"]
+          total_active_seconds: number | null
+          total_rest_seconds: number | null
+          updated_at: string
+          user_id: string
+          workout_id: string
+          workout_name_snapshot: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "workout_session"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      start_session: {
+        Args: { p_scheduled_workout_id?: string; p_workout_id: string }
+        Returns: {
+          created_at: string
+          ended_at: string | null
+          id: string
+          notes: string | null
+          perceived_effort: number | null
+          started_at: string
+          status: Database["public"]["Enums"]["session_status"]
+          total_active_seconds: number | null
+          total_rest_seconds: number | null
+          updated_at: string
+          user_id: string
+          workout_id: string
+          workout_name_snapshot: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "workout_session"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
     }
     Enums: {
       event_type:

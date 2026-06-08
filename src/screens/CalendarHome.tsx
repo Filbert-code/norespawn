@@ -1,0 +1,709 @@
+import { useMemo, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import {
+  CalendarDays,
+  Check,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  Dumbbell,
+  Flame,
+  Play,
+  Plus,
+  RotateCcw,
+  Skull,
+  X,
+} from 'lucide-react'
+import { cn } from '@/lib/utils'
+import { ConfirmDialog } from '@/mockups/components/ConfirmDialog'
+import { ScreenError, ScreenSpinner, ScreenSurface } from '@/screens/_shared/screen'
+import { useScheduledWorkouts } from '@/lib/queries/schedule'
+import {
+  useAbandonSession,
+  useInProgressSession,
+  useSessions,
+} from '@/lib/queries/sessions'
+import { usePlans } from '@/lib/queries/plans'
+import type { ScheduledWorkout, WorkoutSession } from '@/lib/supabase'
+
+// ============================================================================
+// Calendar = union of scheduled_workout (planned/future) and workout_session
+// (history). One row per day: completed > in_progress > scheduled > missed.
+// ============================================================================
+
+type DayStatus = 'completed' | 'scheduled' | 'in_progress' | 'skipped' | 'abandoned'
+interface DayEntry {
+  date: Date
+  workoutName: string
+  status: DayStatus
+  sessionId?: string
+  scheduledId?: string
+  durationMin?: number
+  effort?: number | null
+}
+
+const WEEKDAY_LABELS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+
+function startOfToday(): Date {
+  const d = new Date()
+  d.setHours(0, 0, 0, 0)
+  return d
+}
+function addDays(d: Date, n: number): Date {
+  const c = new Date(d)
+  c.setDate(c.getDate() + n)
+  return c
+}
+function startOfWeekMonday(d: Date): Date {
+  const c = new Date(d)
+  c.setHours(0, 0, 0, 0)
+  const day = (c.getDay() + 6) % 7
+  return addDays(c, -day)
+}
+function sameDay(a: Date, b: Date): boolean {
+  return (
+    a.getFullYear() === b.getFullYear() &&
+    a.getMonth() === b.getMonth() &&
+    a.getDate() === b.getDate()
+  )
+}
+
+/** Union scheduled + sessions into a single per-day map. Session wins if both exist. */
+function buildDayMap(
+  scheduled: ScheduledWorkout[],
+  sessions: WorkoutSession[],
+  planNames: Map<string, string>,
+): Map<string, DayEntry> {
+  const map = new Map<string, DayEntry>()
+
+  for (const s of scheduled) {
+    map.set(s.scheduled_date, {
+      date: new Date(s.scheduled_date + 'T00:00:00'),
+      workoutName: planNames.get(s.workout_id) ?? 'Workout',
+      status: s.status === 'completed'
+        ? 'completed'
+        : s.status === 'skipped'
+          ? 'skipped'
+          : 'scheduled',
+      scheduledId: s.id,
+      sessionId: s.session_id ?? undefined,
+    })
+  }
+  for (const sess of sessions) {
+    const key = sess.started_at.slice(0, 10)
+    const existing = map.get(key)
+    const duration = sess.total_active_seconds
+      ? Math.round(sess.total_active_seconds / 60)
+      : undefined
+    const status: DayStatus =
+      sess.status === 'completed'
+        ? 'completed'
+        : sess.status === 'abandoned'
+          ? 'abandoned'
+          : 'in_progress'
+    map.set(key, {
+      date: new Date(key + 'T00:00:00'),
+      workoutName: existing?.workoutName ?? sess.workout_name_snapshot,
+      status,
+      sessionId: sess.id,
+      scheduledId: existing?.scheduledId,
+      durationMin: duration,
+      effort: sess.perceived_effort,
+    })
+  }
+  return map
+}
+
+function disciplineStreak(map: Map<string, DayEntry>, today: Date): number {
+  let streak = 0
+  // Count today only if completed; otherwise start from yesterday.
+  let cursor = today
+  if (map.get(isoKey(today))?.status !== 'completed') {
+    cursor = addDays(today, -1)
+  }
+  while (true) {
+    const entry = map.get(isoKey(cursor))
+    if (entry?.status === 'completed') {
+      streak += 1
+      cursor = addDays(cursor, -1)
+    } else {
+      break
+    }
+  }
+  return streak
+}
+
+function isoKey(d: Date): string {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+}
+
+export function CalendarHomeScreen() {
+  const navigate = useNavigate()
+  const today = useMemo(() => startOfToday(), [])
+  const [weekStart, setWeekStart] = useState(() => startOfWeekMonday(today))
+  const [selected, setSelected] = useState(today)
+  const [pickerOpen, setPickerOpen] = useState(false)
+  const [pickerMonth, setPickerMonth] = useState(
+    () => new Date(today.getFullYear(), today.getMonth(), 1),
+  )
+  const [confirmAbandon, setConfirmAbandon] = useState<string | null>(null)
+
+  // Pull a wide enough range to cover the visible week strip AND the month
+  // picker grid in one query — picker shows 6 weeks centered on the chosen month.
+  const rangeStart = useMemo(() => addDays(weekStart, -42), [weekStart])
+  const rangeEnd = useMemo(() => addDays(weekStart, 42), [weekStart])
+
+  const { data: scheduled, isLoading: schedLoading, error: schedError } = useScheduledWorkouts(rangeStart, rangeEnd)
+  const { data: sessions, isLoading: sessLoading, error: sessError } = useSessions(rangeStart, rangeEnd)
+  const { data: inProgress } = useInProgressSession()
+  const { data: plans } = usePlans()
+  const abandon = useAbandonSession()
+
+  const planNames = useMemo(
+    () => new Map((plans ?? []).map((p) => [p.workout.id, p.workout.name])),
+    [plans],
+  )
+  const dayMap = useMemo(
+    () => buildDayMap(scheduled ?? [], sessions ?? [], planNames),
+    [scheduled, sessions, planNames],
+  )
+
+  const days = useMemo(() => Array.from({ length: 7 }, (_, i) => addDays(weekStart, i)), [weekStart])
+  const weekEnd = addDays(weekStart, 6)
+  const streak = disciplineStreak(dayMap, today)
+  const onCurrentWeek = sameDay(weekStart, startOfWeekMonday(today))
+
+  const selectedKey = isoKey(selected)
+  const selectedEntry = dayMap.get(selectedKey)
+  const isToday = sameDay(selected, today)
+  const isFuture = selected.getTime() > today.getTime()
+
+  const rangeLabel =
+    weekStart.getMonth() === weekEnd.getMonth()
+      ? `${MONTHS[weekStart.getMonth()]} ${weekStart.getDate()} – ${weekEnd.getDate()}`
+      : `${MONTHS[weekStart.getMonth()]} ${weekStart.getDate()} – ${MONTHS[weekEnd.getMonth()]} ${weekEnd.getDate()}`
+
+  const selectedLabel = `${WEEKDAY_LABELS[(selected.getDay() + 6) % 7]}, ${MONTHS[selected.getMonth()]} ${selected.getDate()}`
+
+  const isLoading = schedLoading || sessLoading
+  const error = schedError || sessError
+
+  const goToSchedule = () =>
+    navigate('/schedule', { state: { date: selected.toISOString() } })
+  const goLive = (sessionId: string) => navigate(`/live/${sessionId}`)
+  const goRecap = (sessionId: string) => navigate(`/recap/${sessionId}`)
+
+  function jumpToDate(date: Date) {
+    setSelected(date)
+    setWeekStart(startOfWeekMonday(date))
+    setPickerOpen(false)
+  }
+  function openPicker() {
+    setPickerMonth(new Date(selected.getFullYear(), selected.getMonth(), 1))
+    setPickerOpen(true)
+  }
+
+  return (
+    <ScreenSurface>
+      <header className="flex items-center gap-2 px-4 pb-3 pt-10">
+        <Skull className="size-7 text-nr-bronze" strokeWidth={1.5} />
+        <div className="leading-none">
+          <h1 className="font-heading text-2xl font-bold uppercase tracking-[0.2em] text-nr-bone">
+            NoRespawn
+          </h1>
+          <p className="mt-0.5 text-[9px] uppercase tracking-[0.3em] text-nr-bone/40">
+            Glory thru discipline
+          </p>
+        </div>
+      </header>
+
+      <div className="mx-4 mb-3 flex items-center gap-3 border border-nr-bronze/30 bg-nr-gunmetal/50 px-4 py-3 clip-bevel">
+        <span className="flex size-10 items-center justify-center rounded-full bg-nr-crimson/15 text-nr-ember">
+          <Flame className="size-6" />
+        </span>
+        <div className="leading-none">
+          <p className="font-heading text-3xl font-bold text-nr-bone">
+            {streak}
+            <span className="ml-1.5 align-baseline font-sans text-xs font-medium uppercase tracking-widest text-nr-bone/50">
+              day streak
+            </span>
+          </p>
+          <p className="mt-1 text-[10px] uppercase tracking-widest text-nr-bone/40">
+            Do not break the chain
+          </p>
+        </div>
+        <div className="ml-auto flex items-end gap-1">
+          {Array.from({ length: 7 }, (_, i) => {
+            const d = addDays(today, i - 6)
+            const w = dayMap.get(isoKey(d))
+            return (
+              <span
+                key={i}
+                className={cn(
+                  'w-1.5 rounded-full',
+                  w?.status === 'completed' ? 'h-5 bg-nr-crimson' : 'h-2 bg-nr-bone/15',
+                )}
+              />
+            )
+          })}
+        </div>
+      </div>
+
+      <div className="flex items-center gap-2 px-4 pb-2">
+        <button
+          onClick={openPicker}
+          className="group flex items-center gap-1.5 text-nr-bone hover:text-nr-crimson"
+        >
+          <CalendarDays className="size-4 text-nr-bronze group-hover:text-nr-crimson" />
+          <h2 className="font-heading text-sm font-bold uppercase tracking-widest">
+            {onCurrentWeek ? 'This Week' : rangeLabel}
+          </h2>
+          <ChevronDown className="size-3.5 text-nr-bronze group-hover:text-nr-crimson" />
+        </button>
+        {!onCurrentWeek && (
+          <button
+            onClick={() => {
+              setWeekStart(startOfWeekMonday(today))
+              setSelected(today)
+            }}
+            className="ml-2 rounded-sm border border-nr-bronze/30 px-2 py-0.5 text-[9px] uppercase tracking-widest text-nr-bone/60 hover:border-nr-crimson hover:text-nr-crimson"
+          >
+            Today
+          </button>
+        )}
+        <div className="ml-auto flex gap-1">
+          <button
+            onClick={() => setWeekStart((w) => addDays(w, -7))}
+            className="flex size-7 items-center justify-center rounded-full border border-nr-bronze/30 text-nr-bronze hover:border-nr-crimson hover:text-nr-crimson"
+          >
+            <ChevronLeft className="size-4" />
+          </button>
+          <button
+            onClick={() => setWeekStart((w) => addDays(w, 7))}
+            className="flex size-7 items-center justify-center rounded-full border border-nr-bronze/30 text-nr-bronze hover:border-nr-crimson hover:text-nr-crimson"
+          >
+            <ChevronRight className="size-4" />
+          </button>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-7 gap-1.5 px-3 pb-1">
+        {days.map((d, i) => {
+          const dToday = sameDay(d, today)
+          const dSelected = sameDay(d, selected)
+          const w = dayMap.get(isoKey(d))
+          return (
+            <button
+              key={i}
+              onClick={() => setSelected(d)}
+              className={cn(
+                'clip-bevel-sm flex flex-col items-center gap-1.5 border py-2 transition-all',
+                dSelected
+                  ? 'border-nr-ember bg-nr-crimson/15 shadow-[0_0_14px_-4px] shadow-nr-ember/70'
+                  : dToday
+                    ? 'border-nr-crimson/60 bg-nr-gunmetal/40'
+                    : 'border-nr-bronze/20 hover:border-nr-bronze/50',
+              )}
+            >
+              <span className="text-[9px] font-medium uppercase tracking-widest text-nr-bone/45">
+                {WEEKDAY_LABELS[i][0]}
+              </span>
+              <span
+                className={cn(
+                  'font-heading text-base font-bold',
+                  dToday ? 'text-nr-ember' : 'text-nr-bone',
+                )}
+              >
+                {d.getDate()}
+              </span>
+              <span className="flex h-4 items-center justify-center">
+                <DayGlyph entry={w} muted={d.getTime() < today.getTime()} />
+              </span>
+            </button>
+          )
+        })}
+      </div>
+
+      <div className="flex-1 overflow-y-auto px-4 pb-6 pt-3">
+        <div className="mb-2 flex items-center gap-2">
+          <h3 className="font-heading text-lg font-bold uppercase tracking-widest text-nr-bone">
+            {isToday ? 'Today' : selectedLabel}
+          </h3>
+          {isToday && (
+            <span className="rounded-sm bg-nr-crimson px-1.5 py-0.5 text-[9px] uppercase tracking-widest text-nr-bone">
+              {MONTHS[selected.getMonth()]} {selected.getDate()}
+            </span>
+          )}
+        </div>
+
+        {isLoading && <ScreenSpinner />}
+        {error && <ScreenError message={(error as Error).message} />}
+
+        {!isLoading && !error && (
+          selectedEntry ? (
+            <DayDetailCard
+              entry={selectedEntry}
+              isToday={isToday}
+              isFuture={isFuture}
+              onReschedule={goToSchedule}
+              onStart={() => selectedEntry.sessionId && goLive(selectedEntry.sessionId)}
+              onResume={() => selectedEntry.sessionId && goLive(selectedEntry.sessionId)}
+              onAbandon={() =>
+                selectedEntry.sessionId && setConfirmAbandon(selectedEntry.sessionId)
+              }
+              onViewSummary={() => selectedEntry.sessionId && goRecap(selectedEntry.sessionId)}
+            />
+          ) : inProgress && isToday ? (
+            <DayDetailCard
+              entry={{
+                date: selected,
+                workoutName: inProgress.workout_name_snapshot,
+                status: 'in_progress',
+                sessionId: inProgress.id,
+              }}
+              isToday
+              isFuture={false}
+              onReschedule={goToSchedule}
+              onStart={() => goLive(inProgress.id)}
+              onResume={() => goLive(inProgress.id)}
+              onAbandon={() => setConfirmAbandon(inProgress.id)}
+              onViewSummary={() => goRecap(inProgress.id)}
+            />
+          ) : (
+            <EmptyDay
+              isFuture={isFuture}
+              firstRun={(plans?.length ?? 0) === 0}
+              onPlan={goToSchedule}
+            />
+          )
+        )}
+      </div>
+
+      {pickerOpen && (
+        <MonthPicker
+          month={pickerMonth}
+          selected={selected}
+          today={today}
+          map={dayMap}
+          onMonthChange={setPickerMonth}
+          onPick={jumpToDate}
+          onClose={() => setPickerOpen(false)}
+        />
+      )}
+
+      <ConfirmDialog
+        open={confirmAbandon !== null}
+        title="Abandon Session"
+        message="This marks the session as abandoned. Logged sets are kept, but the workout won't count as completed."
+        confirmLabel="Abandon"
+        onConfirm={() => {
+          if (confirmAbandon) abandon.mutate(confirmAbandon)
+          setConfirmAbandon(null)
+        }}
+        onCancel={() => setConfirmAbandon(null)}
+      />
+    </ScreenSurface>
+  )
+}
+
+function DayGlyph({ entry, muted }: { entry?: DayEntry; muted: boolean }) {
+  if (!entry) {
+    return (
+      <span className={cn('block h-1 w-1 rounded-full', muted ? 'bg-nr-bone/15' : 'bg-nr-bone/25')} />
+    )
+  }
+  if (entry.status === 'completed') {
+    return (
+      <span className="flex size-4 items-center justify-center rounded-full bg-nr-crimson text-nr-bone">
+        <Check className="size-3" strokeWidth={3} />
+      </span>
+    )
+  }
+  if (entry.status === 'in_progress') {
+    return (
+      <span className="flex size-4 items-center justify-center rounded-full bg-nr-ember text-nr-black">
+        <Play className="size-2.5" />
+      </span>
+    )
+  }
+  if (entry.status === 'skipped' || entry.status === 'abandoned') {
+    return (
+      <span className="flex size-4 items-center justify-center rounded-full border border-nr-crimson/50 text-nr-crimson/70">
+        <X className="size-3" />
+      </span>
+    )
+  }
+  return <span className="block size-3 rounded-full border-2 border-nr-bronze/70" />
+}
+
+function DayDetailCard({
+  entry,
+  isToday,
+  isFuture,
+  onReschedule,
+  onStart,
+  onResume,
+  onAbandon,
+  onViewSummary,
+}: {
+  entry: DayEntry
+  isToday: boolean
+  isFuture: boolean
+  onReschedule: () => void
+  onStart: () => void
+  onResume: () => void
+  onAbandon: () => void
+  onViewSummary: () => void
+}) {
+  const completed = entry.status === 'completed'
+  const inProgress = entry.status === 'in_progress'
+
+  return (
+    <div className="clip-bevel border border-nr-bronze/30 bg-nr-gunmetal/50 p-4">
+      <div className="flex items-center gap-3">
+        <span className="flex size-11 items-center justify-center rounded-sm border border-nr-bronze/30 bg-nr-black/50 text-nr-bronze">
+          <Dumbbell className="size-5" />
+        </span>
+        <div className="min-w-0">
+          <h4 className="font-heading text-lg font-bold uppercase tracking-wide text-nr-bone">
+            {entry.workoutName}
+          </h4>
+          <p
+            className={cn(
+              'text-[10px] uppercase tracking-widest',
+              inProgress ? 'text-nr-ember' : 'text-nr-bone/45',
+            )}
+          >
+            {completed
+              ? 'Completed'
+              : inProgress
+                ? 'In progress · unfinished'
+                : isToday
+                  ? 'Scheduled today'
+                  : isFuture
+                    ? 'Scheduled'
+                    : entry.status === 'abandoned'
+                      ? 'Abandoned'
+                      : 'Missed'}
+          </p>
+        </div>
+      </div>
+
+      {completed && (entry.durationMin || entry.effort) && (
+        <div className="mt-4 grid grid-cols-2 gap-2">
+          {entry.durationMin && <Stat label="Duration" value={`${entry.durationMin}m`} />}
+          {entry.effort && <Stat label="Effort" value={`${entry.effort}/10`} />}
+        </div>
+      )}
+
+      <div className="mt-4">
+        {completed ? (
+          <button
+            onClick={onViewSummary}
+            className="clip-bevel-sm w-full border border-nr-bronze/40 py-2.5 font-heading text-sm font-semibold uppercase tracking-widest text-nr-bronze hover:border-nr-bronze hover:text-nr-bone"
+          >
+            View Summary
+          </button>
+        ) : inProgress ? (
+          <div className="flex flex-col gap-2">
+            <button
+              onClick={onResume}
+              className="clip-bevel flex w-full items-center justify-center gap-2 bg-nr-crimson py-3 font-heading text-base font-bold uppercase tracking-widest text-nr-bone shadow-[0_0_22px_-4px] shadow-nr-ember/80 hover:bg-nr-ember"
+            >
+              <Play className="size-5" /> Resume Workout
+            </button>
+            <button
+              onClick={onAbandon}
+              className="clip-bevel-sm flex w-full items-center justify-center gap-1.5 border border-nr-bronze/40 py-2 font-heading text-xs font-semibold uppercase tracking-widest text-nr-bone/60 hover:border-nr-crimson hover:text-nr-ember"
+            >
+              <RotateCcw className="size-3.5" /> Abandon
+            </button>
+          </div>
+        ) : isToday ? (
+          <button
+            onClick={onStart}
+            className="clip-bevel flex w-full items-center justify-center gap-2 bg-nr-crimson py-3 font-heading text-base font-bold uppercase tracking-widest text-nr-bone shadow-[0_0_22px_-4px] shadow-nr-ember/80 hover:bg-nr-ember"
+          >
+            <Play className="size-5" /> Start Workout
+          </button>
+        ) : isFuture ? (
+          <button
+            onClick={onReschedule}
+            className="clip-bevel-sm w-full border border-nr-bronze/40 py-2.5 font-heading text-sm font-semibold uppercase tracking-widest text-nr-bronze hover:border-nr-bronze hover:text-nr-bone"
+          >
+            Edit / Reschedule
+          </button>
+        ) : null}
+      </div>
+    </div>
+  )
+}
+
+function EmptyDay({
+  isFuture,
+  firstRun,
+  onPlan,
+}: {
+  isFuture: boolean
+  firstRun: boolean
+  onPlan: () => void
+}) {
+  const navigate = useNavigate()
+  if (firstRun) {
+    return (
+      <div className="clip-bevel flex flex-col items-center gap-3 border border-dashed border-nr-bronze/30 bg-nr-gunmetal/20 px-4 py-9 text-center">
+        <Skull className="size-9 text-nr-bone/15" />
+        <div>
+          <p className="font-heading text-sm uppercase tracking-widest text-nr-bone/70">
+            No plans yet
+          </p>
+          <p className="mt-1 text-[11px] uppercase tracking-wider text-nr-bone/35">
+            Forge your first plan to begin
+          </p>
+        </div>
+        <button
+          onClick={() => navigate('/builder')}
+          className="clip-bevel-sm flex items-center gap-1.5 bg-nr-crimson px-4 py-2 font-heading text-xs font-bold uppercase tracking-widest text-nr-bone hover:bg-nr-ember"
+        >
+          <Plus className="size-4" /> Forge a Plan
+        </button>
+      </div>
+    )
+  }
+
+  return (
+    <div className="clip-bevel flex flex-col items-center gap-3 border border-dashed border-nr-bronze/25 bg-nr-gunmetal/20 px-4 py-8 text-center">
+      <Skull className="size-8 text-nr-bone/15" />
+      <p className="text-sm uppercase tracking-widest text-nr-bone/40">
+        {isFuture ? 'No workout planned' : 'Rest day'}
+      </p>
+      {isFuture && (
+        <button
+          onClick={onPlan}
+          className="clip-bevel-sm flex items-center gap-1.5 border border-nr-bronze/40 px-4 py-2 font-heading text-xs font-semibold uppercase tracking-widest text-nr-bronze hover:border-nr-crimson hover:text-nr-crimson"
+        >
+          <Plus className="size-4" /> Plan a Workout
+        </button>
+      )}
+    </div>
+  )
+}
+
+function Stat({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="clip-bevel-sm border border-nr-bronze/20 bg-nr-black/30 px-2 py-2 text-center">
+      <p className="font-heading text-lg font-bold text-nr-bone">{value}</p>
+      <p className="text-[9px] uppercase tracking-widest text-nr-bone/40">{label}</p>
+    </div>
+  )
+}
+
+function MonthPicker({
+  month,
+  selected,
+  today,
+  map,
+  onMonthChange,
+  onPick,
+  onClose,
+}: {
+  month: Date
+  selected: Date
+  today: Date
+  map: Map<string, DayEntry>
+  onMonthChange: (d: Date) => void
+  onPick: (d: Date) => void
+  onClose: () => void
+}) {
+  const firstOfMonth = new Date(month.getFullYear(), month.getMonth(), 1)
+  const gridStart = startOfWeekMonday(firstOfMonth)
+  const cells = Array.from({ length: 42 }, (_, i) => addDays(gridStart, i))
+
+  return (
+    <div className="absolute inset-0 z-20 flex items-center justify-center px-4">
+      <button
+        aria-label="Close"
+        onClick={onClose}
+        className="absolute inset-0 bg-nr-black/80 backdrop-blur-sm"
+      />
+      <div className="clip-bevel relative w-full border border-nr-bronze/40 bg-nr-gunmetal p-4 shadow-[0_0_40px_-8px] shadow-nr-black">
+        <div className="mb-3 flex items-center justify-between">
+          <button
+            onClick={() => onMonthChange(new Date(month.getFullYear(), month.getMonth() - 1, 1))}
+            className="flex size-7 items-center justify-center rounded-full border border-nr-bronze/30 text-nr-bronze hover:border-nr-crimson hover:text-nr-crimson"
+          >
+            <ChevronLeft className="size-4" />
+          </button>
+          <h3 className="font-heading text-sm font-bold uppercase tracking-widest text-nr-bone">
+            {MONTHS[month.getMonth()]} {month.getFullYear()}
+          </h3>
+          <button
+            onClick={() => onMonthChange(new Date(month.getFullYear(), month.getMonth() + 1, 1))}
+            className="flex size-7 items-center justify-center rounded-full border border-nr-bronze/30 text-nr-bronze hover:border-nr-crimson hover:text-nr-crimson"
+          >
+            <ChevronRight className="size-4" />
+          </button>
+        </div>
+
+        <div className="mb-1 grid grid-cols-7 gap-1">
+          {WEEKDAY_LABELS.map((l) => (
+            <span key={l} className="text-center text-[9px] uppercase tracking-widest text-nr-bone/40">
+              {l[0]}
+            </span>
+          ))}
+        </div>
+
+        <div className="grid grid-cols-7 gap-1">
+          {cells.map((d, i) => {
+            const inMonth = d.getMonth() === month.getMonth()
+            const dToday = sameDay(d, today)
+            const dSelected = sameDay(d, selected)
+            const w = map.get(isoKey(d))
+            return (
+              <button
+                key={i}
+                onClick={() => onPick(d)}
+                className={cn(
+                  'relative flex h-9 flex-col items-center justify-center rounded-sm text-sm transition-colors',
+                  dSelected
+                    ? 'bg-nr-crimson font-bold text-nr-bone'
+                    : dToday
+                      ? 'border border-nr-crimson/60 text-nr-ember'
+                      : inMonth
+                        ? 'text-nr-bone hover:bg-nr-bronze/15'
+                        : 'text-nr-bone/25 hover:bg-nr-bronze/10',
+                )}
+              >
+                {d.getDate()}
+                {w && !dSelected && (
+                  <span
+                    className={cn(
+                      'absolute bottom-1 size-1 rounded-full',
+                      w.status === 'completed' ? 'bg-nr-crimson' : 'bg-nr-bronze',
+                    )}
+                  />
+                )}
+              </button>
+            )
+          })}
+        </div>
+
+        <div className="mt-3 flex justify-between">
+          <button
+            onClick={() => onPick(today)}
+            className="rounded-sm border border-nr-bronze/30 px-3 py-1 text-[10px] uppercase tracking-widest text-nr-bone/70 hover:border-nr-crimson hover:text-nr-crimson"
+          >
+            Jump to Today
+          </button>
+          <button
+            onClick={onClose}
+            className="rounded-sm px-3 py-1 text-[10px] uppercase tracking-widest text-nr-bone/40 hover:text-nr-bone"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
