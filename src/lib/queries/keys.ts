@@ -9,6 +9,8 @@ export const qk = {
     detail: (slug: string) => [...qk.exercises.all, 'detail', slug] as const,
     history: (slug: string) => [...qk.exercises.all, 'history', slug] as const,
     lastPerformed: () => [...qk.exercises.all, 'last_performed'] as const,
+    defaults: () => [...qk.exercises.all, 'defaults'] as const,
+    lastPlanRest: () => [...qk.exercises.all, 'last_plan_rest'] as const,
   },
   plans: {
     all: ['plans'] as const,

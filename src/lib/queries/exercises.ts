@@ -5,7 +5,9 @@ import type {
   BodyGroup,
   BodySubGroup,
   Exercise,
+  UserExerciseDefault,
   UserExerciseLastPerformed,
+  UserLastPlanRest,
 } from '@/lib/supabase'
 
 // ----------------------------------------------------------------------------
@@ -69,6 +71,59 @@ export function useLastPerformed() {
         await supabase.from('user_exercise_last_performed').select('*'),
       ) as UserExerciseLastPerformed[]
       return rows
+    },
+  })
+}
+
+export interface ExerciseDefault {
+  sets: number | null
+  reps: number | null
+  weight_lbs: number | null
+  duration_seconds: number | null
+  /** 'plan' | 'session' — where the most-recent value came from. */
+  source: string | null
+}
+
+/**
+ * Per-exercise "smart defaults" for the planning phase: the user's own most
+ * recent sets/reps/weight/duration for each exercise, taking whichever is
+ * newer between the last plan they built and the top set of their last live
+ * session. Returned as a slug -> values map for O(1) seeding lookups.
+ */
+export function useExerciseDefaults() {
+  return useQuery({
+    queryKey: qk.exercises.defaults(),
+    queryFn: async () => {
+      const rows = unwrap(
+        await supabase.from('user_exercise_default').select('*'),
+      ) as UserExerciseDefault[]
+      const map = new Map<string, ExerciseDefault>()
+      for (const r of rows) {
+        if (!r.exercise_slug) continue
+        map.set(r.exercise_slug, {
+          sets: r.sets,
+          reps: r.reps,
+          weight_lbs: r.weight_lbs != null ? Number(r.weight_lbs) : null,
+          duration_seconds: r.duration_seconds,
+          source: r.source,
+        })
+      }
+      return map
+    },
+  })
+}
+
+/** Rest timers from the user's most recently touched plan (plan-level seed). */
+export function useLastPlanRest() {
+  return useQuery({
+    queryKey: qk.exercises.lastPlanRest(),
+    queryFn: async (): Promise<UserLastPlanRest | null> => {
+      const { data, error } = await supabase
+        .from('user_last_plan_rest')
+        .select('*')
+        .maybeSingle()
+      if (error) throw error
+      return data
     },
   })
 }

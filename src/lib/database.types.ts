@@ -865,6 +865,19 @@ export type Database = {
           },
         ]
       }
+      user_exercise_default: {
+        Row: {
+          duration_seconds: number | null
+          effective_at: string | null
+          exercise_slug: string | null
+          reps: number | null
+          sets: number | null
+          source: string | null
+          user_id: string | null
+          weight_lbs: number | null
+        }
+        Relationships: []
+      }
       user_exercise_last_performed: {
         Row: {
           actual_duration_seconds: number | null
@@ -883,6 +896,15 @@ export type Database = {
             referencedColumns: ["slug"]
           },
         ]
+      }
+      user_last_plan_rest: {
+        Row: {
+          effective_at: string | null
+          end_rest_seconds: number | null
+          set_rest_seconds: number | null
+          user_id: string | null
+        }
+        Relationships: []
       }
     }
     Functions: {

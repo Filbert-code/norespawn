@@ -3,7 +3,11 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { ChevronLeft, GripVertical, Minus, Plus, Save, Swords, Timer, TimerReset } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { ScreenError, ScreenSpinner, ScreenSurface } from '@/screens/_shared/screen'
-import { useExercises } from '@/lib/queries/exercises'
+import {
+  useExerciseDefaults,
+  useExercises,
+  useLastPlanRest,
+} from '@/lib/queries/exercises'
 import {
   useCreatePlan,
   usePlan,
@@ -49,6 +53,10 @@ export function ForgePlanScreen() {
 
   const { data: catalog, isLoading: catLoading, error: catError } = useExercises()
   const { data: existing, isLoading: planLoading } = usePlan(editing)
+  // Smart defaults: the user's own most-recent numbers for each exercise,
+  // used to seed a freshly-built plan instead of the global catalog defaults.
+  const { data: exerciseDefaults, isLoading: defaultsLoading } = useExerciseDefaults()
+  const { data: lastPlanRest, isLoading: restLoading } = useLastPlanRest()
   const createPlan = useCreatePlan()
   const updatePlan = useUpdatePlan()
   const startSession = useStartSession()
@@ -87,22 +95,47 @@ export function ForgePlanScreen() {
       setRestExercise(endRestSeed)
       setSeeded(true)
     } else if (state?.slugs) {
+      // Wait for the user's history to load so we seed from their own numbers
+      // rather than briefly locking in the global catalog defaults.
+      if (defaultsLoading || restLoading) return
       const slugs = state.slugs.filter((s) => catalog.some((c) => c.slug === s))
       setOrder(slugs)
       const next: Record<string, Edit> = {}
       for (const s of slugs) {
         const c = catalog.find((c) => c.slug === s)!
+        const mine = exerciseDefaults?.get(s)
+        const isTimed = c.tracking_type === 'timed'
+        const isBodyweight = c.default_weight_lbs == null
         next[s] = {
-          sets: c.default_sets,
-          reps: c.default_reps ?? 10,
-          weight: c.default_weight_lbs ? Number(c.default_weight_lbs) : 0,
-          duration: c.default_duration_seconds ?? 45,
+          // Prefer the user's most-recent value per field; fall back to the
+          // catalog default when they've never set one (or it's N/A).
+          sets: mine?.sets ?? c.default_sets,
+          reps: mine?.reps ?? c.default_reps ?? 10,
+          weight: isBodyweight
+            ? 0
+            : (mine?.weight_lbs ??
+              (c.default_weight_lbs ? Number(c.default_weight_lbs) : 0)),
+          duration: isTimed
+            ? (mine?.duration_seconds ?? c.default_duration_seconds ?? 45)
+            : (c.default_duration_seconds ?? 45),
         }
       }
       setEdits(next)
+      if (lastPlanRest?.set_rest_seconds != null) setRestSet(lastPlanRest.set_rest_seconds)
+      if (lastPlanRest?.end_rest_seconds != null) setRestExercise(lastPlanRest.end_rest_seconds)
       setSeeded(true)
     }
-  }, [catalog, existing, editing, state, seeded])
+  }, [
+    catalog,
+    existing,
+    editing,
+    state,
+    seeded,
+    exerciseDefaults,
+    defaultsLoading,
+    lastPlanRest,
+    restLoading,
+  ])
 
   const exercises = useMemo(() => {
     if (!catalog) return []

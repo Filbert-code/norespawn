@@ -43,6 +43,8 @@ export type ScheduledWorkoutInsert = TablesInsert<'scheduled_workout'>
 export type UserExerciseScore = Tables<'user_exercise_score'>
 export type CurrentExerciseScore = Tables<'current_exercise_score'>
 export type UserExerciseLastPerformed = Tables<'user_exercise_last_performed'>
+export type UserExerciseDefault = Tables<'user_exercise_default'>
+export type UserLastPlanRest = Tables<'user_last_plan_rest'>
 
 // Insert / Update payloads for the tables app code writes most
 export type WorkoutInsert = TablesInsert<'workout'>
