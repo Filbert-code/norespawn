@@ -3,11 +3,11 @@
 import streakBanner from '@/assets/ui/streak_banner.webp'
 import plannedWorkout from '@/assets/ui/planned_workout.webp'
 import restDay from '@/assets/ui/rest_day.webp'
-import navPlate from '@/assets/ui/nav_plate.webp'
+import navFrame from '@/assets/ui/nav_frame.webp'
 
 export const uiArt = {
   streakBanner,
   plannedWorkout,
   restDay,
-  navPlate,
+  navFrame,
 } as const
