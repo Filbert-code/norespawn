@@ -9,11 +9,11 @@ import {
   Pencil,
   Play,
   Plus,
-  Skull,
   Timer,
   Trash2,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { SkullGlyph } from '@/components/SkullGlyph'
 import { ConfirmDialog } from '@/mockups/components/ConfirmDialog'
 import { PlanSheet, PlanSheetNumber, PlanSheetRow } from '@/mockups/components/PlanSheet'
 import { ScreenError, ScreenSpinner, ScreenSurface } from '@/screens/_shared/screen'
@@ -105,7 +105,7 @@ export function PlansScreen() {
             Plans
           </h1>
           <span className="mb-1 flex items-center gap-1 font-heading text-[10px] uppercase tracking-widest text-nr-bone/40">
-            <Skull className="size-3.5 text-nr-bronze/70" />
+            <SkullGlyph className="size-3.5 opacity-70" />
             {sorted.length} Forged
           </span>
         </div>
@@ -146,7 +146,7 @@ export function PlansScreen() {
         {error && <ScreenError message={(error as Error).message} />}
         {empty && (
           <div className="clip-bevel mt-6 flex flex-col items-center gap-3 border border-dashed border-nr-bronze/30 bg-nr-gunmetal/20 px-5 py-12 text-center">
-            <Skull className="size-10 text-nr-bone/15" />
+            <SkullGlyph className="size-10 opacity-15" />
             <div>
               <p className="font-heading text-base uppercase tracking-widest text-nr-bone/70">
                 No plans forged

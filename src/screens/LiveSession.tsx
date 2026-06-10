@@ -15,7 +15,6 @@ import {
   Plus,
   Repeat2,
   Search,
-  Skull,
   ThumbsDown,
   ThumbsUp,
   Trash2,
@@ -23,6 +22,7 @@ import {
   X,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { SkullGlyph } from '@/components/SkullGlyph'
 import { ScreenError, ScreenSpinner } from '@/screens/_shared/screen'
 import { PlanSheet, PlanSheetRow } from '@/components/PlanSheet'
 import { ConfirmDialog } from '@/mockups/components/ConfirmDialog'
@@ -718,7 +718,7 @@ export function LiveSessionScreen() {
 
       {state.phase === 'rest' && suggestion && (
         <div className="clip-bevel-sm relative mx-4 mb-2 flex items-center gap-2 border border-nr-ember/40 bg-nr-crimson/10 px-3 py-2">
-          <Skull className="size-4 shrink-0 text-nr-ember" />
+          <SkullGlyph className="size-4 shrink-0" />
           <p className="flex-1 text-[11px] leading-tight text-nr-bone/85">{suggestion}</p>
           <button
             onClick={applySuggestion}
@@ -1005,7 +1005,7 @@ function QuadrantRing({
             className="absolute flex size-6 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-nr-bronze/50 bg-nr-black"
             style={{ left: `${(p.x / 220) * 100}%`, top: `${(p.y / 220) * 100}%` }}
           >
-            <Skull className="size-3.5 text-nr-bronze" strokeWidth={1.5} />
+            <SkullGlyph className="size-3.5" />
           </span>
         )
       })}

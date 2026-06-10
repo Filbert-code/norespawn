@@ -9,11 +9,11 @@ import {
   Dumbbell,
   Plus,
   Settings,
-  Skull,
   Trash2,
   X,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { SkullGlyph } from '@/components/SkullGlyph'
 import { anim, staggerDelay } from '@/lib/animations'
 import { getExerciseArt } from '@/lib/exerciseArt'
 import { FadeInImage } from '@/components/FadeInImage'
@@ -115,7 +115,7 @@ export function WorkoutBuilderScreen() {
         >
           <ChevronLeft className="size-5" />
         </button>
-        <Skull className="size-6 text-nr-bronze" strokeWidth={1.5} />
+        <SkullGlyph className="size-6" />
         <h1 className="font-heading text-2xl font-bold uppercase tracking-wide text-nr-bone">
           Build Workout
         </h1>
@@ -176,7 +176,7 @@ export function WorkoutBuilderScreen() {
                     onClick={() => toggleSub(sub)}
                     className="sticky top-0 z-10 flex w-full items-center gap-2 border-y border-nr-bronze/25 bg-gradient-to-r from-nr-oxblood/40 via-nr-black/95 to-nr-black/95 px-4 py-2.5 backdrop-blur"
                   >
-                    <Skull className="size-4 text-nr-bronze" />
+                    <SkullGlyph className="size-4" />
                     <h2 className="font-heading text-lg font-bold uppercase tracking-widest text-nr-bone">
                       {subLabel(sub)}
                     </h2>
@@ -358,7 +358,7 @@ function CatalogCard({
             />
           ) : (
             <>
-              <Skull className="absolute size-20 text-nr-bone/[0.04]" strokeWidth={1} />
+              <SkullGlyph className="absolute size-20 opacity-[0.04]" />
               <Dumbbell className="size-10 text-nr-bronze/70" strokeWidth={1.5} />
             </>
           )}

@@ -11,7 +11,6 @@ import {
   Flame,
   Play,
   Plus,
-  Skull,
   Swords,
   Trash2,
   X,
@@ -19,6 +18,7 @@ import {
 import { cn } from '@/lib/utils'
 import { uiArt } from '@/lib/uiArt'
 import { UiBackground } from '@/components/UiBackground'
+import { SkullGlyph } from '@/components/SkullGlyph'
 import { ConfirmDialog } from '@/mockups/components/ConfirmDialog'
 import { PlanSheet } from '@/components/PlanSheet'
 import { ScreenError, ScreenSpinner, ScreenSurface } from '@/screens/_shared/screen'
@@ -249,7 +249,7 @@ export function CalendarHomeScreen() {
   return (
     <ScreenSurface>
       <header className="flex items-center gap-2 px-4 pb-3 pt-10">
-        <Skull className="size-7 text-nr-bronze" strokeWidth={1.5} />
+        <SkullGlyph className="size-14 [filter:saturate(0.2)_brightness(1.5)]" />
         <div className="leading-none">
           <h1 className="font-heading text-2xl font-bold uppercase tracking-[0.2em] text-nr-bone">
             NoRespawn
@@ -674,7 +674,7 @@ function EmptyDay({
     return (
       <div className="clip-bevel relative isolate flex flex-col items-center gap-3 overflow-hidden border border-dashed border-nr-bronze/30 bg-nr-gunmetal/20 px-4 py-9 text-center">
         <UiBackground src={uiArt.restDay} scrim={74} />
-        <Skull className="size-9 text-nr-bone/15" />
+        <SkullGlyph className="size-[4.5rem] opacity-15" />
         <div>
           <p className="font-heading text-sm uppercase tracking-widest text-nr-bone/70">
             No plans yet
@@ -698,7 +698,7 @@ function EmptyDay({
     return (
       <div className="clip-bevel relative isolate flex flex-col items-center gap-3 overflow-hidden border border-dashed border-nr-bronze/25 bg-nr-gunmetal/20 px-4 py-8 text-center">
         <UiBackground src={uiArt.restDay} scrim={74} />
-        <Skull className="size-8 text-nr-bone/15" />
+        <SkullGlyph className="size-16 opacity-15" />
         <p className="text-sm uppercase tracking-widest text-nr-bone/40">No workout yet today</p>
         <p className="-mt-1 text-[11px] uppercase tracking-wider text-nr-bone/35">
           Pick a plan and begin, or schedule for later
@@ -732,7 +732,7 @@ function EmptyDay({
   return (
     <div className="clip-bevel relative isolate flex flex-col items-center gap-3 overflow-hidden border border-dashed border-nr-bronze/25 bg-nr-gunmetal/20 px-4 py-8 text-center">
       <UiBackground src={uiArt.restDay} scrim={74} />
-      <Skull className="size-8 text-nr-bone/15" />
+      <SkullGlyph className="size-16 opacity-15" />
       <p className="text-sm uppercase tracking-widest text-nr-bone/40">
         {isFuture ? 'No workout planned' : 'Rest day'}
       </p>

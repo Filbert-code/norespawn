@@ -6,10 +6,10 @@ import {
   Dumbbell,
   Hammer,
   ListChecks,
-  Skull,
   X,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { SkullGlyph } from '@/components/SkullGlyph'
 import { ScreenError, ScreenSpinner, ScreenSurface } from '@/screens/_shared/screen'
 import { usePlan, usePlans, type PlanSummary } from '@/lib/queries/plans'
 import { useExercises } from '@/lib/queries/exercises'
@@ -250,7 +250,7 @@ export function ScheduleWorkoutScreen() {
               disabled={scheduleMutation.isPending}
               className="clip-bevel pointer-events-auto flex items-center gap-2 bg-nr-crimson px-10 py-3.5 font-heading text-base font-bold uppercase tracking-widest text-nr-bone shadow-[0_0_30px_-4px] shadow-nr-ember/80 hover:bg-nr-ember disabled:opacity-40"
             >
-              <Skull className="size-5" /> Schedule
+              <SkullGlyph className="size-5" /> Schedule
             </button>
           )}
         </div>
