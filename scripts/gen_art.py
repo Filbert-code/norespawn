@@ -56,6 +56,11 @@ MANIFEST = ROOT / "scripts" / "art.manifest.json"
 # at the bottom of this file. When present, it overrides the built-in test JOBS.
 EXERCISES_JSON = ROOT / "scripts" / "exercises.json"
 
+# UI backgrounds (banners/panels) live separately from exercise art.
+UI_DIR = ROOT / "src" / "assets" / "ui"
+UI_RAW_DIR = UI_DIR / "raw"
+UI_MANIFEST = ROOT / "scripts" / "ui.manifest.json"
+
 # Load FAL_KEY from .env into the environment so fal_client picks it up.
 load_dotenv(ROOT / ".env")
 
@@ -92,6 +97,64 @@ STYLE_SUFFIX = (
 
 def build_prompt(movement: str) -> str:
     return f"{STYLE_PREFIX} {movement}, {STYLE_SUFFIX}"
+
+
+# --- UI background style -----------------------------------------------------
+# Backgrounds sit BEHIND text/icons, so the shared style emphasises dark,
+# atmospheric, low-detail negative space and explicitly excludes any central
+# subject. Same grimdark palette as the exercise art for visual continuity.
+UI_STYLE_SUFFIX = (
+    "grimdark Warhammer atmosphere, deep shadow, heavy vignette, oxblood and "
+    "crimson and bronze accents, drifting ash and faint embers, weathered iron "
+    "and gothic cathedral stone, matte painterly texture, cinematic and moody, "
+    "dark empty low-detail negative space in the center for overlaid UI, "
+    "no people, no figures, no text, no letters, no symbols, no logos, no border"
+)
+
+
+def build_ui_prompt(scene: str) -> str:
+    return f"{scene}, {UI_STYLE_SUFFIX}"
+
+
+# Each UI background: a stable `name` (the output filename), a `scene` clause,
+# and an `image_size` (a gpt-image-2 preset string OR a {width, height} dict).
+# gpt-image-2 caps the aspect ratio at 3:1, so banners wider than that are
+# generated at 3:1 and cropped to fit via object-cover in the app.
+UI_JOBS: list[dict] = [
+    {
+        # The banner is ~5.4:1 but the model caps at 3:1. So generate a TALLER
+        # 3:2 frame with the embers concentrated in a horizontal ribbon across
+        # the middle, then crop just that ribbon (center band, ~5:1) so the
+        # shipped asset matches the banner with no ugly crop in the app.
+        "name": "streak_banner",
+        "scene": "a single narrow horizontal ribbon of smouldering molten forge "
+        "coals and glowing embers running straight across the exact middle from "
+        "edge to edge, fading into deep solid black empty darkness both above and "
+        "below the ribbon, a few faint rising sparks",
+        "image_size": {"width": 1536, "height": 1024},
+        "crop": {"top": 0.30, "height": 0.30},
+    },
+    {
+        "name": "planned_workout",
+        "scene": "a dim grimdark armory wall, racked iron weapons and hanging "
+        "chains in heavy shadow lit by faint crimson torchlight",
+        "image_size": "landscape_4_3",
+    },
+    {
+        "name": "rest_day",
+        "scene": "a cold dormant forge in an empty gothic stone chamber, "
+        "extinguished grey ashes, quiet muted blue-grey gloom, faint cold light",
+        "image_size": "landscape_4_3",
+    },
+    {
+        # One reusable plate tile, rendered behind each of the 3 nav buttons. A
+        # single centered plate so each cropped copy reads as its own section.
+        "name": "nav_plate",
+        "scene": "a single weathered dark hammered iron plate, centered, with "
+        "riveted corners and a worn bronze rim, flat head-on view, evenly lit",
+        "image_size": "landscape_16_9",
+    },
+]
 
 
 # --- Jobs -------------------------------------------------------------------
@@ -187,14 +250,14 @@ def load_jobs() -> list[dict[str, str]]:
     return TEST_JOBS
 
 
-def load_manifest() -> dict:
+def load_manifest(path: Path = MANIFEST) -> dict:
     try:
-        return json.loads(MANIFEST.read_text())
+        return json.loads(path.read_text())
     except (FileNotFoundError, json.JSONDecodeError):
         return {}
 
 
-def save_manifest(manifest: dict) -> None:
+def save_manifest(manifest: dict, path: Path = MANIFEST) -> None:
     """Persist the manifest atomically, merging with what's already on disk.
 
     Merging means concurrent batch runs (e.g. all 4 at once) accumulate instead
@@ -202,18 +265,18 @@ def save_manifest(manifest: dict) -> None:
     only present on disk are preserved.
     """
     try:
-        disk = json.loads(MANIFEST.read_text())
+        disk = json.loads(path.read_text())
         if isinstance(disk, dict):
-            for slug, entry in disk.items():
-                manifest.setdefault(slug, entry)
+            for key, entry in disk.items():
+                manifest.setdefault(key, entry)
     except (FileNotFoundError, json.JSONDecodeError):
         pass
-    tmp = MANIFEST.with_suffix(".json.tmp")
+    tmp = path.with_suffix(".json.tmp")
     tmp.write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n")
-    tmp.replace(MANIFEST)
+    tmp.replace(path)
 
 
-def subscribe_with_retry(prompt: str, slug: str) -> dict:
+def subscribe_with_retry(prompt: str, label: str, image_size: str = IMAGE_SIZE) -> dict:
     """Call fal, retrying transient failures with backoff."""
     last_err: Exception | None = None
     for attempt in range(1, 5):
@@ -222,7 +285,7 @@ def subscribe_with_retry(prompt: str, slug: str) -> dict:
                 MODEL,
                 arguments={
                     "prompt": prompt,
-                    "image_size": IMAGE_SIZE,
+                    "image_size": image_size,
                     "quality": QUALITY,
                     "num_images": 1,
                     "output_format": OUTPUT_FORMAT,
@@ -234,19 +297,70 @@ def subscribe_with_retry(prompt: str, slug: str) -> dict:
             if attempt == 4:
                 break
             wait = 1.5 * attempt
-            print(f"  retry {slug} (attempt {attempt} failed: {err}); waiting {wait:.0f}s")
+            print(f"  retry {label} (attempt {attempt} failed: {err}); waiting {wait:.0f}s")
             time.sleep(wait)
     assert last_err is not None
     raise last_err
 
 
-def manifest_entry(prompt: str) -> dict:
-    return {
+def apply_crop(img: Image.Image, crop: dict | None) -> Image.Image:
+    """Crop a fractional box {left,top,width,height} (0-1) out of the image.
+
+    Lets us generate a taller image (the model caps aspect at 3:1) and then keep
+    only a wide horizontal ribbon, so the shipped asset matches an extreme banner
+    aspect with no further cropping in the app. Missing keys default to full.
+    """
+    if not crop:
+        return img
+    w, h = img.size
+    left = int(round(crop.get("left", 0.0) * w))
+    top = int(round(crop.get("top", 0.0) * h))
+    right = left + int(round(crop.get("width", 1.0) * w))
+    bottom = top + int(round(crop.get("height", 1.0) * h))
+    return img.crop((max(0, left), max(0, top), min(w, right), min(h, bottom)))
+
+
+def render(
+    label: str,
+    prompt: str,
+    image_size,
+    out_path: Path,
+    raw_path: Path,
+    crop: dict | None = None,
+) -> tuple[int, int]:
+    """Generate one image: fetch, save the full raw PNG + an optimized WebP.
+
+    The raw PNG is always saved uncropped so the crop can be re-derived later
+    (see --recrop) without spending another API call.
+    """
+    result = subscribe_with_retry(prompt, label, image_size)
+    images = result.get("images") or []
+    url = images[0].get("url") if images else None
+    if not url:
+        raise RuntimeError(f"no image returned for {label}: {result}")
+
+    with urllib.request.urlopen(url, context=SSL_CONTEXT) as resp:
+        raw_bytes = resp.read()
+
+    raw_path.parent.mkdir(parents=True, exist_ok=True)
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    raw_path.write_bytes(raw_bytes)
+
+    img = apply_crop(Image.open(BytesIO(raw_bytes)).convert("RGB"), crop)
+    img.save(out_path, "WEBP", quality=WEBP_QUALITY, method=6)
+    return img.size
+
+
+def manifest_entry(prompt: str, image_size=IMAGE_SIZE, crop: dict | None = None) -> dict:
+    entry = {
         "model": MODEL,
-        "image_size": IMAGE_SIZE,
+        "image_size": image_size,
         "quality": QUALITY,
         "prompt": prompt,
     }
+    if crop:
+        entry["crop"] = crop
+    return entry
 
 
 def generate(job: dict[str, str], manifest: dict, force: bool) -> None:
@@ -263,33 +377,51 @@ def generate(job: dict[str, str], manifest: dict, force: bool) -> None:
 
     prompt = build_prompt(job["movement"])
     print(f"-> gen  {slug}")
-    result = subscribe_with_retry(prompt, slug)
-
-    images = result.get("images") or []
-    url = images[0].get("url") if images else None
-    if not url:
-        raise RuntimeError(f"no image returned for {slug}: {result}")
-
-    with urllib.request.urlopen(url, context=SSL_CONTEXT) as resp:
-        raw_bytes = resp.read()
-
-    RAW_DIR.mkdir(parents=True, exist_ok=True)
-    OUT_DIR.mkdir(parents=True, exist_ok=True)
-
-    # 1) Raw PNG, exactly as the API returned it (max fidelity / reference).
-    raw_path = RAW_DIR / f"{slug}.png"
-    raw_path.write_bytes(raw_bytes)
-
-    # 2) Optimized WebP for shipping (native resolution, high quality).
-    img = Image.open(BytesIO(raw_bytes)).convert("RGB")
-    img.save(webp_path, "WEBP", quality=WEBP_QUALITY, method=6)
+    w, h = render(slug, prompt, IMAGE_SIZE, webp_path, RAW_DIR / f"{slug}.png")
 
     manifest[slug] = manifest_entry(prompt)
     # Persist immediately so an interrupt mid-batch never loses a completed
     # image's record. The files on disk are already written above.
     save_manifest(manifest)
-    w, h = img.size
     print(f"   done {slug} -> {webp_path.relative_to(ROOT)} ({w}x{h}) + raw png")
+
+
+def generate_ui(job: dict, manifest: dict, force: bool) -> None:
+    name = job["name"]
+    image_size = job["image_size"]
+    crop = job.get("crop")
+    prompt = build_ui_prompt(job["scene"])
+    webp_path = UI_DIR / f"{name}.webp"
+    if webp_path.exists() and not force:
+        if name not in manifest:
+            manifest[name] = manifest_entry(prompt, image_size, crop)
+            save_manifest(manifest, UI_MANIFEST)
+        print(f"  skip {name} (already exists)")
+        return
+
+    print(f"-> gen  {name} ({image_size})")
+    w, h = render(name, prompt, image_size, webp_path, UI_RAW_DIR / f"{name}.png", crop)
+    manifest[name] = manifest_entry(prompt, image_size, crop)
+    save_manifest(manifest, UI_MANIFEST)
+    print(f"   done {name} -> {webp_path.relative_to(ROOT)} ({w}x{h}) + raw png")
+
+
+def recrop_ui(jobs: list[dict]) -> None:
+    """Re-derive each UI WebP from its saved raw PNG using the job's crop spec.
+
+    No API calls — used to iterate on a banner's crop band for free.
+    """
+    for job in jobs:
+        name = job["name"]
+        raw_path = UI_RAW_DIR / f"{name}.png"
+        if not raw_path.exists():
+            print(f"  skip {name} (no raw png — run --ui --force first)")
+            continue
+        img = apply_crop(Image.open(raw_path).convert("RGB"), job.get("crop"))
+        out_path = UI_DIR / f"{name}.webp"
+        img.save(out_path, "WEBP", quality=WEBP_QUALITY, method=6)
+        w, h = img.size
+        print(f"   recrop {name} -> {out_path.relative_to(ROOT)} ({w}x{h})")
 
 
 def reconcile(jobs: list[dict[str, str]]) -> None:
@@ -325,6 +457,36 @@ def reconcile(jobs: list[dict[str, str]]) -> None:
         print(f"  WARNING: {len(unknown)} images have no known prompt source: {unknown}")
 
 
+def run_ui(args: argparse.Namespace) -> None:
+    """Generate the UI background set into src/assets/ui/."""
+    jobs = UI_JOBS
+    if args.only:
+        only = set(args.only.split(","))
+        jobs = [j for j in jobs if j["name"] in only]
+    if not jobs:
+        raise SystemExit("No matching UI jobs.")
+
+    if args.recrop:
+        print(f"Recropping {len(jobs)} UI background(s) from raw PNGs.")
+        recrop_ui(jobs)
+        return
+
+    print(f"UI backgrounds: {len(jobs)} this run.")
+
+    manifest = load_manifest(UI_MANIFEST)
+    done = 0
+    try:
+        for job in jobs:
+            try:
+                generate_ui(job, manifest, args.force)
+                done += 1
+            except Exception as err:  # noqa: BLE001 - keep going on single failure
+                print(f"x FAIL {job['name']}: {err}")
+    finally:
+        save_manifest(manifest, UI_MANIFEST)
+        print(f"\nManifest written -> {UI_MANIFEST.relative_to(ROOT)} ({done}/{len(jobs)} this run)")
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Generate exercise art via fal gpt-image-2")
     parser.add_argument("--force", action="store_true", help="regenerate even if art exists")
@@ -336,9 +498,26 @@ def main() -> None:
         action="store_true",
         help="rebuild manifest entries for every existing image (no API calls)",
     )
+    parser.add_argument(
+        "--ui",
+        action="store_true",
+        help="generate UI background art (src/assets/ui/) instead of exercises",
+    )
+    parser.add_argument(
+        "--recrop",
+        action="store_true",
+        help="(with --ui) re-derive WebPs from saved raw PNGs using crop specs; no API calls",
+    )
     args = parser.parse_args()
 
     import os
+
+    if args.ui:
+        # Recrop works entirely from local raw PNGs, so it needs no API key.
+        if not args.recrop and not os.environ.get("FAL_KEY"):
+            raise SystemExit("Missing FAL_KEY - add it to .env (FAL_KEY=...). See .env.example.")
+        run_ui(args)
+        return
 
     jobs = load_jobs()
 

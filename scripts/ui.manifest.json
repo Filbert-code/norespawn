@@ -1,0 +1,33 @@
+{
+  "nav_plate": {
+    "image_size": "landscape_16_9",
+    "model": "openai/gpt-image-2",
+    "prompt": "a single weathered dark hammered iron plate, centered, with riveted corners and a worn bronze rim, flat head-on view, evenly lit, grimdark Warhammer atmosphere, deep shadow, heavy vignette, oxblood and crimson and bronze accents, drifting ash and faint embers, weathered iron and gothic cathedral stone, matte painterly texture, cinematic and moody, dark empty low-detail negative space in the center for overlaid UI, no people, no figures, no text, no letters, no symbols, no logos, no border",
+    "quality": "low"
+  },
+  "planned_workout": {
+    "image_size": "landscape_4_3",
+    "model": "openai/gpt-image-2",
+    "prompt": "a dim grimdark armory wall, racked iron weapons and hanging chains in heavy shadow lit by faint crimson torchlight, grimdark Warhammer atmosphere, deep shadow, heavy vignette, oxblood and crimson and bronze accents, drifting ash and faint embers, weathered iron and gothic cathedral stone, matte painterly texture, cinematic and moody, dark empty low-detail negative space in the center for overlaid UI, no people, no figures, no text, no letters, no symbols, no logos, no border",
+    "quality": "low"
+  },
+  "rest_day": {
+    "image_size": "landscape_4_3",
+    "model": "openai/gpt-image-2",
+    "prompt": "a cold dormant forge in an empty gothic stone chamber, extinguished grey ashes, quiet muted blue-grey gloom, faint cold light, grimdark Warhammer atmosphere, deep shadow, heavy vignette, oxblood and crimson and bronze accents, drifting ash and faint embers, weathered iron and gothic cathedral stone, matte painterly texture, cinematic and moody, dark empty low-detail negative space in the center for overlaid UI, no people, no figures, no text, no letters, no symbols, no logos, no border",
+    "quality": "low"
+  },
+  "streak_banner": {
+    "crop": {
+      "height": 0.3,
+      "top": 0.35
+    },
+    "image_size": {
+      "height": 1024,
+      "width": 1536
+    },
+    "model": "openai/gpt-image-2",
+    "prompt": "a single narrow horizontal ribbon of smouldering molten forge coals and glowing embers running straight across the exact middle from edge to edge, fading into deep solid black empty darkness both above and below the ribbon, a few faint rising sparks, grimdark Warhammer atmosphere, deep shadow, heavy vignette, oxblood and crimson and bronze accents, drifting ash and faint embers, weathered iron and gothic cathedral stone, matte painterly texture, cinematic and moody, dark empty low-detail negative space in the center for overlaid UI, no people, no figures, no text, no letters, no symbols, no logos, no border",
+    "quality": "low"
+  }
+}

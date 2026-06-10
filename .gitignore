@@ -17,9 +17,10 @@ scripts/.venv
 __pycache__/
 *.pyc
 
-# Raw exercise art originals (~123MB). The shipped WebPs in
-# src/assets/exercises/ are committed; these untouched PNGs stay local only.
+# Raw art originals. The shipped WebPs are committed; the untouched PNGs
+# (large) stay local only.
 src/assets/exercises/raw/
+src/assets/ui/raw/
 
 # Environment variables (keep .env.example tracked)
 .env

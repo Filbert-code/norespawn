@@ -17,6 +17,8 @@ import {
   X,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { uiArt } from '@/lib/uiArt'
+import { UiBackground } from '@/components/UiBackground'
 import { ConfirmDialog } from '@/mockups/components/ConfirmDialog'
 import { PlanSheet } from '@/components/PlanSheet'
 import { ScreenError, ScreenSpinner, ScreenSurface } from '@/screens/_shared/screen'
@@ -258,7 +260,8 @@ export function CalendarHomeScreen() {
         </div>
       </header>
 
-      <div className="mx-4 mb-3 flex items-center gap-3 border border-nr-bronze/30 bg-nr-gunmetal/50 px-4 py-3 clip-bevel">
+      <div className="clip-bevel relative isolate mx-4 mb-3 flex items-center gap-3 overflow-hidden border border-nr-bronze/30 bg-nr-gunmetal/50 px-4 py-3">
+        <UiBackground src={uiArt.streakBanner} scrim={68} />
         <span className="flex size-10 items-center justify-center rounded-full bg-nr-crimson/15 text-nr-ember">
           <Flame className="size-6" />
         </span>
@@ -552,7 +555,8 @@ function DayDetailCard({
   const inProgress = entry.status === 'in_progress'
 
   return (
-    <div className="clip-bevel border border-nr-bronze/30 bg-nr-gunmetal/50 p-4">
+    <div className="clip-bevel relative isolate overflow-hidden border border-nr-bronze/30 bg-nr-gunmetal/50 p-4">
+      <UiBackground src={uiArt.plannedWorkout} scrim={72} />
       <div className="flex items-center gap-3">
         <span className="flex size-11 items-center justify-center rounded-sm border border-nr-bronze/30 bg-nr-black/50 text-nr-bronze">
           <Dumbbell className="size-5" />
@@ -668,7 +672,8 @@ function EmptyDay({
   const navigate = useNavigate()
   if (firstRun) {
     return (
-      <div className="clip-bevel flex flex-col items-center gap-3 border border-dashed border-nr-bronze/30 bg-nr-gunmetal/20 px-4 py-9 text-center">
+      <div className="clip-bevel relative isolate flex flex-col items-center gap-3 overflow-hidden border border-dashed border-nr-bronze/30 bg-nr-gunmetal/20 px-4 py-9 text-center">
+        <UiBackground src={uiArt.restDay} scrim={74} />
         <Skull className="size-9 text-nr-bone/15" />
         <div>
           <p className="font-heading text-sm uppercase tracking-widest text-nr-bone/70">
@@ -691,7 +696,8 @@ function EmptyDay({
   // For TODAY we want a path to "just start lifting" without scheduling first.
   if (isToday) {
     return (
-      <div className="clip-bevel flex flex-col items-center gap-3 border border-dashed border-nr-bronze/25 bg-nr-gunmetal/20 px-4 py-8 text-center">
+      <div className="clip-bevel relative isolate flex flex-col items-center gap-3 overflow-hidden border border-dashed border-nr-bronze/25 bg-nr-gunmetal/20 px-4 py-8 text-center">
+        <UiBackground src={uiArt.restDay} scrim={74} />
         <Skull className="size-8 text-nr-bone/15" />
         <p className="text-sm uppercase tracking-widest text-nr-bone/40">No workout yet today</p>
         <p className="-mt-1 text-[11px] uppercase tracking-wider text-nr-bone/35">
@@ -724,7 +730,8 @@ function EmptyDay({
   }
 
   return (
-    <div className="clip-bevel flex flex-col items-center gap-3 border border-dashed border-nr-bronze/25 bg-nr-gunmetal/20 px-4 py-8 text-center">
+    <div className="clip-bevel relative isolate flex flex-col items-center gap-3 overflow-hidden border border-dashed border-nr-bronze/25 bg-nr-gunmetal/20 px-4 py-8 text-center">
+      <UiBackground src={uiArt.restDay} scrim={74} />
       <Skull className="size-8 text-nr-bone/15" />
       <p className="text-sm uppercase tracking-widest text-nr-bone/40">
         {isFuture ? 'No workout planned' : 'Rest day'}

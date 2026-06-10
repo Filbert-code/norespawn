@@ -1,6 +1,8 @@
 import { useLocation, useNavigate } from 'react-router-dom'
 import { CalendarDays, Library, Settings as SettingsIcon } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { uiArt } from '@/lib/uiArt'
+import { UiBackground } from '@/components/UiBackground'
 
 // Persistent bottom navigation (D1). Real-app counterpart to
 // `mockups/components/TabBar.tsx` — routes are real, not mockup paths.
@@ -17,11 +19,11 @@ export function AppTabBar({ className }: { className?: string }) {
   return (
     <nav
       className={cn(
-        'flex border-t border-nr-bronze/25 bg-nr-black/95 px-2 pb-[max(env(safe-area-inset-bottom),1rem)] pt-2 backdrop-blur',
+        'flex border-t border-nr-bronze/25 bg-nr-black pb-[max(env(safe-area-inset-bottom),1rem)] pt-2',
         className,
       )}
     >
-      {TABS.map((t) => {
+      {TABS.map((t, i) => {
         const active = pathname === t.to
         return (
           <button
@@ -29,10 +31,12 @@ export function AppTabBar({ className }: { className?: string }) {
             onClick={() => navigate(t.to)}
             aria-current={active ? 'page' : undefined}
             className={cn(
-              'flex flex-1 flex-col items-center gap-1 py-1 font-heading text-[10px] uppercase tracking-widest transition-colors',
+              'relative isolate flex flex-1 flex-col items-center gap-1 overflow-hidden py-2 font-heading text-[10px] uppercase tracking-widest transition-colors',
+              i > 0 && 'border-l border-nr-bronze/40',
               active ? 'text-nr-ember' : 'text-nr-bone/45 hover:text-nr-bone',
             )}
           >
+            <UiBackground src={uiArt.navPlate} scrim={active ? 64 : 72} />
             <t.icon
               className={cn('size-5', active && 'drop-shadow-[0_0_6px] drop-shadow-nr-ember/60')}
             />
