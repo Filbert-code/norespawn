@@ -1,0 +1,1003 @@
+[
+	{
+		"slug": "arnold_press",
+		"name": "Arnold Press",
+		"equipment": "dumbbell",
+		"movement_pattern": "vertical_push",
+		"instructions": null
+	},
+	{
+		"slug": "back_extension",
+		"name": "Back Extension",
+		"equipment": "bodyweight",
+		"movement_pattern": "hinge",
+		"instructions": null
+	},
+	{
+		"slug": "banded_hip_abduction",
+		"name": "Banded Hip Abduction",
+		"equipment": "band",
+		"movement_pattern": "isolation",
+		"instructions": null
+	},
+	{
+		"slug": "barbell_back_squat",
+		"name": "Barbell Back Squat",
+		"equipment": "barbell",
+		"movement_pattern": "squat",
+		"instructions": null
+	},
+	{
+		"slug": "barbell_bench_press",
+		"name": "Barbell Bench Press",
+		"equipment": "barbell",
+		"movement_pattern": "horizontal_push",
+		"instructions": null
+	},
+	{
+		"slug": "barbell_bicep_curl",
+		"name": "Barbell Bicep Curl",
+		"equipment": "barbell",
+		"movement_pattern": "isolation",
+		"instructions": null
+	},
+	{
+		"slug": "barbell_clean_and_press",
+		"name": "Barbell Clean And Press",
+		"equipment": "barbell",
+		"movement_pattern": "vertical_push",
+		"instructions": null
+	},
+	{
+		"slug": "barbell_front_raise",
+		"name": "Barbell Front Raise",
+		"equipment": "barbell",
+		"movement_pattern": "isolation",
+		"instructions": null
+	},
+	{
+		"slug": "barbell_front_squat",
+		"name": "Barbell Front Squat",
+		"equipment": "barbell",
+		"movement_pattern": "squat",
+		"instructions": null
+	},
+	{
+		"slug": "barbell_glute_bridge",
+		"name": "Barbell Glute Bridge",
+		"equipment": "barbell",
+		"movement_pattern": "hinge",
+		"instructions": null
+	},
+	{
+		"slug": "barbell_good_morning",
+		"name": "Barbell Good Morning",
+		"equipment": "barbell",
+		"movement_pattern": "hinge",
+		"instructions": null
+	},
+	{
+		"slug": "barbell_hip_thrust",
+		"name": "Barbell Hip Thrust",
+		"equipment": "barbell",
+		"movement_pattern": "hinge",
+		"instructions": null
+	},
+	{
+		"slug": "barbell_overhead_press",
+		"name": "Barbell Overhead Press",
+		"equipment": "barbell",
+		"movement_pattern": "vertical_push",
+		"instructions": null
+	},
+	{
+		"slug": "barbell_power_clean",
+		"name": "Barbell Power Clean",
+		"equipment": "barbell",
+		"movement_pattern": "hinge",
+		"instructions": null
+	},
+	{
+		"slug": "barbell_row",
+		"name": "Barbell Row",
+		"equipment": "barbell",
+		"movement_pattern": "horizontal_pull",
+		"instructions": null
+	},
+	{
+		"slug": "barbell_shrug",
+		"name": "Barbell Shrug",
+		"equipment": "barbell",
+		"movement_pattern": "isolation",
+		"instructions": null
+	},
+	{
+		"slug": "barbell_thruster",
+		"name": "Barbell Thruster",
+		"equipment": "barbell",
+		"movement_pattern": "squat",
+		"instructions": null
+	},
+	{
+		"slug": "barbell_upright_row",
+		"name": "Barbell Upright Row",
+		"equipment": "barbell",
+		"movement_pattern": "vertical_pull",
+		"instructions": null
+	},
+	{
+		"slug": "barbell_wrist_curl",
+		"name": "Barbell Wrist Curl",
+		"equipment": "barbell",
+		"movement_pattern": "isolation",
+		"instructions": null
+	},
+	{
+		"slug": "bicycle_crunch",
+		"name": "Bicycle Crunch",
+		"equipment": "bodyweight",
+		"movement_pattern": "core",
+		"instructions": null
+	},
+	{
+		"slug": "bodyweight_squat",
+		"name": "Bodyweight Squat",
+		"equipment": "bodyweight",
+		"movement_pattern": "squat",
+		"instructions": null
+	},
+	{
+		"slug": "bulgarian_split_squat",
+		"name": "Bulgarian Split Squat",
+		"equipment": "dumbbell",
+		"movement_pattern": "lunge",
+		"instructions": null
+	},
+	{
+		"slug": "burpee",
+		"name": "Burpee",
+		"equipment": "bodyweight",
+		"movement_pattern": null,
+		"instructions": null
+	},
+	{
+		"slug": "cable_crossover",
+		"name": "Cable Crossover",
+		"equipment": "cable",
+		"movement_pattern": "isolation",
+		"instructions": null
+	},
+	{
+		"slug": "cable_crunch",
+		"name": "Cable Crunch",
+		"equipment": "cable",
+		"movement_pattern": "core",
+		"instructions": null
+	},
+	{
+		"slug": "cable_curl",
+		"name": "Cable Curl",
+		"equipment": "cable",
+		"movement_pattern": "isolation",
+		"instructions": null
+	},
+	{
+		"slug": "cable_front_raise",
+		"name": "Cable Front Raise",
+		"equipment": "cable",
+		"movement_pattern": "isolation",
+		"instructions": null
+	},
+	{
+		"slug": "cable_glute_kickback",
+		"name": "Cable Glute Kickback",
+		"equipment": "cable",
+		"movement_pattern": "hinge",
+		"instructions": null
+	},
+	{
+		"slug": "cable_lateral_raise",
+		"name": "Cable Lateral Raise",
+		"equipment": "cable",
+		"movement_pattern": "isolation",
+		"instructions": null
+	},
+	{
+		"slug": "cable_pull_through",
+		"name": "Cable Pull Through",
+		"equipment": "cable",
+		"movement_pattern": "hinge",
+		"instructions": null
+	},
+	{
+		"slug": "cable_rear_delt_fly",
+		"name": "Cable Rear Delt Fly",
+		"equipment": "cable",
+		"movement_pattern": "isolation",
+		"instructions": null
+	},
+	{
+		"slug": "cable_shrug",
+		"name": "Cable Shrug",
+		"equipment": "cable",
+		"movement_pattern": "isolation",
+		"instructions": null
+	},
+	{
+		"slug": "cable_upright_row",
+		"name": "Cable Upright Row",
+		"equipment": "cable",
+		"movement_pattern": "vertical_pull",
+		"instructions": null
+	},
+	{
+		"slug": "cable_wrist_curl",
+		"name": "Cable Wrist Curl",
+		"equipment": "cable",
+		"movement_pattern": "isolation",
+		"instructions": null
+	},
+	{
+		"slug": "chest_dip",
+		"name": "Chest Dip",
+		"equipment": "bodyweight",
+		"movement_pattern": "horizontal_push",
+		"instructions": null
+	},
+	{
+		"slug": "chin_up",
+		"name": "Chin Up",
+		"equipment": "bodyweight",
+		"movement_pattern": "vertical_pull",
+		"instructions": null
+	},
+	{
+		"slug": "close_grip_bench_press",
+		"name": "Close Grip Bench Press",
+		"equipment": "barbell",
+		"movement_pattern": "horizontal_push",
+		"instructions": null
+	},
+	{
+		"slug": "concentration_curl",
+		"name": "Concentration Curl",
+		"equipment": "dumbbell",
+		"movement_pattern": "isolation",
+		"instructions": null
+	},
+	{
+		"slug": "crunch",
+		"name": "Crunch",
+		"equipment": "bodyweight",
+		"movement_pattern": "core",
+		"instructions": null
+	},
+	{
+		"slug": "dead_bug",
+		"name": "Dead Bug",
+		"equipment": "bodyweight",
+		"movement_pattern": "core",
+		"instructions": null
+	},
+	{
+		"slug": "deadlift",
+		"name": "Deadlift",
+		"equipment": "barbell",
+		"movement_pattern": "hinge",
+		"instructions": null
+	},
+	{
+		"slug": "decline_barbell_bench_press",
+		"name": "Decline Barbell Bench Press",
+		"equipment": "barbell",
+		"movement_pattern": "horizontal_push",
+		"instructions": null
+	},
+	{
+		"slug": "decline_dumbbell_press",
+		"name": "Decline Dumbbell Press",
+		"equipment": "dumbbell",
+		"movement_pattern": "horizontal_push",
+		"instructions": null
+	},
+	{
+		"slug": "diamond_push_up",
+		"name": "Diamond Push Up",
+		"equipment": "bodyweight",
+		"movement_pattern": "horizontal_push",
+		"instructions": null
+	},
+	{
+		"slug": "dumbbell_bench_press",
+		"name": "Dumbbell Bench Press",
+		"equipment": "dumbbell",
+		"movement_pattern": "horizontal_push",
+		"instructions": null
+	},
+	{
+		"slug": "dumbbell_bicep_curl",
+		"name": "Dumbbell Bicep Curl",
+		"equipment": "dumbbell",
+		"movement_pattern": "isolation",
+		"instructions": null
+	},
+	{
+		"slug": "dumbbell_calf_raise",
+		"name": "Dumbbell Calf Raise",
+		"equipment": "dumbbell",
+		"movement_pattern": "isolation",
+		"instructions": null
+	},
+	{
+		"slug": "dumbbell_fly",
+		"name": "Dumbbell Fly",
+		"equipment": "dumbbell",
+		"movement_pattern": "isolation",
+		"instructions": null
+	},
+	{
+		"slug": "dumbbell_front_raise",
+		"name": "Dumbbell Front Raise",
+		"equipment": "dumbbell",
+		"movement_pattern": "isolation",
+		"instructions": null
+	},
+	{
+		"slug": "dumbbell_lateral_raise",
+		"name": "Dumbbell Lateral Raise",
+		"equipment": "dumbbell",
+		"movement_pattern": "isolation",
+		"instructions": null
+	},
+	{
+		"slug": "dumbbell_pullover",
+		"name": "Dumbbell Pullover",
+		"equipment": "dumbbell",
+		"movement_pattern": "isolation",
+		"instructions": null
+	},
+	{
+		"slug": "dumbbell_rear_delt_fly",
+		"name": "Dumbbell Rear Delt Fly",
+		"equipment": "dumbbell",
+		"movement_pattern": "isolation",
+		"instructions": null
+	},
+	{
+		"slug": "dumbbell_romanian_deadlift",
+		"name": "Dumbbell Romanian Deadlift",
+		"equipment": "dumbbell",
+		"movement_pattern": "hinge",
+		"instructions": null
+	},
+	{
+		"slug": "dumbbell_row",
+		"name": "Dumbbell Row",
+		"equipment": "dumbbell",
+		"movement_pattern": "horizontal_pull",
+		"instructions": null
+	},
+	{
+		"slug": "dumbbell_shoulder_press",
+		"name": "Dumbbell Shoulder Press",
+		"equipment": "dumbbell",
+		"movement_pattern": "vertical_push",
+		"instructions": null
+	},
+	{
+		"slug": "dumbbell_shrug",
+		"name": "Dumbbell Shrug",
+		"equipment": "dumbbell",
+		"movement_pattern": "isolation",
+		"instructions": null
+	},
+	{
+		"slug": "dumbbell_snatch",
+		"name": "Dumbbell Snatch",
+		"equipment": "dumbbell",
+		"movement_pattern": "hinge",
+		"instructions": null
+	},
+	{
+		"slug": "dumbbell_squat",
+		"name": "Dumbbell Squat",
+		"equipment": "dumbbell",
+		"movement_pattern": "squat",
+		"instructions": null
+	},
+	{
+		"slug": "dumbbell_step_up",
+		"name": "Dumbbell Step Up",
+		"equipment": "dumbbell",
+		"movement_pattern": "lunge",
+		"instructions": null
+	},
+	{
+		"slug": "dumbbell_thruster",
+		"name": "Dumbbell Thruster",
+		"equipment": "dumbbell",
+		"movement_pattern": "squat",
+		"instructions": null
+	},
+	{
+		"slug": "dumbbell_upright_row",
+		"name": "Dumbbell Upright Row",
+		"equipment": "dumbbell",
+		"movement_pattern": "vertical_pull",
+		"instructions": null
+	},
+	{
+		"slug": "dumbbell_wrist_curl",
+		"name": "Dumbbell Wrist Curl",
+		"equipment": "dumbbell",
+		"movement_pattern": "isolation",
+		"instructions": null
+	},
+	{
+		"slug": "elliptical",
+		"name": "Elliptical",
+		"equipment": "machine",
+		"movement_pattern": null,
+		"instructions": null
+	},
+	{
+		"slug": "ez_bar_curl",
+		"name": "EZ Bar Curl",
+		"equipment": "barbell",
+		"movement_pattern": "isolation",
+		"instructions": null
+	},
+	{
+		"slug": "face_pull",
+		"name": "Face Pull",
+		"equipment": "cable",
+		"movement_pattern": "isolation",
+		"instructions": null
+	},
+	{
+		"slug": "farmers_carry",
+		"name": "Farmers Carry",
+		"equipment": "dumbbell",
+		"movement_pattern": "carry",
+		"instructions": null
+	},
+	{
+		"slug": "flutter_kick",
+		"name": "Flutter Kick",
+		"equipment": "bodyweight",
+		"movement_pattern": "core",
+		"instructions": null
+	},
+	{
+		"slug": "frog_pump",
+		"name": "Frog Pump",
+		"equipment": "bodyweight",
+		"movement_pattern": "hinge",
+		"instructions": null
+	},
+	{
+		"slug": "glute_bridge",
+		"name": "Glute Bridge",
+		"equipment": "bodyweight",
+		"movement_pattern": "hinge",
+		"instructions": null
+	},
+	{
+		"slug": "goblet_squat",
+		"name": "Goblet Squat",
+		"equipment": "dumbbell",
+		"movement_pattern": "squat",
+		"instructions": null
+	},
+	{
+		"slug": "hack_squat",
+		"name": "Hack Squat",
+		"equipment": "machine",
+		"movement_pattern": "squat",
+		"instructions": null
+	},
+	{
+		"slug": "hammer_curl",
+		"name": "Hammer Curl",
+		"equipment": "dumbbell",
+		"movement_pattern": "isolation",
+		"instructions": null
+	},
+	{
+		"slug": "hanging_knee_raise",
+		"name": "Hanging Knee Raise",
+		"equipment": "bodyweight",
+		"movement_pattern": "core",
+		"instructions": null
+	},
+	{
+		"slug": "hanging_leg_raise",
+		"name": "Hanging Leg Raise",
+		"equipment": "bodyweight",
+		"movement_pattern": "core",
+		"instructions": null
+	},
+	{
+		"slug": "high_cable_crossover",
+		"name": "High Cable Crossover",
+		"equipment": "cable",
+		"movement_pattern": "isolation",
+		"instructions": null
+	},
+	{
+		"slug": "hip_abduction_machine",
+		"name": "Hip Abduction Machine",
+		"equipment": "machine",
+		"movement_pattern": "isolation",
+		"instructions": null
+	},
+	{
+		"slug": "hip_adduction_machine",
+		"name": "Hip Adduction Machine",
+		"equipment": "machine",
+		"movement_pattern": "isolation",
+		"instructions": null
+	},
+	{
+		"slug": "hollow_hold",
+		"name": "Hollow Hold",
+		"equipment": "bodyweight",
+		"movement_pattern": "core",
+		"instructions": null
+	},
+	{
+		"slug": "incline_barbell_bench_press",
+		"name": "Incline Barbell Bench Press",
+		"equipment": "barbell",
+		"movement_pattern": "horizontal_push",
+		"instructions": null
+	},
+	{
+		"slug": "incline_dumbbell_curl",
+		"name": "Incline Dumbbell Curl",
+		"equipment": "dumbbell",
+		"movement_pattern": "isolation",
+		"instructions": null
+	},
+	{
+		"slug": "incline_dumbbell_fly",
+		"name": "Incline Dumbbell Fly",
+		"equipment": "dumbbell",
+		"movement_pattern": "isolation",
+		"instructions": null
+	},
+	{
+		"slug": "incline_dumbbell_press",
+		"name": "Incline Dumbbell Press",
+		"equipment": "dumbbell",
+		"movement_pattern": "horizontal_push",
+		"instructions": null
+	},
+	{
+		"slug": "incline_machine_chest_press",
+		"name": "Incline Machine Chest Press",
+		"equipment": "machine",
+		"movement_pattern": "horizontal_push",
+		"instructions": null
+	},
+	{
+		"slug": "incline_smith_machine_bench_press",
+		"name": "Incline Smith Machine Bench Press",
+		"equipment": "smith_machine",
+		"movement_pattern": "horizontal_push",
+		"instructions": null
+	},
+	{
+		"slug": "inverted_row",
+		"name": "Inverted Row",
+		"equipment": "bodyweight",
+		"movement_pattern": "horizontal_pull",
+		"instructions": null
+	},
+	{
+		"slug": "jump_rope",
+		"name": "Jump Rope",
+		"equipment": "bodyweight",
+		"movement_pattern": null,
+		"instructions": null
+	},
+	{
+		"slug": "kettlebell_clean_and_press",
+		"name": "Kettlebell Clean And Press",
+		"equipment": "kettlebell",
+		"movement_pattern": "vertical_push",
+		"instructions": null
+	},
+	{
+		"slug": "kettlebell_swing",
+		"name": "Kettlebell Swing",
+		"equipment": "kettlebell",
+		"movement_pattern": "hinge",
+		"instructions": null
+	},
+	{
+		"slug": "lat_pulldown",
+		"name": "Lat Pulldown",
+		"equipment": "cable",
+		"movement_pattern": "vertical_pull",
+		"instructions": null
+	},
+	{
+		"slug": "leg_extension",
+		"name": "Leg Extension",
+		"equipment": "machine",
+		"movement_pattern": "isolation",
+		"instructions": null
+	},
+	{
+		"slug": "leg_press",
+		"name": "Leg Press",
+		"equipment": "machine",
+		"movement_pattern": "squat",
+		"instructions": null
+	},
+	{
+		"slug": "leg_press_calf_raise",
+		"name": "Leg Press Calf Raise",
+		"equipment": "machine",
+		"movement_pattern": "isolation",
+		"instructions": null
+	},
+	{
+		"slug": "low_cable_crossover",
+		"name": "Low Cable Crossover",
+		"equipment": "cable",
+		"movement_pattern": "isolation",
+		"instructions": null
+	},
+	{
+		"slug": "lying_leg_curl",
+		"name": "Lying Leg Curl",
+		"equipment": "machine",
+		"movement_pattern": "hinge",
+		"instructions": null
+	},
+	{
+		"slug": "lying_leg_raise",
+		"name": "Lying Leg Raise",
+		"equipment": "bodyweight",
+		"movement_pattern": "core",
+		"instructions": null
+	},
+	{
+		"slug": "machine_chest_press",
+		"name": "Machine Chest Press",
+		"equipment": "machine",
+		"movement_pattern": "horizontal_push",
+		"instructions": null
+	},
+	{
+		"slug": "machine_hip_thrust",
+		"name": "Machine Hip Thrust",
+		"equipment": "machine",
+		"movement_pattern": "hinge",
+		"instructions": null
+	},
+	{
+		"slug": "machine_lateral_raise",
+		"name": "Machine Lateral Raise",
+		"equipment": "machine",
+		"movement_pattern": "isolation",
+		"instructions": null
+	},
+	{
+		"slug": "machine_pullover",
+		"name": "Machine Pullover",
+		"equipment": "machine",
+		"movement_pattern": "isolation",
+		"instructions": null
+	},
+	{
+		"slug": "machine_shoulder_press",
+		"name": "Machine Shoulder Press",
+		"equipment": "machine",
+		"movement_pattern": "vertical_push",
+		"instructions": null
+	},
+	{
+		"slug": "machine_tricep_extension",
+		"name": "Machine Tricep Extension",
+		"equipment": "machine",
+		"movement_pattern": "isolation",
+		"instructions": null
+	},
+	{
+		"slug": "mountain_climber",
+		"name": "Mountain Climber",
+		"equipment": "bodyweight",
+		"movement_pattern": "core",
+		"instructions": null
+	},
+	{
+		"slug": "outdoor_run",
+		"name": "Outdoor Run",
+		"equipment": "bodyweight",
+		"movement_pattern": null,
+		"instructions": null
+	},
+	{
+		"slug": "overhead_cable_tricep_extension",
+		"name": "Overhead Cable Tricep Extension",
+		"equipment": "cable",
+		"movement_pattern": "isolation",
+		"instructions": null
+	},
+	{
+		"slug": "overhead_dumbbell_tricep_extension",
+		"name": "Overhead Dumbbell Tricep Extension",
+		"equipment": "dumbbell",
+		"movement_pattern": "isolation",
+		"instructions": null
+	},
+	{
+		"slug": "pec_deck",
+		"name": "Pec Deck",
+		"equipment": "machine",
+		"movement_pattern": "isolation",
+		"instructions": null
+	},
+	{
+		"slug": "plank",
+		"name": "Plank",
+		"equipment": "bodyweight",
+		"movement_pattern": "core",
+		"instructions": null
+	},
+	{
+		"slug": "preacher_curl",
+		"name": "Preacher Curl",
+		"equipment": "machine",
+		"movement_pattern": "isolation",
+		"instructions": null
+	},
+	{
+		"slug": "pull_up",
+		"name": "Pull Up",
+		"equipment": "bodyweight",
+		"movement_pattern": "vertical_pull",
+		"instructions": null
+	},
+	{
+		"slug": "push_up",
+		"name": "Push Up",
+		"equipment": "bodyweight",
+		"movement_pattern": "horizontal_push",
+		"instructions": null
+	},
+	{
+		"slug": "reverse_curl",
+		"name": "Reverse Curl",
+		"equipment": "barbell",
+		"movement_pattern": "isolation",
+		"instructions": null
+	},
+	{
+		"slug": "reverse_lunge",
+		"name": "Reverse Lunge",
+		"equipment": "dumbbell",
+		"movement_pattern": "lunge",
+		"instructions": null
+	},
+	{
+		"slug": "reverse_pec_deck",
+		"name": "Reverse Pec Deck",
+		"equipment": "machine",
+		"movement_pattern": "isolation",
+		"instructions": null
+	},
+	{
+		"slug": "reverse_wrist_curl",
+		"name": "Reverse Wrist Curl",
+		"equipment": "barbell",
+		"movement_pattern": "isolation",
+		"instructions": null
+	},
+	{
+		"slug": "romanian_deadlift",
+		"name": "Romanian Deadlift",
+		"equipment": "barbell",
+		"movement_pattern": "hinge",
+		"instructions": null
+	},
+	{
+		"slug": "rope_pushdown",
+		"name": "Rope Pushdown",
+		"equipment": "cable",
+		"movement_pattern": "isolation",
+		"instructions": null
+	},
+	{
+		"slug": "rowing_erg",
+		"name": "Rowing Erg",
+		"equipment": "machine",
+		"movement_pattern": null,
+		"instructions": null
+	},
+	{
+		"slug": "russian_twist",
+		"name": "Russian Twist",
+		"equipment": "bodyweight",
+		"movement_pattern": "core",
+		"instructions": null
+	},
+	{
+		"slug": "seated_cable_row",
+		"name": "Seated Cable Row",
+		"equipment": "cable",
+		"movement_pattern": "horizontal_pull",
+		"instructions": null
+	},
+	{
+		"slug": "seated_calf_raise",
+		"name": "Seated Calf Raise",
+		"equipment": "machine",
+		"movement_pattern": "isolation",
+		"instructions": null
+	},
+	{
+		"slug": "seated_leg_curl",
+		"name": "Seated Leg Curl",
+		"equipment": "machine",
+		"movement_pattern": "hinge",
+		"instructions": null
+	},
+	{
+		"slug": "side_plank",
+		"name": "Side Plank",
+		"equipment": "bodyweight",
+		"movement_pattern": "core",
+		"instructions": null
+	},
+	{
+		"slug": "sissy_squat",
+		"name": "Sissy Squat",
+		"equipment": "bodyweight",
+		"movement_pattern": "squat",
+		"instructions": null
+	},
+	{
+		"slug": "sit_up",
+		"name": "Sit Up",
+		"equipment": "bodyweight",
+		"movement_pattern": "core",
+		"instructions": null
+	},
+	{
+		"slug": "skullcrusher",
+		"name": "Skullcrusher",
+		"equipment": "barbell",
+		"movement_pattern": "isolation",
+		"instructions": null
+	},
+	{
+		"slug": "smith_machine_bench_press",
+		"name": "Smith Machine Bench Press",
+		"equipment": "smith_machine",
+		"movement_pattern": "horizontal_push",
+		"instructions": null
+	},
+	{
+		"slug": "smith_machine_row",
+		"name": "Smith Machine Row",
+		"equipment": "smith_machine",
+		"movement_pattern": "horizontal_pull",
+		"instructions": null
+	},
+	{
+		"slug": "smith_machine_shoulder_press",
+		"name": "Smith Machine Shoulder Press",
+		"equipment": "smith_machine",
+		"movement_pattern": "vertical_push",
+		"instructions": null
+	},
+	{
+		"slug": "smith_machine_squat",
+		"name": "Smith Machine Squat",
+		"equipment": "smith_machine",
+		"movement_pattern": "squat",
+		"instructions": null
+	},
+	{
+		"slug": "stair_climber",
+		"name": "Stair Climber",
+		"equipment": "machine",
+		"movement_pattern": null,
+		"instructions": null
+	},
+	{
+		"slug": "standing_calf_raise",
+		"name": "Standing Calf Raise",
+		"equipment": "machine",
+		"movement_pattern": "isolation",
+		"instructions": null
+	},
+	{
+		"slug": "stationary_bike",
+		"name": "Stationary Bike",
+		"equipment": "machine",
+		"movement_pattern": null,
+		"instructions": null
+	},
+	{
+		"slug": "stiff_leg_deadlift",
+		"name": "Stiff Leg Deadlift",
+		"equipment": "barbell",
+		"movement_pattern": "hinge",
+		"instructions": null
+	},
+	{
+		"slug": "straight_arm_pulldown",
+		"name": "Straight Arm Pulldown",
+		"equipment": "cable",
+		"movement_pattern": "isolation",
+		"instructions": null
+	},
+	{
+		"slug": "suitcase_carry",
+		"name": "Suitcase Carry",
+		"equipment": "kettlebell",
+		"movement_pattern": "carry",
+		"instructions": null
+	},
+	{
+		"slug": "t_bar_row",
+		"name": "T Bar Row",
+		"equipment": "machine",
+		"movement_pattern": "horizontal_pull",
+		"instructions": null
+	},
+	{
+		"slug": "treadmill_incline_walk",
+		"name": "Treadmill Incline Walk",
+		"equipment": "machine",
+		"movement_pattern": null,
+		"instructions": null
+	},
+	{
+		"slug": "treadmill_run",
+		"name": "Treadmill Run",
+		"equipment": "machine",
+		"movement_pattern": null,
+		"instructions": null
+	},
+	{
+		"slug": "tricep_kickback",
+		"name": "Tricep Kickback",
+		"equipment": "dumbbell",
+		"movement_pattern": "isolation",
+		"instructions": null
+	},
+	{
+		"slug": "triceps_dip",
+		"name": "Triceps Dip",
+		"equipment": "bodyweight",
+		"movement_pattern": "vertical_push",
+		"instructions": null
+	},
+	{
+		"slug": "v_up",
+		"name": "V Up",
+		"equipment": "bodyweight",
+		"movement_pattern": "core",
+		"instructions": null
+	},
+	{
+		"slug": "walking_lunge",
+		"name": "Walking Lunge",
+		"equipment": "dumbbell",
+		"movement_pattern": "lunge",
+		"instructions": null
+	},
+	{
+		"slug": "weighted_russian_twist",
+		"name": "Weighted Russian Twist",
+		"equipment": "dumbbell",
+		"movement_pattern": "core",
+		"instructions": null
+	}
+]

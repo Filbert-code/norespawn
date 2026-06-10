@@ -14,6 +14,7 @@ import {
   X,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { getExerciseArt } from '@/lib/exerciseArt'
 import { ScreenError, ScreenSpinner, ScreenSurface } from '@/screens/_shared/screen'
 import {
   exercisesByGroup,
@@ -327,6 +328,7 @@ function CatalogCard({
   selected: boolean
   onToggle: (slug: string) => void
 }) {
+  const art = getExerciseArt(exercise.slug)
   return (
     <button
       type="button"
@@ -340,8 +342,19 @@ function CatalogCard({
     >
       <div className="clip-bevel relative flex flex-col bg-nr-gunmetal/90">
         <div className="relative flex h-28 items-center justify-center overflow-hidden bg-[radial-gradient(circle_at_50%_120%,rgba(239,68,68,0.18),transparent_60%)]">
-          <Skull className="absolute size-20 text-nr-bone/[0.04]" strokeWidth={1} />
-          <Dumbbell className="size-10 text-nr-bronze/70" strokeWidth={1.5} />
+          {art ? (
+            <img
+              src={art}
+              alt={exercise.name}
+              loading="lazy"
+              className="absolute inset-0 size-full object-cover"
+            />
+          ) : (
+            <>
+              <Skull className="absolute size-20 text-nr-bone/[0.04]" strokeWidth={1} />
+              <Dumbbell className="size-10 text-nr-bronze/70" strokeWidth={1.5} />
+            </>
+          )}
 
           <span
             className={cn(

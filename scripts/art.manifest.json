@@ -1,0 +1,860 @@
+{
+  "arnold_press": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a arnold press, mid-rep under heavy effort, using a dumbbell, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "back_extension": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a back extension, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "banded_hip_abduction": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a banded hip abduction, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "barbell_back_squat": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk standing in a deep squat with a heavy iron barbell racked across the shoulders, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "barbell_bench_press": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk lying back on a stone bench and pressing a heavy iron barbell straight up above the chest, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "barbell_bicep_curl": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk curling a heavy iron barbell upward with both arms, elbows tucked to the sides, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "barbell_clean_and_press": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a barbell clean and press, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "barbell_front_raise": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a barbell front raise, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "barbell_front_squat": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a barbell front squat, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "barbell_glute_bridge": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a barbell glute bridge, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "barbell_good_morning": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a barbell good morning, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "barbell_hip_thrust": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a barbell hip thrust, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "barbell_overhead_press": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a barbell overhead press, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "barbell_power_clean": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a barbell power clean, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "barbell_row": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a barbell row, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "barbell_shrug": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a barbell shrug, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "barbell_thruster": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a barbell thruster, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "barbell_upright_row": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a barbell upright row, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "barbell_wrist_curl": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a barbell wrist curl, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "bicycle_crunch": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a bicycle crunch, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "bodyweight_squat": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a bodyweight squat, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "bulgarian_split_squat": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a bulgarian split squat, mid-rep under heavy effort, using a dumbbell, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "burpee": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a burpee, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "cable_crossover": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a cable crossover, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "cable_crunch": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a cable crunch, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "cable_curl": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a cable curl, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "cable_front_raise": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a cable front raise, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "cable_glute_kickback": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a cable glute kickback, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "cable_lateral_raise": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a cable lateral raise, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "cable_pull_through": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a cable pull through, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "cable_rear_delt_fly": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a cable rear delt fly, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "cable_shrug": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a cable shrug, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "cable_upright_row": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a cable upright row, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "cable_wrist_curl": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a cable wrist curl, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "chest_dip": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a chest dip, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "chin_up": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a chin up, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "close_grip_bench_press": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a close grip bench press, mid-rep under heavy effort, using a barbell, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "concentration_curl": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a concentration curl, mid-rep under heavy effort, using a dumbbell, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "crunch": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a crunch, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "dead_bug": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a dead bug, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "deadlift": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk heaving a massive iron barbell off the ground in a deadlift, flat back, both hands gripping the bar, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "decline_barbell_bench_press": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a decline barbell bench press, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "decline_dumbbell_press": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a decline dumbbell press, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "diamond_push_up": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a diamond push up, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "dumbbell_bench_press": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a dumbbell bench press, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "dumbbell_bicep_curl": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a dumbbell bicep curl, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "dumbbell_calf_raise": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a dumbbell calf raise, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "dumbbell_fly": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a dumbbell fly, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "dumbbell_front_raise": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a dumbbell front raise, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "dumbbell_lateral_raise": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk raising two heavy iron dumbbells out to the sides at shoulder height, arms extended, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "dumbbell_pullover": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a dumbbell pullover, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "dumbbell_rear_delt_fly": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a dumbbell rear delt fly, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "dumbbell_romanian_deadlift": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a dumbbell romanian deadlift, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "dumbbell_row": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a dumbbell row, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "dumbbell_shoulder_press": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a dumbbell shoulder press, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "dumbbell_shrug": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a dumbbell shrug, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "dumbbell_snatch": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a dumbbell snatch, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "dumbbell_squat": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a dumbbell squat, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "dumbbell_step_up": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a dumbbell step up, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "dumbbell_thruster": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a dumbbell thruster, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "dumbbell_upright_row": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a dumbbell upright row, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "dumbbell_wrist_curl": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a dumbbell wrist curl, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "elliptical": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a elliptical, mid-rep under heavy effort, using a machine, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "ez_bar_curl": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a ez bar curl, mid-rep under heavy effort, using a barbell, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "face_pull": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a face pull, mid-rep under heavy effort, using a cable, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "farmers_carry": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a farmers carry, mid-rep under heavy effort, using a dumbbell, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "flutter_kick": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a flutter kick, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "frog_pump": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a frog pump, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "glute_bridge": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a glute bridge, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "goblet_squat": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a goblet squat, mid-rep under heavy effort, using a dumbbell, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "hack_squat": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a hack squat, mid-rep under heavy effort, using a machine, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "hammer_curl": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a hammer curl, mid-rep under heavy effort, using a dumbbell, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "hanging_knee_raise": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a hanging knee raise, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "hanging_leg_raise": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a hanging leg raise, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "high_cable_crossover": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a high cable crossover, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "hip_abduction_machine": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a hip abduction machine, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "hip_adduction_machine": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a hip adduction machine, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "hollow_hold": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a hollow hold, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "incline_barbell_bench_press": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a incline barbell bench press, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "incline_dumbbell_curl": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a incline dumbbell curl, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "incline_dumbbell_fly": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a incline dumbbell fly, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "incline_dumbbell_press": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a incline dumbbell press, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "incline_machine_chest_press": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a incline machine chest press, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "incline_smith_machine_bench_press": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a incline smith machine bench press, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "inverted_row": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a inverted row, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "jump_rope": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a jump rope, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "kettlebell_clean_and_press": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a kettlebell clean and press, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "kettlebell_swing": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk swinging a heavy iron kettlebell forward to chest height with both hands, hips driving the motion, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "lat_pulldown": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a lat pulldown, mid-rep under heavy effort, using a cable, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "leg_extension": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a leg extension, mid-rep under heavy effort, using a machine, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "leg_press": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a leg press, mid-rep under heavy effort, using a machine, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "leg_press_calf_raise": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a leg press calf raise, mid-rep under heavy effort, using a machine, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "low_cable_crossover": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a low cable crossover, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "lying_leg_curl": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a lying leg curl, mid-rep under heavy effort, using a machine, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "lying_leg_raise": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a lying leg raise, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "machine_chest_press": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a machine chest press, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "machine_hip_thrust": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a machine hip thrust, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "machine_lateral_raise": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a machine lateral raise, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "machine_pullover": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a machine pullover, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "machine_shoulder_press": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a machine shoulder press, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "machine_tricep_extension": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a machine tricep extension, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "mountain_climber": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a mountain climber, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "outdoor_run": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a outdoor run, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "overhead_cable_tricep_extension": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a overhead cable tricep extension, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "overhead_dumbbell_tricep_extension": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a overhead dumbbell tricep extension, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "pec_deck": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a pec deck, mid-rep under heavy effort, using a machine, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "plank": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk holding a rigid forearm plank on the stone floor, body straight and braced, seen from the side, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "preacher_curl": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a preacher curl, mid-rep under heavy effort, using a machine, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "pull_up": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk hanging from an iron bar at the top of a pull-up, chin above the bar, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "push_up": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a push up, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "reverse_curl": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a reverse curl, mid-rep under heavy effort, using a barbell, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "reverse_lunge": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a reverse lunge, mid-rep under heavy effort, using a dumbbell, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "reverse_pec_deck": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a reverse pec deck, mid-rep under heavy effort, using a machine, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "reverse_wrist_curl": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a reverse wrist curl, mid-rep under heavy effort, using a barbell, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "romanian_deadlift": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a romanian deadlift, mid-rep under heavy effort, using a barbell, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "rope_pushdown": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a rope pushdown, mid-rep under heavy effort, using a cable, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "rowing_erg": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a rowing erg, mid-rep under heavy effort, using a machine, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "russian_twist": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a russian twist, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "seated_cable_row": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a seated cable row, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "seated_calf_raise": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a seated calf raise, mid-rep under heavy effort, using a machine, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "seated_leg_curl": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a seated leg curl, mid-rep under heavy effort, using a machine, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "side_plank": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a side plank, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "sissy_squat": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a sissy squat, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "sit_up": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a sit up, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "skullcrusher": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a skullcrusher, mid-rep under heavy effort, using a barbell, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "smith_machine_bench_press": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a smith machine bench press, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "smith_machine_row": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a smith machine row, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "smith_machine_shoulder_press": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a smith machine shoulder press, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "smith_machine_squat": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a smith machine squat, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "stair_climber": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a stair climber, mid-rep under heavy effort, using a machine, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "standing_calf_raise": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a standing calf raise, mid-rep under heavy effort, using a machine, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "stationary_bike": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a stationary bike, mid-rep under heavy effort, using a machine, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "stiff_leg_deadlift": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a stiff leg deadlift, mid-rep under heavy effort, using a barbell, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "straight_arm_pulldown": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a straight arm pulldown, mid-rep under heavy effort, using a cable, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "suitcase_carry": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a suitcase carry, mid-rep under heavy effort, using a kettlebell, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "t_bar_row": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a t bar row, mid-rep under heavy effort, using a machine, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "treadmill_incline_walk": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a treadmill incline walk, mid-rep under heavy effort, using a machine, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "treadmill_run": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a treadmill run, mid-rep under heavy effort, using a machine, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "tricep_kickback": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a tricep kickback, mid-rep under heavy effort, using a dumbbell, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "triceps_dip": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a triceps dip, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "v_up": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a v up, mid-rep under heavy effort, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "walking_lunge": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a walking lunge, mid-rep under heavy effort, using a dumbbell, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  },
+  "weighted_russian_twist": {
+    "image_size": "square",
+    "model": "openai/gpt-image-2",
+    "prompt": "grimdark Warhammer-style dark oil painting of a single lone hooded muscular ascetic warrior-monk performing a weighted russian twist, mid-rep under heavy effort, using a dumbbell, mid-effort and straining, single centered figure, hooded face in deep shadow, near-black background, oxblood and crimson accents, dramatic bronze rim-light, drifting ash and faint embers, gothic cathedral gloom, weathered iron, matte painterly texture, heavy shadow and vignette, ominous and masculine, square composition, no text, no watermark, no logos",
+    "quality": "low"
+  }
+}
