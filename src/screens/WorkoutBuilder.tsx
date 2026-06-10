@@ -14,7 +14,9 @@ import {
   X,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { anim, staggerDelay } from '@/lib/animations'
 import { getExerciseArt } from '@/lib/exerciseArt'
+import { FadeInImage } from '@/components/FadeInImage'
 import { ScreenError, ScreenSpinner, ScreenSurface } from '@/screens/_shared/screen'
 import {
   exercisesByGroup,
@@ -196,12 +198,13 @@ export function WorkoutBuilderScreen() {
 
                   {open && (
                     <div className="grid grid-cols-2 gap-2.5 p-3">
-                      {list.map((ex) => (
+                      {list.map((ex, i) => (
                         <CatalogCard
                           key={ex.slug}
                           exercise={ex}
                           selected={selected.includes(ex.slug)}
                           onToggle={toggle}
+                          index={i}
                         />
                       ))}
                     </div>
@@ -323,17 +326,21 @@ function CatalogCard({
   exercise,
   selected,
   onToggle,
+  index = 0,
 }: {
   exercise: Exercise
   selected: boolean
   onToggle: (slug: string) => void
+  index?: number
 }) {
   const art = getExerciseArt(exercise.slug)
   return (
     <button
       type="button"
       onClick={() => onToggle(exercise.slug)}
+      style={staggerDelay(index)}
       className={cn(
+        anim.riseIn,
         'clip-bevel group relative flex flex-col overflow-hidden border bg-nr-gunmetal/80 p-px text-left transition-all duration-150',
         selected
           ? 'border-nr-ember shadow-[0_0_18px_-2px] shadow-nr-ember/60'
@@ -341,9 +348,9 @@ function CatalogCard({
       )}
     >
       <div className="clip-bevel relative flex flex-col bg-nr-gunmetal/90">
-        <div className="relative flex h-28 items-center justify-center overflow-hidden bg-[radial-gradient(circle_at_50%_120%,rgba(239,68,68,0.18),transparent_60%)]">
+        <div className="relative flex aspect-square items-center justify-center overflow-hidden bg-[radial-gradient(circle_at_50%_120%,rgba(239,68,68,0.18),transparent_60%)]">
           {art ? (
-            <img
+            <FadeInImage
               src={art}
               alt={exercise.name}
               loading="lazy"
@@ -366,11 +373,11 @@ function CatalogCard({
           >
             {selected ? <Check className="size-4" /> : <Plus className="size-4" />}
           </span>
-        </div>
 
-        <h3 className="px-3 pb-3 pt-2 font-heading text-sm font-semibold uppercase leading-tight tracking-wide text-nr-bone">
-          {exercise.name}
-        </h3>
+          <h3 className="absolute inset-x-0 bottom-0 bg-nr-black/75 px-2 py-1.5 text-center font-heading text-sm font-semibold uppercase leading-tight tracking-wide text-nr-bone">
+            {exercise.name}
+          </h3>
+        </div>
       </div>
     </button>
   )

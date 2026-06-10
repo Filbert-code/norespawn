@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { ChevronLeft, ChevronRight, Dumbbell, Flame, Heart, Plus, Trophy } from 'lucide-react'
 import { ScreenError, ScreenSpinner, ScreenSurface } from '@/screens/_shared/screen'
 import { getExerciseArt } from '@/lib/exerciseArt'
+import { FadeInImage } from '@/components/FadeInImage'
 import { useExerciseBySlug, useExercises, useLastPerformed } from '@/lib/queries/exercises'
 import {
   useExerciseHistory,
@@ -80,7 +81,7 @@ export function ExerciseDetailScreen() {
 
         {art && (
           <div className="clip-bevel relative mt-4 h-40 overflow-hidden border border-nr-bronze/20">
-            <img src={art} alt={exercise?.name ?? ''} className="size-full object-cover" />
+            <FadeInImage src={art} alt={exercise?.name ?? ''} className="size-full object-cover" />
             <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-nr-black via-nr-black/20 to-transparent" />
           </div>
         )}

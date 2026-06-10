@@ -204,6 +204,35 @@
     .nr-ash-mote { animation: none; opacity: var(--ash-o, 0.5); }
 }
 
+/* ============================================================
+   Motion system. The semantic manifest lives in
+   src/lib/animations.ts; these are the underlying keyframes +
+   utilities. Keep it subtle: grimdark is weighty, not bouncy.
+   ============================================================ */
+@keyframes nr-fade-in {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+@keyframes nr-rise-in {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes nr-scale-in {
+    from { opacity: 0; transform: scale(0.96); }
+    to   { opacity: 1; transform: scale(1); }
+}
+
+/* easeOutQuint — decisive settle, no overshoot */
+@utility anim-fade-in  { animation: nr-fade-in 400ms ease-out both; }
+@utility anim-rise-in  { animation: nr-rise-in 450ms cubic-bezier(0.22, 1, 0.36, 1) both; }
+@utility anim-scale-in { animation: nr-scale-in 300ms cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+@media (prefers-reduced-motion: reduce) {
+    .anim-fade-in,
+    .anim-rise-in,
+    .anim-scale-in { animation: none !important; }
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
