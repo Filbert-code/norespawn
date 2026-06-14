@@ -7,7 +7,6 @@ import {
   Hand,
   Heart,
   Hourglass,
-  ListOrdered,
   Lock,
   Minus,
   Pause,
@@ -29,6 +28,9 @@ import ctrlPauseArt from '@/mockups/assets/ctrl_pause.webp'
 import ctrlAddsetArt from '@/mockups/assets/ctrl_addset.webp'
 import stepRepsArt from '@/mockups/assets/step_reps.webp'
 import cardWeightArt from '@/mockups/assets/card_weight.webp'
+import exerciseBanner from '@/assets/ui/exercise_banner.webp'
+import planPlate from '@/assets/ui/plan_plate.webp'
+import planPlatePressed from '@/assets/ui/plan_plate_pressed.webp'
 import { ScreenError, ScreenSpinner } from '@/screens/_shared/screen'
 import { PlanSheet, PlanSheetRow } from '@/components/PlanSheet'
 import { ConfirmDialog } from '@/mockups/components/ConfirmDialog'
@@ -621,9 +623,19 @@ export function LiveSessionScreen() {
           </span>
           <button
             onClick={() => setShowQueue(true)}
-            className="flex items-center gap-1 rounded-sm border border-nr-bronze/30 px-2 py-1 text-[9px] uppercase tracking-widest hover:border-nr-crimson hover:text-nr-crimson"
+            className="group relative flex items-center justify-center px-7 py-3.5 font-heading text-xs font-bold uppercase tracking-widest text-nr-bone drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)]"
           >
-            <ListOrdered className="size-3.5" /> Plan
+            <span
+              aria-hidden
+              style={{ backgroundImage: `url(${planPlate})` }}
+              className="pointer-events-none absolute inset-0 bg-contain bg-center bg-no-repeat group-active:opacity-0"
+            />
+            <span
+              aria-hidden
+              style={{ backgroundImage: `url(${planPlatePressed})` }}
+              className="pointer-events-none absolute inset-0 bg-contain bg-center bg-no-repeat opacity-0 group-active:opacity-100"
+            />
+            <span className="relative transition-transform group-active:translate-y-px">Plan</span>
           </button>
         </div>
         <div className="mt-2 flex gap-1">
@@ -644,19 +656,26 @@ export function LiveSessionScreen() {
         <div className="mt-1.5 flex items-center justify-center gap-1 text-[8px] uppercase tracking-[0.25em] text-nr-bronze/55">
           <Check className="size-2.5" /> Saved locally
         </div>
-        <button
-          onClick={() => navigate(`/exercise/${exView.sx.exercise_slug}`)}
-          className="mt-2 w-full text-center font-heading text-xl font-bold uppercase leading-tight tracking-wide text-nr-bone underline-offset-4 transition-colors hover:text-nr-ember hover:underline"
-        >
-          {exView.sx.exercise_name_snapshot}
-        </button>
-        <p className="text-center text-[10px] uppercase tracking-[0.25em] text-nr-bone/40">
-          {catalog?.find((c) => c.slug === exView.sx.exercise_slug)?.body_sub_group_slug ?? ''}
-        </p>
+        <div className="relative mx-auto mt-1 aspect-[1000/318] w-full">
+          <img
+            src={exerciseBanner}
+            alt=""
+            aria-hidden
+            className="pointer-events-none absolute inset-0 size-full select-none object-contain"
+          />
+          <div className="absolute inset-0 flex flex-col items-center justify-center px-[18%] pt-[9%] text-center">
+            <button
+              onClick={() => navigate(`/exercise/${exView.sx.exercise_slug}`)}
+              className="line-clamp-2 font-heading text-base font-bold uppercase leading-none tracking-wide text-[#241910] transition-colors hover:text-nr-crimson"
+            >
+              {exView.sx.exercise_name_snapshot}
+            </button>
+          </div>
+        </div>
       </header>
 
       {/* ---- ring ---- */}
-      <div className="relative flex flex-1 flex-col items-center justify-center px-6">
+      <div className="relative flex flex-1 flex-col items-center justify-center px-6 pb-16">
         <QuadrantRing
           sets={setStates}
           progress={progress}
@@ -737,7 +756,7 @@ export function LiveSessionScreen() {
         )}
 
         {state.phase !== 'transition' && currentSetRow && (
-          <div className="mt-3 grid w-full max-w-[300px] grid-cols-2 gap-2">
+          <div className="mt-7 grid w-full max-w-[300px] grid-cols-2 gap-2">
             <StatTile label="Reps" value={state.reps} planned={currentSetRow.planned_reps ?? 0} art={cardWeightArt} />
             <StatTile
               label="Weight"
