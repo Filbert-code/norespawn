@@ -23,6 +23,12 @@ import {
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { SkullGlyph } from '@/components/SkullGlyph'
+import { AshField } from '@/mockups/components/AshField'
+import bgArt from '@/mockups/assets/live-session-bg.png'
+import ctrlPauseArt from '@/mockups/assets/ctrl_pause.webp'
+import ctrlAddsetArt from '@/mockups/assets/ctrl_addset.webp'
+import stepRepsArt from '@/mockups/assets/step_reps.webp'
+import cardWeightArt from '@/mockups/assets/card_weight.webp'
 import { ScreenError, ScreenSpinner } from '@/screens/_shared/screen'
 import { PlanSheet, PlanSheetRow } from '@/components/PlanSheet'
 import { ConfirmDialog } from '@/mockups/components/ConfirmDialog'
@@ -83,6 +89,26 @@ function fmtLong(total: number) {
 type SetState = 'completed' | 'skipped' | 'active' | 'upcoming'
 
 type PickerMode = { kind: 'add' } | { kind: 'swap'; sessionExerciseId: string }
+
+// Decorative generated frame applied via CSS border-image: the ornate corners
+// stay crisp while the rails stretch to any element size (no warping). `fill`
+// also paints the art's dark center slice (used by the stat cards); buttons
+// leave it off so their own tint/hover background shows through the middle.
+function ArtFrame({ src, width, fill = false }: { src: string; width: string; fill?: boolean }) {
+  return (
+    <span
+      aria-hidden
+      className="pointer-events-none absolute inset-0 -z-10"
+      style={{
+        borderStyle: 'solid',
+        borderWidth: width,
+        borderImageSource: `url(${src})`,
+        borderImageSlice: fill ? '20% fill' : '20%',
+        borderImageRepeat: 'stretch',
+      }}
+    />
+  )
+}
 
 export function LiveSessionScreen() {
   const navigate = useNavigate()
@@ -573,8 +599,15 @@ export function LiveSessionScreen() {
 
   return (
     <div className="relative flex h-full flex-col overflow-hidden bg-nr-black text-nr-bone">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_28%,rgba(127,29,29,0.30),transparent_60%)]" />
-      <div className="absolute inset-0 bg-gradient-to-b from-nr-black/70 via-nr-black/40 to-nr-black/90" />
+      <img
+        src={bgArt}
+        alt=""
+        aria-hidden
+        className="pointer-events-none absolute inset-0 size-full object-cover opacity-90"
+      />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_28%,rgba(127,29,29,0.20),transparent_60%)]" />
+      <div className="absolute inset-0 bg-gradient-to-b from-nr-black/40 via-nr-black/25 to-nr-black/85" />
+      <AshField count={28} emberChance={0.3} />
       <div className="pointer-events-none absolute inset-0 shadow-[inset_0_0_90px_20px_rgba(0,0,0,0.8)]" />
 
       {/* ---- header ---- */}
@@ -705,12 +738,13 @@ export function LiveSessionScreen() {
 
         {state.phase !== 'transition' && currentSetRow && (
           <div className="mt-3 grid w-full max-w-[300px] grid-cols-2 gap-2">
-            <StatTile label="Reps" value={state.reps} planned={currentSetRow.planned_reps ?? 0} />
+            <StatTile label="Reps" value={state.reps} planned={currentSetRow.planned_reps ?? 0} art={cardWeightArt} />
             <StatTile
               label="Weight"
               value={state.weight}
               unit="lb"
               planned={currentSetRow.planned_weight_lbs != null ? Number(currentSetRow.planned_weight_lbs) : 0}
+              art={cardWeightArt}
             />
           </div>
         )}
@@ -770,20 +804,23 @@ export function LiveSessionScreen() {
             onClick={togglePause}
             icon={state.running ? <Pause className="size-5" /> : <Play className="size-5" />}
             label={state.running ? 'Pause' : 'Resume'}
+            art={ctrlPauseArt}
             tone="primary"
           />
-          <CtrlButton onClick={handleAddSet} icon={<Plus className="size-5" />} label="Add Set" />
-          <CtrlButton onClick={skipSet} icon={<ChevronsRight className="size-5" />} label="Skip Set" />
+          <CtrlButton onClick={handleAddSet} icon={<Plus className="size-5" />} label="Add Set" art={ctrlAddsetArt} />
+          <CtrlButton onClick={skipSet} icon={<ChevronsRight className="size-5" />} label="Skip Set" art={ctrlAddsetArt} />
         </div>
         <div className="grid grid-cols-3 gap-2">
-          <Stepper label="Reps" onDec={() => bump('reps', -1)} onInc={() => bump('reps', 1)} />
+          <Stepper label="Reps" art={stepRepsArt} onDec={() => bump('reps', -1)} onInc={() => bump('reps', 1)} />
           <Stepper
             label="Weight"
+            art={stepRepsArt}
             onDec={() => bump('weight', -prefs.weightStep)}
             onInc={() => bump('weight', prefs.weightStep)}
           />
           <Stepper
             label="Rest"
+            art={stepRepsArt}
             icon={<Hourglass className="size-4" />}
             onDec={() => bump('rest', -prefs.restStep)}
             onInc={() => bump('rest', prefs.restStep)}
@@ -1002,10 +1039,10 @@ function QuadrantRing({
         return (
           <span
             key={ang}
-            className="absolute flex size-6 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-nr-bronze/50 bg-nr-black"
+            className="absolute size-6 -translate-x-1/2 -translate-y-1/2"
             style={{ left: `${(p.x / 220) * 100}%`, top: `${(p.y / 220) * 100}%` }}
           >
-            <SkullGlyph className="size-3.5" />
+            <SkullGlyph className="size-full" />
           </span>
         )
       })}
@@ -1021,15 +1058,23 @@ function StatTile({
   value,
   unit,
   planned,
+  art,
 }: {
   label: string
   value: number
   unit?: string
   planned: number
+  art: string
 }) {
   const changed = planned !== value
   return (
-    <div className="clip-bevel-sm border border-nr-bronze/25 bg-nr-gunmetal/50 px-2 py-2 text-center">
+    <div className="relative isolate px-3 py-3 text-center">
+      <ArtFrame src={art} width="16px" fill />
+      <span
+        aria-hidden
+        className="absolute inset-0 -z-10"
+        style={{ backgroundColor: 'rgba(12,12,14,0.35)' }}
+      />
       <p className="text-[9px] uppercase tracking-widest text-nr-bone/45">{label}</p>
       <p className="font-heading text-2xl font-bold leading-none text-nr-bone">
         {value}
@@ -1051,23 +1096,31 @@ function CtrlButton({
   icon,
   label,
   onClick,
+  art,
   tone = 'default',
 }: {
   icon: React.ReactNode
   label: string
   onClick: () => void
+  art: string
   tone?: 'default' | 'primary'
 }) {
   return (
     <button
       onClick={onClick}
       className={cn(
-        'clip-bevel-sm flex flex-col items-center gap-1 border py-2.5 transition-colors',
-        tone === 'primary'
-          ? 'border-nr-crimson/60 bg-nr-crimson/15 text-nr-ember hover:bg-nr-crimson/25'
-          : 'border-nr-bronze/30 text-nr-bone/80 hover:border-nr-bronze/60 hover:text-nr-bone',
+        'relative isolate flex flex-col items-center gap-1 py-3 transition-colors',
+        tone === 'primary' ? 'text-nr-ember' : 'text-nr-bone/80 hover:text-nr-bone',
       )}
     >
+      <ArtFrame src={art} width="14px" />
+      {tone === 'primary' && (
+        <span
+          aria-hidden
+          className="absolute inset-[14px] -z-10"
+          style={{ backgroundColor: 'rgba(185,28,28,0.14)' }}
+        />
+      )}
       {icon}
       <span className="font-heading text-[10px] uppercase tracking-widest">{label}</span>
     </button>
@@ -1077,29 +1130,32 @@ function CtrlButton({
 function Stepper({
   label,
   icon,
+  art,
   onDec,
   onInc,
 }: {
   label: string
   icon?: React.ReactNode
+  art: string
   onDec: () => void
   onInc: () => void
 }) {
   return (
-    <div className="clip-bevel-sm flex items-center justify-between border border-nr-bronze/30 bg-nr-gunmetal/40">
+    <div className="relative isolate flex items-center justify-between">
+      <ArtFrame src={art} width="12px" />
       <button
         onClick={onDec}
-        className="flex h-10 flex-1 items-center justify-center text-nr-bone/70 hover:bg-nr-crimson/20 hover:text-nr-ember"
+        className="flex h-11 flex-1 items-center justify-center text-nr-bone/70 hover:text-nr-ember"
       >
         <Minus className="size-4" />
       </button>
-      <span className="flex items-center gap-1 px-1 font-heading text-[10px] uppercase tracking-widest text-nr-bone/50">
+      <span className="flex items-center gap-1 px-1 font-heading text-[10px] uppercase tracking-widest text-nr-bone/55">
         {icon}
         {label}
       </span>
       <button
         onClick={onInc}
-        className="flex h-10 flex-1 items-center justify-center text-nr-bone/70 hover:bg-nr-crimson/20 hover:text-nr-ember"
+        className="flex h-11 flex-1 items-center justify-center text-nr-bone/70 hover:text-nr-ember"
       >
         <Plus className="size-4" />
       </button>
