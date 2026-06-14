@@ -35,6 +35,34 @@ import {
   type MockExercise,
 } from '@/mockups/data/exercises'
 import bgArt from '@/mockups/assets/live-session-bg.png'
+import ctrlPauseArt from '@/mockups/assets/ctrl_pause.webp'
+import ctrlAddsetArt from '@/mockups/assets/ctrl_addset.webp'
+import ctrlSkipArt from '@/mockups/assets/ctrl_skip.webp'
+import stepRepsArt from '@/mockups/assets/step_reps.webp'
+import stepWeightArt from '@/mockups/assets/step_weight.webp'
+import stepRestArt from '@/mockups/assets/step_rest.webp'
+import cardRepsArt from '@/mockups/assets/card_reps.webp'
+import cardWeightArt from '@/mockups/assets/card_weight.webp'
+
+// Decorative generated frame applied via CSS border-image: the ornate corners
+// stay crisp while the rails stretch to any element size (no warping). `fill`
+// also paints the art's dark center slice (used by the stat cards); buttons
+// leave it off so their own tint/hover background shows through the middle.
+function ArtFrame({ src, width, fill = false }: { src: string; width: string; fill?: boolean }) {
+  return (
+    <span
+      aria-hidden
+      className="pointer-events-none absolute inset-0 -z-10"
+      style={{
+        borderStyle: 'solid',
+        borderWidth: width,
+        borderImageSource: `url(${src})`,
+        borderImageSlice: fill ? '20% fill' : '20%',
+        borderImageRepeat: 'stretch',
+      }}
+    />
+  )
+}
 
 // ============================================================================
 // The live workout = editable list of session_exercise rows (stable ids),
@@ -515,8 +543,8 @@ export function LiveSession() {
               {/* stat tiles (work/rest only) */}
               {phase !== 'transition' && (
                 <div className="mt-3 grid w-full max-w-[300px] grid-cols-2 gap-2">
-                  <StatTile label="Reps" value={reps} planned={ex.reps} />
-                  <StatTile label="Weight" value={weight} unit="lb" planned={ex.weight} />
+                  <StatTile label="Reps" value={reps} planned={ex.reps} art={cardRepsArt} />
+                  <StatTile label="Weight" value={weight} unit="lb" planned={ex.weight} art={cardWeightArt} />
                 </div>
               )}
             </div>
@@ -586,6 +614,7 @@ export function LiveSession() {
                   }}
                   icon={running ? <Pause className="size-5" /> : <Play className="size-5" />}
                   label={running ? 'Pause' : 'Resume'}
+                  art={ctrlPauseArt}
                   tone="primary"
                 />
                 <CtrlButton
@@ -595,14 +624,16 @@ export function LiveSession() {
                   }}
                   icon={<Plus className="size-5" />}
                   label="Add Set"
+                  art={ctrlAddsetArt}
                 />
-                <CtrlButton onClick={skipSet} icon={<ChevronsRight className="size-5" />} label="Skip Set" />
+                <CtrlButton onClick={skipSet} icon={<ChevronsRight className="size-5" />} label="Skip Set" art={ctrlSkipArt} />
               </div>
               <div className="grid grid-cols-3 gap-2">
-                <Stepper label="Reps" onDec={() => { setReps((r) => Math.max(0, r - 1)); flash(`Reps → ${Math.max(0, reps - 1)}`) }} onInc={() => { setReps((r) => r + 1); flash(`Reps → ${reps + 1}`) }} />
-                <Stepper label="Weight" onDec={() => { setWeight((w) => Math.max(0, w - 5)); flash(`Weight → ${Math.max(0, weight - 5)} lb`) }} onInc={() => { setWeight((w) => w + 5); flash(`Weight → ${weight + 5} lb`) }} />
+                <Stepper label="Reps" art={stepRepsArt} onDec={() => { setReps((r) => Math.max(0, r - 1)); flash(`Reps → ${Math.max(0, reps - 1)}`) }} onInc={() => { setReps((r) => r + 1); flash(`Reps → ${reps + 1}`) }} />
+                <Stepper label="Weight" art={stepWeightArt} onDec={() => { setWeight((w) => Math.max(0, w - 5)); flash(`Weight → ${Math.max(0, weight - 5)} lb`) }} onInc={() => { setWeight((w) => w + 5); flash(`Weight → ${weight + 5} lb`) }} />
                 <Stepper
                   label="Rest"
+                  art={stepRestArt}
                   icon={<Hourglass className="size-4" />}
                   onDec={() => { setRestTarget((t) => Math.max(15, t - 15)); setRestRemaining((r) => Math.max(0, r - 15)); flash('Rest −15s') }}
                   onInc={() => { setRestTarget((t) => t + 15); setRestRemaining((r) => r + 15); flash('Rest +15s') }}
@@ -893,15 +924,23 @@ function StatTile({
   value,
   unit,
   planned,
+  art,
 }: {
   label: string
   value: number
   unit?: string
   planned: number
+  art: string
 }) {
   const changed = planned !== value
   return (
-    <div className="clip-bevel-sm border border-nr-bronze/25 bg-nr-gunmetal/50 px-2 py-2 text-center">
+    <div className="relative isolate px-3 py-3 text-center">
+      <ArtFrame src={art} width="16px" fill />
+      <span
+        aria-hidden
+        className="absolute inset-0 -z-10"
+        style={{ backgroundColor: 'rgba(12,12,14,0.35)' }}
+      />
       <p className="text-[9px] uppercase tracking-widest text-nr-bone/45">{label}</p>
       <p className="font-heading text-2xl font-bold leading-none text-nr-bone">
         {value}
@@ -918,23 +957,33 @@ function CtrlButton({
   icon,
   label,
   onClick,
+  art,
   tone = 'default',
 }: {
   icon: React.ReactNode
   label: string
   onClick: () => void
+  art: string
   tone?: 'default' | 'primary'
 }) {
   return (
     <button
       onClick={onClick}
       className={cn(
-        'clip-bevel-sm flex flex-col items-center gap-1 border py-2.5 transition-colors',
+        'relative isolate flex flex-col items-center gap-1 py-3 transition-colors',
         tone === 'primary'
-          ? 'border-nr-crimson/60 bg-nr-crimson/15 text-nr-ember hover:bg-nr-crimson/25'
-          : 'border-nr-bronze/30 text-nr-bone/80 hover:border-nr-bronze/60 hover:text-nr-bone',
+          ? 'text-nr-ember'
+          : 'text-nr-bone/80 hover:text-nr-bone',
       )}
     >
+      <ArtFrame src={art} width="14px" />
+      {tone === 'primary' && (
+        <span
+          aria-hidden
+          className="absolute inset-[14px] -z-10"
+          style={{ backgroundColor: 'rgba(185,28,28,0.14)' }}
+        />
+      )}
       {icon}
       <span className="font-heading text-[10px] uppercase tracking-widest">{label}</span>
     </button>
@@ -944,29 +993,32 @@ function CtrlButton({
 function Stepper({
   label,
   icon,
+  art,
   onDec,
   onInc,
 }: {
   label: string
   icon?: React.ReactNode
+  art: string
   onDec: () => void
   onInc: () => void
 }) {
   return (
-    <div className="clip-bevel-sm flex items-center justify-between border border-nr-bronze/30 bg-nr-gunmetal/40">
+    <div className="relative isolate flex items-center justify-between">
+      <ArtFrame src={art} width="12px" />
       <button
         onClick={onDec}
-        className="flex h-10 flex-1 items-center justify-center text-nr-bone/70 hover:bg-nr-crimson/20 hover:text-nr-ember"
+        className="flex h-11 flex-1 items-center justify-center text-nr-bone/70 hover:text-nr-ember"
       >
         <Minus className="size-4" />
       </button>
-      <span className="flex items-center gap-1 px-1 font-heading text-[10px] uppercase tracking-widest text-nr-bone/50">
+      <span className="flex items-center gap-1 px-1 font-heading text-[10px] uppercase tracking-widest text-nr-bone/55">
         {icon}
         {label}
       </span>
       <button
         onClick={onInc}
-        className="flex h-10 flex-1 items-center justify-center text-nr-bone/70 hover:bg-nr-crimson/20 hover:text-nr-ember"
+        className="flex h-11 flex-1 items-center justify-center text-nr-bone/70 hover:text-nr-ember"
       >
         <Plus className="size-4" />
       </button>

@@ -1513,7 +1513,7 @@ Legend:  ─&lt; one-to-many     ──&gt; many-to-one (FK)     &gt;── refe
               <tr><td>D7</td><td>Save vs. Start in Forge Plan</td><td><b>Two actions: "Save Plan" and "Save &amp; Start"</b> — Start always persists <code>workout</code> + <code>workout_exercise</code> first (no ad-hoc workouts, §8).</td></tr>
               <tr><td>D8</td><td>Build-then-schedule loop</td><td><b>Target date carried through the builder</b>; after Save, returns to Schedule with the new plan pre-selected (router state).</td></tr>
               <tr><td>D9</td><td>Rest-day persistence</td><td><b>Rest day dropped from the v1 UI.</b> <code>scheduled_workout.workout_id</code> stays <b>NOT NULL</b> — no nullable-plan / sentinel-row complexity for now.</td></tr>
-              <tr><td>D10</td><td>One workout per day</td><td><b>Enforced</b> with a unique <code>(user_id, scheduled_date)</code> constraint on <code>scheduled_workout</code> (matches the single-workout day-detail UI).</td></tr>
+              <tr><td>D10</td><td>Multiple workouts per day</td><td><b>Revised:</b> the one-per-day unique index was dropped. <code>scheduled_workout</code> carries a <code>position</code> for intra-day ordering; a day is an ordered <b>list</b> of entries. Scheduling appends via the <code>schedule_workout(workout_id, date, notes)</code> RPC (atomic next-position). Streak: a day counts if <b>any</b> workout that day is completed.</td></tr>
               <tr><td>D11</td><td>PR computation</td><td><b>Computed on read</b> from completed <code>session_set</code> rows (Epley 1RM) via a view / client calc — no PR table (§13).</td></tr>
               <tr><td>D12</td><td>Empty / first-run states</td><td><b>Empty states + a "forge your first plan" nudge</b> for Calendar, Plans, and Exercise Detail (never-performed).</td></tr>
               <tr><td>D13</td><td>Loading / error / offline</td><td><b>Local-first live session</b> — writes persist on-device instantly and flush to Supabase opportunistically (enables D5 resume); read-heavy screens use spinners + retry toasts.</td></tr>
@@ -1526,10 +1526,11 @@ Legend:  ─&lt; one-to-many     ──&gt; many-to-one (FK)     &gt;── refe
           <div class="callout note">
             <b>Scheduling layer (<code>scheduled_workout</code>).</b> Added after the original
             design as the calendar "tracker": <code>(user_id, workout_id, scheduled_date, status,
-            session_id, notes)</code>. Per D10 it carries a unique <code>(user_id,
-            scheduled_date)</code> constraint; per D9 <code>workout_id</code> is NOT NULL (no rest
-            rows). Starting a scheduled day spawns a <code>workout_session</code> and links it back
-            via <code>session_id</code>.
+            session_id, notes, position)</code>. Per the revised D10 a day holds <b>multiple</b>
+            ordered rows (no unique constraint; ordered by <code>position</code>); per D9
+            <code>workout_id</code> is NOT NULL (no rest rows). Starting a scheduled row spawns a
+            <code>workout_session</code> and links it back via <code>session_id</code>; ad-hoc Quick
+            Start sessions appear as unplanned entries on their day.
           </div>
         </section>
 

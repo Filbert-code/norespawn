@@ -306,6 +306,7 @@ export type Database = {
           created_at: string
           id: string
           notes: string | null
+          position: number
           scheduled_date: string
           session_id: string | null
           status: string
@@ -317,6 +318,7 @@ export type Database = {
           created_at?: string
           id?: string
           notes?: string | null
+          position?: number
           scheduled_date: string
           session_id?: string | null
           status?: string
@@ -328,6 +330,7 @@ export type Database = {
           created_at?: string
           id?: string
           notes?: string | null
+          position?: number
           scheduled_date?: string
           session_id?: string | null
           status?: string
@@ -935,6 +938,27 @@ export type Database = {
         SetofOptions: {
           from: "*"
           to: "workout_session"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      schedule_workout: {
+        Args: { p_date: string; p_notes?: string; p_workout_id: string }
+        Returns: {
+          created_at: string
+          id: string
+          notes: string | null
+          position: number
+          scheduled_date: string
+          session_id: string | null
+          status: string
+          updated_at: string
+          user_id: string
+          workout_id: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "scheduled_workout"
           isOneToOne: true
           isSetofReturn: false
         }

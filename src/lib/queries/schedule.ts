@@ -5,9 +5,10 @@ import { useAuth } from '@/lib/auth'
 import type { ScheduledWorkout } from '@/lib/supabase'
 
 // ----------------------------------------------------------------------------
-// scheduled_workout = (user, date, workout) row. The DB has a one-per-day
-// unique index so the upsert below is safe — we either insert a new row or
-// flip the existing row to the new plan.
+// scheduled_workout = (user, date, workout) row. Multiple workouts per day are
+// supported (D10 revised): each day holds an ordered list of rows keyed by
+// `position`. Scheduling appends a new row via the `schedule_workout` RPC,
+// which assigns the next position atomically server-side.
 // ----------------------------------------------------------------------------
 
 export function useScheduledWorkouts(fromDate: Date, toDate: Date) {
@@ -22,7 +23,8 @@ export function useScheduledWorkouts(fromDate: Date, toDate: Date) {
           .select('*')
           .gte('scheduled_date', fromISO)
           .lte('scheduled_date', toISO)
-          .order('scheduled_date'),
+          .order('scheduled_date')
+          .order('position'),
       ) as ScheduledWorkout[]
       return rows
     },
@@ -43,23 +45,13 @@ export function useScheduleWorkout() {
       notes?: string | null
     }): Promise<ScheduledWorkout> => {
       if (!user) throw new Error('Not signed in')
-      const row = unwrap(
-        await supabase
-          .from('scheduled_workout')
-          .upsert(
-            {
-              user_id: user.id,
-              workout_id: workoutId,
-              scheduled_date: isoDate(date),
-              status: 'scheduled',
-              notes: notes ?? null,
-            },
-            { onConflict: 'user_id,scheduled_date' },
-          )
-          .select()
-          .single(),
-      ) as ScheduledWorkout
-      return row
+      const { data, error } = await supabase.rpc('schedule_workout', {
+        p_workout_id: workoutId,
+        p_date: isoDate(date),
+        p_notes: notes ?? undefined,
+      })
+      if (error) throw error
+      return data as unknown as ScheduledWorkout
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: qk.schedule.all })

@@ -34,16 +34,22 @@ import type { ScheduledWorkout, WorkoutSession } from '@/lib/supabase'
 
 // ============================================================================
 // Calendar = union of scheduled_workout (planned/future) and workout_session
-// (history). One row per day: completed > in_progress > scheduled > missed.
+// (history). Each day holds an ordered *list* of entries (multiple workouts
+// per day are first-class). Within an entry: completed > in_progress >
+// scheduled > missed.
 // ============================================================================
 
 type DayStatus = 'completed' | 'scheduled' | 'in_progress' | 'skipped' | 'abandoned'
 interface DayEntry {
+  key: string
   date: Date
   workoutName: string
   status: DayStatus
+  workoutId?: string
   sessionId?: string
   scheduledId?: string
+  /** Intra-day order: scheduled rows by their stored position, then sessions. */
+  position: number
   durationMin?: number
   effort?: number | null
 }
@@ -75,31 +81,51 @@ function sameDay(a: Date, b: Date): boolean {
   )
 }
 
-/** Union scheduled + sessions into a single per-day map. Session wins if both exist. */
+/**
+ * Union scheduled + sessions into an ordered per-day *list*. A session is
+ * merged into its linked scheduled row (via `session_id`); ad-hoc sessions with
+ * no schedule row (Quick Start) become their own appended entries.
+ */
 function buildDayMap(
   scheduled: ScheduledWorkout[],
   sessions: WorkoutSession[],
   planNames: Map<string, string>,
-): Map<string, DayEntry> {
-  const map = new Map<string, DayEntry>()
+): Map<string, DayEntry[]> {
+  const map = new Map<string, DayEntry[]>()
+  const bySession = new Map<string, DayEntry>()
+  const add = (key: string, entry: DayEntry) => {
+    const list = map.get(key)
+    if (list) list.push(entry)
+    else map.set(key, [entry])
+  }
 
+  // Scheduled rows first (already ordered by date, then position by the query).
   for (const s of scheduled) {
-    map.set(s.scheduled_date, {
+    const entry: DayEntry = {
+      key: s.id,
       date: new Date(s.scheduled_date + 'T00:00:00'),
       workoutName: planNames.get(s.workout_id) ?? 'Workout',
-      status: s.status === 'completed'
-        ? 'completed'
-        : s.status === 'skipped'
-          ? 'skipped'
-          : 'scheduled',
+      status:
+        s.status === 'completed'
+          ? 'completed'
+          : s.status === 'skipped'
+            ? 'skipped'
+            : 'scheduled',
+      workoutId: s.workout_id,
       scheduledId: s.id,
       sessionId: s.session_id ?? undefined,
-    })
+      position: s.position,
+    }
+    add(s.scheduled_date, entry)
+    if (s.session_id) bySession.set(s.session_id, entry)
   }
+
+  // Sessions: merge into the linked scheduled entry, else append as an
+  // unplanned (ad-hoc / Quick Start) entry sorted after the planned ones.
+  let unplanned = 0
   for (const sess of sessions) {
     const key = sess.started_at.slice(0, 10)
-    const existing = map.get(key)
-    const duration = sess.total_active_seconds
+    const durationMin = sess.total_active_seconds
       ? Math.round(sess.total_active_seconds / 60)
       : undefined
     const status: DayStatus =
@@ -108,29 +134,45 @@ function buildDayMap(
         : sess.status === 'abandoned'
           ? 'abandoned'
           : 'in_progress'
-    map.set(key, {
-      date: new Date(key + 'T00:00:00'),
-      workoutName: existing?.workoutName ?? sess.workout_name_snapshot,
-      status,
-      sessionId: sess.id,
-      scheduledId: existing?.scheduledId,
-      durationMin: duration,
-      effort: sess.perceived_effort,
-    })
+    const linked = bySession.get(sess.id)
+    if (linked) {
+      linked.status = status
+      linked.sessionId = sess.id
+      linked.durationMin = durationMin
+      linked.effort = sess.perceived_effort
+    } else {
+      add(key, {
+        key: sess.id,
+        date: new Date(key + 'T00:00:00'),
+        workoutName: sess.workout_name_snapshot,
+        status,
+        workoutId: sess.workout_id,
+        sessionId: sess.id,
+        position: 1000 + unplanned++,
+        durationMin,
+        effort: sess.perceived_effort,
+      })
+    }
   }
+
+  for (const list of map.values()) list.sort((a, b) => a.position - b.position)
   return map
 }
 
-function disciplineStreak(map: Map<string, DayEntry>, today: Date): number {
+/** A day counts toward the streak if *any* workout that day was completed. */
+function dayIsComplete(entries?: DayEntry[]): boolean {
+  return !!entries?.some((e) => e.status === 'completed')
+}
+
+function disciplineStreak(map: Map<string, DayEntry[]>, today: Date): number {
   let streak = 0
   // Count today only if completed; otherwise start from yesterday.
   let cursor = today
-  if (map.get(isoKey(today))?.status !== 'completed') {
+  if (!dayIsComplete(map.get(isoKey(today)))) {
     cursor = addDays(today, -1)
   }
   while (true) {
-    const entry = map.get(isoKey(cursor))
-    if (entry?.status === 'completed') {
+    if (dayIsComplete(map.get(isoKey(cursor)))) {
       streak += 1
       cursor = addDays(cursor, -1)
     } else {
@@ -202,6 +244,26 @@ export function CalendarHomeScreen() {
     }
   }
 
+  // Start a *scheduled* entry: resume if it already spawned a session, else
+  // snapshot a fresh session from its plan and link the schedule row.
+  async function startScheduled(entry: DayEntry) {
+    if (entry.sessionId) {
+      goLive(entry.sessionId)
+      return
+    }
+    if (!entry.workoutId) return
+    setLaunchError(null)
+    try {
+      const session = await startSession.mutateAsync({
+        workoutId: entry.workoutId,
+        scheduledWorkoutId: entry.scheduledId,
+      })
+      navigate(`/live/${session.id}`)
+    } catch (e) {
+      setLaunchError((e as Error).message)
+    }
+  }
+
   const planNames = useMemo(
     () => new Map((plans ?? []).map((p) => [p.workout.id, p.workout.name])),
     [plans],
@@ -217,9 +279,28 @@ export function CalendarHomeScreen() {
   const onCurrentWeek = sameDay(weekStart, startOfWeekMonday(today))
 
   const selectedKey = isoKey(selected)
-  const selectedEntry = dayMap.get(selectedKey)
   const isToday = sameDay(selected, today)
   const isFuture = selected.getTime() > today.getTime()
+  // An in-progress session must always be resumable on "today" even if its UTC
+  // start date lands on an adjacent calendar key — inject it if missing.
+  const selectedEntries = useMemo<DayEntry[]>(() => {
+    const base = dayMap.get(selectedKey) ?? []
+    if (isToday && inProgress && !base.some((e) => e.sessionId === inProgress.id)) {
+      return [
+        {
+          key: inProgress.id,
+          date: selected,
+          workoutName: inProgress.workout_name_snapshot,
+          status: 'in_progress',
+          workoutId: inProgress.workout_id,
+          sessionId: inProgress.id,
+          position: -1,
+        },
+        ...base,
+      ]
+    }
+    return base
+  }, [dayMap, selectedKey, isToday, inProgress, selected])
 
   const rangeLabel =
     weekStart.getMonth() === weekEnd.getMonth()
@@ -285,7 +366,7 @@ export function CalendarHomeScreen() {
                 key={i}
                 className={cn(
                   'w-1.5 rounded-full',
-                  w?.status === 'completed' ? 'h-5 bg-nr-crimson' : 'h-2 bg-nr-bone/15',
+                  dayIsComplete(w) ? 'h-5 bg-nr-crimson' : 'h-2 bg-nr-bone/15',
                 )}
               />
             )
@@ -361,7 +442,7 @@ export function CalendarHomeScreen() {
                 {d.getDate()}
               </span>
               <span className="flex h-4 items-center justify-center">
-                <DayGlyph entry={w} muted={d.getTime() < today.getTime()} />
+                <DayGlyph entries={w} muted={d.getTime() < today.getTime()} />
               </span>
             </button>
           )
@@ -384,49 +465,44 @@ export function CalendarHomeScreen() {
         {error && <ScreenError message={(error as Error).message} />}
 
         {!isLoading && !error && (
-          // An in-progress session always takes priority for "today" — even if
-          // its UTC start date doesn't line up with the local calendar day —
-          // so the user can always Resume / Cancel the workout they're mid-way
-          // through instead of being offered a fresh Start.
-          isToday && inProgress ? (
-            <DayDetailCard
-              entry={{
-                date: selected,
-                workoutName: selectedEntry?.workoutName ?? inProgress.workout_name_snapshot,
-                status: 'in_progress',
-                sessionId: inProgress.id,
-                scheduledId: selectedEntry?.scheduledId,
-              }}
-              isToday
-              isFuture={false}
-              onReschedule={goToSchedule}
-              onStart={() => goLive(inProgress.id)}
-              onResume={() => goLive(inProgress.id)}
-              onAbandon={() => setConfirmAbandon(inProgress.id)}
-              onViewSummary={() => goRecap(inProgress.id)}
-            />
-          ) : selectedEntry ? (
-            <DayDetailCard
-              entry={selectedEntry}
-              isToday={isToday}
-              isFuture={isFuture}
-              onReschedule={goToSchedule}
-              onCancelSchedule={
-                selectedEntry.scheduledId && selectedEntry.status === 'scheduled'
-                  ? () =>
-                      setConfirmCancelSchedule({
-                        id: selectedEntry.scheduledId!,
-                        name: selectedEntry.workoutName,
-                      })
-                  : undefined
-              }
-              onStart={() => selectedEntry.sessionId && goLive(selectedEntry.sessionId)}
-              onResume={() => selectedEntry.sessionId && goLive(selectedEntry.sessionId)}
-              onAbandon={() =>
-                selectedEntry.sessionId && setConfirmAbandon(selectedEntry.sessionId)
-              }
-              onViewSummary={() => selectedEntry.sessionId && goRecap(selectedEntry.sessionId)}
-            />
+          selectedEntries.length > 0 ? (
+            <div className="space-y-3">
+              {selectedEntries.map((entry) => (
+                <DayDetailCard
+                  key={entry.key}
+                  entry={entry}
+                  isToday={isToday}
+                  isFuture={isFuture}
+                  onReschedule={goToSchedule}
+                  onCancelSchedule={
+                    entry.scheduledId && entry.status === 'scheduled'
+                      ? () =>
+                          setConfirmCancelSchedule({
+                            id: entry.scheduledId!,
+                            name: entry.workoutName,
+                          })
+                      : undefined
+                  }
+                  onStart={() => startScheduled(entry)}
+                  onResume={() => entry.sessionId && goLive(entry.sessionId)}
+                  onAbandon={() => entry.sessionId && setConfirmAbandon(entry.sessionId)}
+                  onViewSummary={() => entry.sessionId && goRecap(entry.sessionId)}
+                />
+              ))}
+              {launchError && (
+                <p className="rounded-sm border border-nr-crimson/40 bg-nr-crimson/10 px-3 py-2 text-[11px] uppercase tracking-wider text-nr-ember">
+                  Could not start: {launchError}
+                </p>
+              )}
+              {(isToday || isFuture) && (
+                <button
+                  onClick={goToSchedule}
+                  className="clip-bevel-sm flex w-full items-center justify-center gap-1.5 border border-dashed border-nr-bronze/40 py-2.5 font-heading text-xs font-semibold uppercase tracking-widest text-nr-bronze hover:border-nr-crimson hover:text-nr-crimson"
+                >
+                  <Plus className="size-4" /> Add another workout
+                </button>
+              )}
+            </div>
           ) : (
             <EmptyDay
               isToday={isToday}
@@ -500,12 +576,38 @@ export function CalendarHomeScreen() {
   )
 }
 
-function DayGlyph({ entry, muted }: { entry?: DayEntry; muted: boolean }) {
-  if (!entry) {
+function DayGlyph({ entries, muted }: { entries?: DayEntry[]; muted: boolean }) {
+  if (!entries || entries.length === 0) {
     return (
       <span className={cn('block h-1 w-1 rounded-full', muted ? 'bg-nr-bone/15' : 'bg-nr-bone/25')} />
     )
   }
+
+  // Multi-workout day: a compact count badge tinted by the aggregate state.
+  if (entries.length > 1) {
+    const total = entries.length
+    const completed = entries.filter((e) => e.status === 'completed').length
+    const inProgress = entries.some((e) => e.status === 'in_progress')
+    const tone = inProgress
+      ? 'bg-nr-ember text-nr-black'
+      : completed === total
+        ? 'bg-nr-crimson text-nr-bone'
+        : completed > 0
+          ? 'bg-nr-crimson/40 text-nr-bone'
+          : 'border border-nr-bronze/70 text-nr-bone/70'
+    return (
+      <span
+        className={cn(
+          'flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[8px] font-bold leading-none',
+          tone,
+        )}
+      >
+        {completed > 0 && completed < total ? `${completed}/${total}` : total}
+      </span>
+    )
+  }
+
+  const entry = entries[0]
   if (entry.status === 'completed') {
     return (
       <span className="flex size-4 items-center justify-center rounded-full bg-nr-crimson text-nr-bone">
@@ -871,7 +973,7 @@ function MonthPicker({
   month: Date
   selected: Date
   today: Date
-  map: Map<string, DayEntry>
+  map: Map<string, DayEntry[]>
   onMonthChange: (d: Date) => void
   onPick: (d: Date) => void
   onClose: () => void
@@ -936,11 +1038,11 @@ function MonthPicker({
                 )}
               >
                 {d.getDate()}
-                {w && !dSelected && (
+                {w && w.length > 0 && !dSelected && (
                   <span
                     className={cn(
                       'absolute bottom-1 size-1 rounded-full',
-                      w.status === 'completed' ? 'bg-nr-crimson' : 'bg-nr-bronze',
+                      w.some((e) => e.status === 'completed') ? 'bg-nr-crimson' : 'bg-nr-bronze',
                     )}
                   />
                 )}
