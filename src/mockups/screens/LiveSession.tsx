@@ -477,7 +477,7 @@ export function LiveSession() {
                   aria-hidden
                   className="pointer-events-none absolute inset-0 size-full select-none object-contain"
                 />
-                <div className="absolute inset-0 flex flex-col items-center justify-center px-[18%] pt-[9%] text-center">
+                <div className="absolute inset-0 flex -translate-y-1 flex-col items-center justify-center px-[18%] pt-[9%] text-center">
                   <button
                     onClick={() => navigate('/mockups/exercise')}
                     className="line-clamp-2 font-heading text-base font-bold uppercase leading-none tracking-wide text-[#241910] transition-colors hover:text-nr-crimson"
