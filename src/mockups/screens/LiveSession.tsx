@@ -16,7 +16,6 @@ import {
   Plus,
   Repeat2,
   Search,
-  Skull,
   ThumbsDown,
   ThumbsUp,
   Trash2,
@@ -24,6 +23,7 @@ import {
   X,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { SkullGlyph } from '@/components/SkullGlyph'
 import { PhoneFrame } from '@/mockups/components/PhoneFrame'
 import { AshField } from '@/mockups/components/AshField'
 import { PlanSheet, PlanSheetRow } from '@/mockups/components/PlanSheet'
@@ -37,11 +37,7 @@ import {
 import bgArt from '@/mockups/assets/live-session-bg.png'
 import ctrlPauseArt from '@/mockups/assets/ctrl_pause.webp'
 import ctrlAddsetArt from '@/mockups/assets/ctrl_addset.webp'
-import ctrlSkipArt from '@/mockups/assets/ctrl_skip.webp'
 import stepRepsArt from '@/mockups/assets/step_reps.webp'
-import stepWeightArt from '@/mockups/assets/step_weight.webp'
-import stepRestArt from '@/mockups/assets/step_rest.webp'
-import cardRepsArt from '@/mockups/assets/card_reps.webp'
 import cardWeightArt from '@/mockups/assets/card_weight.webp'
 
 // Decorative generated frame applied via CSS border-image: the ornate corners
@@ -216,10 +212,10 @@ function QuadrantRing({
         return (
           <span
             key={ang}
-            className="absolute flex size-6 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-nr-bronze/50 bg-nr-black"
+            className="absolute size-6 -translate-x-1/2 -translate-y-1/2"
             style={{ left: `${(p.x / 220) * 100}%`, top: `${(p.y / 220) * 100}%` }}
           >
-            <Skull className="size-3.5 text-nr-bronze" strokeWidth={1.5} />
+            <SkullGlyph className="size-full" />
           </span>
         )
       })}
@@ -414,10 +410,10 @@ export function LiveSession() {
         <img
           src={bgArt}
           alt=""
-          className="pointer-events-none absolute inset-0 size-full scale-110 object-cover opacity-[0.16] blur-[2px]"
+          className="pointer-events-none absolute inset-0 size-full object-cover opacity-90"
         />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_28%,rgba(127,29,29,0.30),transparent_60%)]" />
-        <div className="absolute inset-0 bg-gradient-to-b from-nr-black/70 via-nr-black/40 to-nr-black/90" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_28%,rgba(127,29,29,0.20),transparent_60%)]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-nr-black/40 via-nr-black/25 to-nr-black/85" />
         <AshField count={28} emberChance={0.3} />
         <div className="pointer-events-none absolute inset-0 shadow-[inset_0_0_90px_20px_rgba(0,0,0,0.8)]" />
 
@@ -543,7 +539,7 @@ export function LiveSession() {
               {/* stat tiles (work/rest only) */}
               {phase !== 'transition' && (
                 <div className="mt-3 grid w-full max-w-[300px] grid-cols-2 gap-2">
-                  <StatTile label="Reps" value={reps} planned={ex.reps} art={cardRepsArt} />
+                  <StatTile label="Reps" value={reps} planned={ex.reps} art={cardWeightArt} />
                   <StatTile label="Weight" value={weight} unit="lb" planned={ex.weight} art={cardWeightArt} />
                 </div>
               )}
@@ -552,7 +548,7 @@ export function LiveSession() {
             {/* ---- smart suggestion (during rest) ---- */}
             {phase === 'rest' && suggestion && (
               <div className="relative mx-4 mb-2 flex items-center gap-2 border border-nr-ember/40 bg-nr-crimson/10 px-3 py-2 clip-bevel-sm">
-                <Skull className="size-4 shrink-0 text-nr-ember" />
+                <SkullGlyph className="size-4 shrink-0" />
                 <p className="flex-1 text-[11px] leading-tight text-nr-bone/85">{suggestion}</p>
                 <button
                   onClick={() => {
@@ -626,14 +622,14 @@ export function LiveSession() {
                   label="Add Set"
                   art={ctrlAddsetArt}
                 />
-                <CtrlButton onClick={skipSet} icon={<ChevronsRight className="size-5" />} label="Skip Set" art={ctrlSkipArt} />
+                <CtrlButton onClick={skipSet} icon={<ChevronsRight className="size-5" />} label="Skip Set" art={ctrlAddsetArt} />
               </div>
               <div className="grid grid-cols-3 gap-2">
                 <Stepper label="Reps" art={stepRepsArt} onDec={() => { setReps((r) => Math.max(0, r - 1)); flash(`Reps → ${Math.max(0, reps - 1)}`) }} onInc={() => { setReps((r) => r + 1); flash(`Reps → ${reps + 1}`) }} />
-                <Stepper label="Weight" art={stepWeightArt} onDec={() => { setWeight((w) => Math.max(0, w - 5)); flash(`Weight → ${Math.max(0, weight - 5)} lb`) }} onInc={() => { setWeight((w) => w + 5); flash(`Weight → ${weight + 5} lb`) }} />
+                <Stepper label="Weight" art={stepRepsArt} onDec={() => { setWeight((w) => Math.max(0, w - 5)); flash(`Weight → ${Math.max(0, weight - 5)} lb`) }} onInc={() => { setWeight((w) => w + 5); flash(`Weight → ${weight + 5} lb`) }} />
                 <Stepper
                   label="Rest"
-                  art={stepRestArt}
+                  art={stepRepsArt}
                   icon={<Hourglass className="size-4" />}
                   onDec={() => { setRestTarget((t) => Math.max(15, t - 15)); setRestRemaining((r) => Math.max(0, r - 15)); flash('Rest −15s') }}
                   onInc={() => { setRestTarget((t) => t + 15); setRestRemaining((r) => r + 15); flash('Rest +15s') }}

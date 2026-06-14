@@ -1,4 +1,13 @@
 {
+  "live_session_bg": {
+    "image_size": {
+      "height": 1536,
+      "width": 1024
+    },
+    "model": "openai/gpt-image-2",
+    "prompt": "ornate battle-worn blackened steel and gunmetal armor plating with intricate engraved filigree and worn bronze trim covering the left and right sides top to bottom and arching across the top corners, overlapping riveted plates and interlocking panels, a vivid glowing molten crimson and bright ember-red glow blazing down from the upper center with hot glowing red cracks veining through the metal, sparks and embers, fading to deep solid black at the bottom, the whole vertical center left as dark empty space, highly detailed painterly concept art, grimdark Warhammer atmosphere, deep shadow, heavy vignette, oxblood and crimson and bronze accents, drifting ash and faint embers, weathered iron and gothic cathedral stone, matte painterly texture, cinematic and moody, dark empty low-detail negative space in the center for overlaid UI, no people, no figures, no text, no letters, no symbols, no logos, no border",
+    "quality": "low"
+  },
   "nav_plate": {
     "image_size": "landscape_16_9",
     "model": "openai/gpt-image-2",

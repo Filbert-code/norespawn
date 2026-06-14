@@ -19,6 +19,7 @@ import { cn } from '@/lib/utils'
 import { uiArt } from '@/lib/uiArt'
 import { UiBackground } from '@/components/UiBackground'
 import { SkullGlyph } from '@/components/SkullGlyph'
+import wordmark from '@/mockups/assets/wordmark.png?w=300;520;760&format=avif;webp;png&as=picture'
 import { ConfirmDialog } from '@/mockups/components/ConfirmDialog'
 import { PlanSheet } from '@/components/PlanSheet'
 import { ScreenError, ScreenSpinner, ScreenSurface } from '@/screens/_shared/screen'
@@ -330,12 +331,23 @@ export function CalendarHomeScreen() {
   return (
     <ScreenSurface>
       <header className="flex items-center gap-2 px-4 pb-3 pt-10">
-        <SkullGlyph className="size-14 [filter:saturate(0.2)_brightness(1.5)]" />
+        <SkullGlyph className="size-14" />
         <div className="leading-none">
-          <h1 className="font-heading text-2xl font-bold uppercase tracking-[0.2em] text-nr-bone">
-            NoRespawn
+          <h1 className="w-40">
+            <picture>
+              {Object.entries(wordmark.sources).map(([format, srcSet]) => (
+                <source key={format} type={`image/${format}`} srcSet={srcSet} />
+              ))}
+              <img
+                src={wordmark.img.src}
+                width={wordmark.img.w}
+                height={wordmark.img.h}
+                alt="NoRespawn"
+                className="w-full mix-blend-screen"
+              />
+            </picture>
           </h1>
-          <p className="mt-0.5 text-[9px] uppercase tracking-[0.3em] text-nr-bone/40">
+          <p className="mt-1 text-[9px] uppercase tracking-[0.3em] text-nr-bone/40">
             Glory thru discipline
           </p>
         </div>

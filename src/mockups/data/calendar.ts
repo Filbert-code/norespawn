@@ -1,31 +1,46 @@
 // Mock calendar data for the landing-page mockup. Entries are keyed by an
 // offset (in days) from "today" so the current-day highlight always lines up.
+//
+// Mirrors the real CalendarHome data shape: each day holds an ordered *list* of
+// entries (multiple workouts per day are first-class). Within a day, status
+// precedence for glyphs/streaks is completed > in_progress > scheduled > missed.
 
-export type DayStatus = 'completed' | 'scheduled' | 'in_progress' | 'skipped'
+export type DayStatus = 'completed' | 'scheduled' | 'in_progress' | 'skipped' | 'abandoned'
 
-export interface DayWorkout {
-  status: DayStatus
+export interface DayEntry {
+  key: string
+  date: Date
   workoutName: string
+  status: DayStatus
+  /** Intra-day order. */
+  position: number
   /** completed-only stats */
   durationMin?: number
-  totalSets?: number
-  effort?: number // 1-10
-  bodyGroups?: string[]
+  effort?: number | null
 }
 
-// offset 0 = today, negative = past, positive = future
-const RELATIVE: Record<number, DayWorkout> = {
-  [-13]: { status: 'completed', workoutName: 'Pull Day', durationMin: 52, totalSets: 18, effort: 7, bodyGroups: ['Back', 'Arms'] },
-  [-11]: { status: 'completed', workoutName: 'Leg Day', durationMin: 64, totalSets: 20, effort: 9, bodyGroups: ['Legs'] },
-  [-9]: { status: 'completed', workoutName: 'Push Day', durationMin: 48, totalSets: 17, effort: 7, bodyGroups: ['Chest', 'Shoulders'] },
-  [-4]: { status: 'completed', workoutName: 'Pull Day', durationMin: 55, totalSets: 19, effort: 8, bodyGroups: ['Back', 'Arms'] },
-  [-3]: { status: 'completed', workoutName: 'Leg Day', durationMin: 61, totalSets: 21, effort: 9, bodyGroups: ['Legs'] },
-  [-2]: { status: 'completed', workoutName: 'Push Day', durationMin: 49, totalSets: 18, effort: 7, bodyGroups: ['Chest', 'Shoulders'] },
-  [-1]: { status: 'completed', workoutName: 'Arms & Core', durationMin: 38, totalSets: 14, effort: 6, bodyGroups: ['Arms', 'Core'] },
-  [0]: { status: 'in_progress', workoutName: 'Chest & Shoulders' },
-  [2]: { status: 'scheduled', workoutName: 'Leg Day' },
-  [4]: { status: 'scheduled', workoutName: 'Pull Day' },
-  [6]: { status: 'scheduled', workoutName: 'Push Day' },
+// offset 0 = today, negative = past, positive = future. A couple of days carry
+// two entries to exercise the multi-workout-per-day UI (count badge, stacked
+// detail cards, "add another workout").
+type RelEntry = Omit<DayEntry, 'key' | 'date'>
+const RELATIVE: Record<number, RelEntry[]> = {
+  [-13]: [{ workoutName: 'Pull Day', status: 'completed', position: 0, durationMin: 52, effort: 7 }],
+  [-11]: [{ workoutName: 'Leg Day', status: 'completed', position: 0, durationMin: 64, effort: 9 }],
+  [-9]: [{ workoutName: 'Push Day', status: 'completed', position: 0, durationMin: 48, effort: 7 }],
+  [-4]: [{ workoutName: 'Pull Day', status: 'completed', position: 0, durationMin: 55, effort: 8 }],
+  [-3]: [
+    { workoutName: 'Leg Day', status: 'completed', position: 0, durationMin: 61, effort: 9 },
+    { workoutName: 'Core Finisher', status: 'completed', position: 1, durationMin: 16, effort: 6 },
+  ],
+  [-2]: [{ workoutName: 'Push Day', status: 'completed', position: 0, durationMin: 49, effort: 7 }],
+  [-1]: [{ workoutName: 'Arms & Core', status: 'completed', position: 0, durationMin: 38, effort: 6 }],
+  [0]: [{ workoutName: 'Chest & Shoulders', status: 'in_progress', position: 0 }],
+  [2]: [
+    { workoutName: 'Leg Day', status: 'scheduled', position: 0 },
+    { workoutName: 'Mobility', status: 'scheduled', position: 1 },
+  ],
+  [4]: [{ workoutName: 'Pull Day', status: 'scheduled', position: 0 }],
+  [6]: [{ workoutName: 'Push Day', status: 'scheduled', position: 0 }],
 }
 
 // ---- date helpers (local-time, date-only) ----
@@ -59,26 +74,50 @@ export function sameDay(a: Date, b: Date): boolean {
 
 const today = startOfToday()
 
-/** Build the offset->workout map into an absolute iso-date map. */
-const WORKOUTS_BY_DATE: Record<string, DayWorkout> = Object.fromEntries(
-  Object.entries(RELATIVE).map(([offset, w]) => [isoDate(addDays(today, Number(offset))), w]),
+/** Build the offset->entries map into an absolute iso-date map. */
+const ENTRIES_BY_DATE: Record<string, DayEntry[]> = Object.fromEntries(
+  Object.entries(RELATIVE).map(([offset, list]) => {
+    const date = addDays(today, Number(offset))
+    const key = isoDate(date)
+    return [key, list.map((e, i) => ({ ...e, key: `${key}-${i}`, date }))]
+  }),
 )
 
-export function workoutForDate(date: Date): DayWorkout | undefined {
-  return WORKOUTS_BY_DATE[isoDate(date)]
+export function entriesForDate(date: Date): DayEntry[] {
+  return ENTRIES_BY_DATE[isoDate(date)] ?? []
+}
+
+/** A day counts toward the streak if *any* workout that day was completed. */
+export function dayIsComplete(entries: DayEntry[]): boolean {
+  return entries.some((e) => e.status === 'completed')
 }
 
 /** Current discipline streak: consecutive days ending today/yesterday with a completed workout. */
 export function disciplineStreak(): number {
   let streak = 0
   // allow the streak to "hold" through today even if today isn't done yet
-  let cursor = workoutForDate(today)?.status === 'completed' ? today : addDays(today, -1)
-  while (workoutForDate(cursor)?.status === 'completed') {
+  let cursor = dayIsComplete(entriesForDate(today)) ? today : addDays(today, -1)
+  while (dayIsComplete(entriesForDate(cursor))) {
     streak += 1
     cursor = addDays(cursor, -1)
   }
   return streak
 }
+
+// ---- Quick Start plans (for the "Start a Workout" sheet) ----
+export interface MockPlan {
+  id: string
+  name: string
+  exerciseCount: number
+  timesPerformed: number
+}
+
+export const MOCK_PLANS: MockPlan[] = [
+  { id: 'push', name: 'Push Day', exerciseCount: 6, timesPerformed: 12 },
+  { id: 'pull', name: 'Pull Day', exerciseCount: 6, timesPerformed: 11 },
+  { id: 'legs', name: 'Leg Day', exerciseCount: 5, timesPerformed: 9 },
+  { id: 'arms', name: 'Arms & Core', exerciseCount: 5, timesPerformed: 4 },
+]
 
 export const WEEKDAY_LABELS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 export const MONTHS = [

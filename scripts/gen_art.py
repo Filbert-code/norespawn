@@ -154,6 +154,23 @@ UI_JOBS: list[dict] = [
         "riveted corners and a worn bronze rim, flat head-on view, evenly lit",
         "image_size": "landscape_16_9",
     },
+    {
+        # Live-session backdrop. Tall portrait (phone screen) so it fills the
+        # live workout frame with no landscape letterboxing. Battle-worn
+        # blackened armor plating runs down the left and right edges; a faint
+        # molten ember glow bleeds from the upper-center and fades to black,
+        # leaving the vertical center column empty for the timer ring + controls.
+        "name": "live_session_bg",
+        "scene": "ornate battle-worn blackened steel and gunmetal armor plating "
+        "with intricate engraved filigree and worn bronze trim covering the left "
+        "and right sides top to bottom and arching across the top corners, "
+        "overlapping riveted plates and interlocking panels, a vivid glowing "
+        "molten crimson and bright ember-red glow blazing down from the upper "
+        "center with hot glowing red cracks veining through the metal, sparks and "
+        "embers, fading to deep solid black at the bottom, the whole vertical "
+        "center left as dark empty space, highly detailed painterly concept art",
+        "image_size": {"width": 1024, "height": 1536},
+    },
 ]
 
 

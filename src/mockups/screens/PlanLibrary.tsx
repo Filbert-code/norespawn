@@ -14,6 +14,10 @@ import {
   Trash2,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import startPlate from '@/assets/ui/start_plate.webp'
+import startPlatePressed from '@/assets/ui/start_plate_pressed.webp'
+import forgePlate from '@/assets/ui/forge_plate.webp'
+import forgePlatePressed from '@/assets/ui/forge_plate_pressed.webp'
 import { PhoneFrame } from '@/mockups/components/PhoneFrame'
 import { PlanSheet, PlanSheetRow, PlanSheetNumber } from '@/mockups/components/PlanSheet'
 import { TabBar } from '@/mockups/components/TabBar'
@@ -221,10 +225,20 @@ export function PlanLibrary() {
           {/* forge new plan — prominent primary action */}
           <button
             onClick={goForge}
-            className="clip-bevel mt-4 flex w-full items-center justify-center gap-2 bg-nr-crimson py-3 font-heading text-sm font-bold uppercase tracking-widest text-nr-bone transition-colors hover:bg-nr-ember"
+            className="group relative mt-4 flex w-full items-center justify-center gap-2 py-4 font-heading text-sm font-bold uppercase tracking-widest text-nr-bone drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)] transition-[filter] hover:brightness-110"
           >
-            <Plus className="size-4" strokeWidth={3} />
-            Forge New Plan
+            <span
+              aria-hidden
+              style={{ backgroundImage: `url(${forgePlate})` }}
+              className="pointer-events-none absolute inset-0 bg-[length:100%_100%] bg-no-repeat group-active:opacity-0"
+            />
+            <span
+              aria-hidden
+              style={{ backgroundImage: `url(${forgePlatePressed})` }}
+              className="pointer-events-none absolute inset-0 bg-[length:100%_100%] bg-no-repeat opacity-0 group-active:opacity-100"
+            />
+            <Plus className="relative size-4 transition-transform group-active:translate-y-px" strokeWidth={3} />
+            <span className="relative transition-transform group-active:translate-y-px">Forge New Plan</span>
           </button>
         </header>
 
@@ -266,9 +280,20 @@ export function PlanLibrary() {
               </div>
               <button
                 onClick={goForge}
-                className="clip-bevel-sm flex items-center gap-1.5 bg-nr-crimson px-5 py-2.5 font-heading text-xs font-bold uppercase tracking-widest text-nr-bone hover:bg-nr-ember"
+                className="group relative flex items-center gap-1.5 px-7 py-3.5 font-heading text-xs font-bold uppercase tracking-widest text-nr-bone drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)] transition-[filter] hover:brightness-110"
               >
-                <Plus className="size-4" strokeWidth={3} /> Forge New Plan
+                <span
+                  aria-hidden
+                  style={{ backgroundImage: `url(${forgePlate})` }}
+                  className="pointer-events-none absolute inset-0 bg-[length:100%_100%] bg-no-repeat group-active:opacity-0"
+                />
+                <span
+                  aria-hidden
+                  style={{ backgroundImage: `url(${forgePlatePressed})` }}
+                  className="pointer-events-none absolute inset-0 bg-[length:100%_100%] bg-no-repeat opacity-0 group-active:opacity-100"
+                />
+                <Plus className="relative size-4 transition-transform group-active:translate-y-px" strokeWidth={3} />
+                <span className="relative transition-transform group-active:translate-y-px">Forge New Plan</span>
               </button>
             </div>
           ) : (
@@ -308,10 +333,20 @@ export function PlanLibrary() {
                   setViewId(null)
                   goLive()
                 }}
-                className="clip-bevel-sm mt-3 flex w-full items-center justify-center gap-2 bg-nr-crimson py-2.5 font-heading text-sm font-bold uppercase tracking-widest text-nr-bone transition-colors hover:bg-nr-ember"
+                className="group relative mt-3 flex aspect-[994/327] w-full items-center justify-center gap-2 font-heading text-sm font-bold uppercase tracking-widest text-nr-bone drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)] transition-[filter] hover:brightness-110"
               >
-                <Play className="size-4" fill="currentColor" />
-                Start
+                <span
+                  aria-hidden
+                  style={{ backgroundImage: `url(${startPlate})` }}
+                  className="pointer-events-none absolute inset-0 bg-contain bg-center bg-no-repeat group-active:opacity-0"
+                />
+                <span
+                  aria-hidden
+                  style={{ backgroundImage: `url(${startPlatePressed})` }}
+                  className="pointer-events-none absolute inset-0 bg-contain bg-center bg-no-repeat opacity-0 group-active:opacity-100"
+                />
+                <Play className="relative size-4 transition-transform group-active:translate-y-px" fill="currentColor" />
+                <span className="relative transition-transform group-active:translate-y-px">Start</span>
               </button>
             }
           >
@@ -367,7 +402,7 @@ function PlanCard({
   const never = plan.lastDays === null
 
   return (
-    <article className="clip-bevel relative border border-nr-bronze/25 bg-nr-gunmetal/40 p-4">
+    <article className="clip-bevel relative border border-nr-bronze/25 bg-nr-black/50 p-4">
       {/* title + kebab */}
       <div className="flex items-start justify-between gap-2">
         <h2 className="font-heading text-lg font-bold uppercase leading-tight tracking-wide text-nr-bone">
@@ -424,10 +459,20 @@ function PlanCard({
       <div className="mt-3.5 flex gap-2">
         <button
           onClick={onStart}
-          className="clip-bevel-sm flex flex-1 items-center justify-center gap-2 bg-nr-crimson py-2.5 font-heading text-sm font-bold uppercase tracking-widest text-nr-bone transition-colors hover:bg-nr-ember"
+          className="group relative flex aspect-[994/327] flex-1 items-center justify-center gap-2 font-heading text-sm font-bold uppercase tracking-widest text-nr-bone drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)] transition-[filter] hover:brightness-110"
         >
-          <Play className="size-4" fill="currentColor" />
-          Start
+          <span
+            aria-hidden
+            style={{ backgroundImage: `url(${startPlate})` }}
+            className="pointer-events-none absolute inset-0 bg-contain bg-center bg-no-repeat group-active:opacity-0"
+          />
+          <span
+            aria-hidden
+            style={{ backgroundImage: `url(${startPlatePressed})` }}
+            className="pointer-events-none absolute inset-0 bg-contain bg-center bg-no-repeat opacity-0 group-active:opacity-100"
+          />
+          <Play className="relative size-4 transition-transform group-active:translate-y-px" fill="currentColor" />
+          <span className="relative transition-transform group-active:translate-y-px">Start</span>
         </button>
         <button
           onClick={onView}
